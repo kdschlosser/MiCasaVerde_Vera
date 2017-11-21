@@ -117,7 +117,6 @@ class {class_name}({subclasses}):
         self._jobs = []
         self._pending_jobs = 0
         self._configured = 0
-        self._status = -1
         
 {subclass_inits}
         if node is not None:
@@ -144,13 +143,27 @@ class {class_name}({subclasses}):
             self._bindings.remove(event_handler)
             
     @property
-    def status(self):
-        return self._status
+    def name(self):
+        for key, value in self._variables.items():
+            if 'name' in key:
+                return value
+        raise AttributeError('Attribute name is not found.')
         
-    @status.setter
-    def status(self, value):
-        self._status = value
-        
+    @name.setter
+    def name(self, value):
+        for key in self._variables.keys():
+            if 'name' in key:
+                self._parent.send(
+                    DeviceNum=self.id,
+                    Value=value,
+                    Variable='name',
+                    id='variableset',
+                    serviceId='{device_id}'
+                )
+                break
+        else:
+            raise AttributeError('Attribute name is not found.')
+    
     @property
     def Jobs(self):
         return self._jobs
@@ -193,11 +206,13 @@ class {class_name}({subclasses}):
     def __setattr__(self, key, value):
         if key.startswith('_'):
             object.__setattr__(self, key, value)
-        elif isinstance(getattr(self.__class__, key), property):
+        elif isinstance(getattr(self.__class__, key, None), property):
             object.__setattr__(self, key, value)
-            
         elif (
-            isinstance(getattr(self.__class__, key.replace('.', '')), property)
+            isinstance(
+                getattr(self.__class__, key.replace('.', ''), None),
+                property
+            )
         ):
             object.__setattr__(self, key.replace('.', ''), value)
         else:

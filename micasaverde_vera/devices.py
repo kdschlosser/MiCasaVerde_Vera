@@ -94,6 +94,8 @@ class Devices(object):
 
     def update_node(self, node, full=False):
         if node is not None:
+            if 'status' in node:
+                del node['status']
             devices = []
             for device in node:
                 id = device['id']
