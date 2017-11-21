@@ -36,7 +36,7 @@ from event import EventHandler
 
 
 class Scenes(object):
-    
+
 
     def __init__(self, parent, node):
         self._scenes = []
@@ -61,7 +61,7 @@ class Scenes(object):
         for scene in self._scenes:
             if number in (scene.id, scene.name):
                 return scene
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -75,7 +75,7 @@ class Scenes(object):
             scenes = []
             for scene in node:
                 id = scene['id']
-                
+
                 for found_scene in self._scenes[:]:
                     if found_scene.id == id:
                         found_scene.update_node(scene)
@@ -85,22 +85,22 @@ class Scenes(object):
                     found_scene = Scene(self, scene)
                     for event_handler in self._bindings:
                         event_handler('new', scene=found_scene)
-                   
+
                 scenes += [found_scene]
-                    
+
             if full:
                 for scene in self._scenes:
                     for event_handler in self._bindings:
                         event_handler('remove', scene=scene)
-                        
+
                 del self._scenes[:]
-                
+
             self._scenes += scenes
-    
+
 
 class Scene(object):
-    
-    
+
+
     def __init__(self, parent, node):
         self._parent = parent
         self._triggers = []
@@ -117,12 +117,12 @@ class Scene(object):
         self.Timestamp = get('Timestamp')
         self.last_run = get('last_run')
         self._room = get('room')
-        
+
         for trigger in node.pop('triggers', []):
-            self._triggers += [Trigger(self, trigger)]
-        
+            self._triggers += [SceneTrigger(self, trigger)]
+
         self.__dict__.update(node)
-        
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -133,13 +133,13 @@ class Scene(object):
 
     def get_device(self, number):
         return self._parent.get_device(number)
-    
+
     def get_trigger(self, number):
         number = str(number)
-        
+
         if number.isdigit():
             number = int(number)
-                
+
         for trigger in self._triggers:
             if number in (trigger.id, trigger.name):
                 return trigger
@@ -221,10 +221,10 @@ class Scene(object):
             action='RunScene',
             SceneNum=self.id
         )
-        
+
     def update_node(self, node, full=False):
         triggers = []
-        
+
         for trigger in node.pop('triggers', []):
             name = trigger['name']
             for found_trigger in self._triggers[:]:
@@ -233,7 +233,7 @@ class Scene(object):
                     self._triggers.remove(found_trigger)
                     break
             else:
-                found_trigger = Trigger(self, trigger)
+                found_trigger = SceneTrigger(self, trigger)
 
                 for event_handler in self._bindings:
                     event_handler(
@@ -242,10 +242,10 @@ class Scene(object):
                         trigger=found_trigger,
                         attribute='triggers'
                     )
-                    
-                
+
+
             triggers += [found_trigger]
-            
+
         if full:
             for trigger in self._triggers:
                 for event_handler in self._bindings:
@@ -257,7 +257,7 @@ class Scene(object):
                     )
             
             del self._triggers[:]
-        
+
         self._triggers += triggers
 
         for key, value in node.items():
@@ -272,7 +272,7 @@ class Scene(object):
                         attribute=key,
                         value=value
                     )
-                    
+
                 setattr(self, key, value)
 
             elif old_value != value:
@@ -285,10 +285,10 @@ class Scene(object):
                         value=value
                     )
                 setattr(self, key, value)
-        
+
 
 class SceneArgument(object):
-    
+
     def __init__(self, parent, node):
         self._parent = parent
         for key, value in node.items():
@@ -296,7 +296,7 @@ class SceneArgument(object):
 
 
 class SceneTrigger(object):
-    
+
     def __init__(self, parent, node):
         self._parent = parent
         self._arguments = []
@@ -316,10 +316,10 @@ class SceneTrigger(object):
 
         for argument in node.pop('arguments', []):
             self._arguments += [SceneArgument(self, argument)]
-            
+
         for key, value in node.items():
             self.__dict__[key] = value
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -377,10 +377,10 @@ class SceneTrigger(object):
     def lua(self, lua):
         if self._encoded_lua == '1':
             base64.b64encode(lua)
-            
-    
+
+
     def update_node(self, node, full=False):
-        
+
         arguments = []
         for argument in node.pop('arguments', []):
             id = argument['id']
@@ -389,7 +389,7 @@ class SceneTrigger(object):
                     self._arguments.remove(argument)
             else:
                 found_argument = SceneArgument(self, argument)
-                
+
                 for event_handler in self._bindings:
                     event_handler(
                         'new',
@@ -398,7 +398,7 @@ class SceneTrigger(object):
                         argument=found_argument,
                         attribute='arguments'
                     )
-                
+
             if found_argument.value != argument['value']:
                 event_handler(
                     'changed',
@@ -407,9 +407,9 @@ class SceneTrigger(object):
                     argument=found_argument,
                     attribute='arguments'
                 )
-                
+
             arguments += [found_argument]
-        
+
         if full:
             for argument in self._arguments:
                 event_handler(
@@ -419,15 +419,15 @@ class SceneTrigger(object):
                     argument=argument,
                     attribute='arguments'
                 )
-                
+
             del self._arguments[:]
-        
+
         self._arguments += arguments
-            
-        
+
+
         for key, value in node:
             old_value = getattr(self, key, None)
-            
+
             if old_value is None:
                 event_handler(
                     'new',
@@ -436,9 +436,9 @@ class SceneTrigger(object):
                     attribute=key,
                     value=value
                 )
-                
+
                 setattr(self, key, value)
-                
+
             elif old_value != value:
                 event_handler(
                     'changed',
