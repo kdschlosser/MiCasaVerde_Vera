@@ -142,23 +142,80 @@ class {class_name}({subclasses}):
         if event_handler in self._bindings:
             self._bindings.remove(event_handler)
             
+    def create_variable(self, variable, value):
+        """
+        Creates a New Variable
+        """
+        
+        orig_variable = variable
+        variable = variable.replace('.', '').replace(' ', '')
+        
+        if (variable, orig_variable) in self._variables:
+            return None
+        else:
+            self._variables[(variable, orig_variable)] = value
+        
+        def var_getter(self):
+            for key, val in self._variables.items():
+                if orig_variable in key:
+                    return val
+            
+        def var_setter(self, val):
+            for key in self._variables.keys():
+                if orig_variable in key:
+                    self._parent.send(
+                        DeviceNum=self.id,
+                        Value=val,
+                        Variable=orig_variable,
+                        id='variableset',
+                        serviceId='{device_id}'
+                    )
+                    
+        prop = property(fget=var_getter, fset=var_setter)
+                    
+        object.__setattr__(self, variable, prop)
+                    
+        return self._parent.send(
+            DeviceNum=self.id,
+            Value=value,
+            Variable=orig_variable,
+            id='variableset',
+            serviceId='{device_id}'
+        )
+        
+    def set_name(self, new_name):
+        return self._parent.send(
+            id='action',
+            serviceId='{device_id}',
+            action='SetName',
+            DeviceNum=self.id,
+            NewName=new_name
+        )
+
+    def get_name(self):
+        return self._parent.send(
+            id='action',
+            serviceId='{device_id}',
+            action='GetName',
+            DeviceNum=self.id
+        )
+            
     @property
-    def name(self):
+    def Name(self):
         for key, value in self._variables.items():
-            if 'name' in key:
+            if 'name' in key or 'Name' in key:
                 return value
         raise AttributeError('Attribute name is not found.')
         
     @name.setter
-    def name(self, value):
+    def Name(self, value):
         for key in self._variables.keys():
-            if 'name' in key:
+            if 'name' in key or 'Name' in key:
                 self._parent.send(
-                    DeviceNum=self.id,
-                    Value=value,
-                    Variable='name',
-                    id='variableset',
-                    serviceId='{device_id}'
+                    id='device',
+                    action='rename',
+                    name=value,
+                    device=self.id
                 )
                 break
         else:
@@ -292,6 +349,7 @@ class {class_name}(object):
     """
     
     def __init__(self, parent):
+        self.id = 0
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         for key, value in _default_variables.items():
@@ -301,7 +359,7 @@ class {class_name}(object):
 '''
 
 ATTR_DOC_TEMPLATE = """        {attr_name} {attr_type}: {attr_docs}\n"""
-STATE_TEMPLATE = "\n    {attr_name}: None,"
+STATE_TEMPLATE = "\n    ('{attr_name}', '{orig_attr_name}'): None,"
 ALLOWED_VALUES_TEMPLATE = '''
             Allowed Values:
                 {values}
@@ -466,8 +524,8 @@ def make_class_template(
 
 
     cls_attributes = ''.join(
-        STATE_TEMPLATE.format(attr_name=attribute)
-        for attribute in attributes
+        STATE_TEMPLATE.format(attr_name=attr_name, orig_attr_name=orig_attr_name)
+        for attr_name, orig_attr_name in attributes
     )
 
     template = CLASS_TEMPLATE.format(
@@ -570,60 +628,91 @@ def create_class_methods(
 ):
     gateway = True if service_id.find('HomeAutomationGateway') > -1 else False
     for action in actions:
-        name = action.find('%sname' % service_xmlns).text
-        arguments = action.find('%sargumentList' % service_xmlns)
+        orig_method_name = action.find('%sname' % service_xmlns).text
+        method_name = parse_string(orig_method_name)
 
-        send_arguments = [
-            ['id', "'action'"],
-            ['serviceId', '%r' % service_id],
-            ['action', '%r' % name],
-            ['DeviceNum', 'self.id']
-        ]
+        if method_name in ('get_name', 'set_name'):
+            continue
+
+        if method_name == 'continue':
+            method_name = 'Continue'
+
+        method_name = method_name.replace('/', '')
+
+        for number, replacement in NUMBER_MAPPING.items():
+            if method_name.startswith(number):
+                method_name = replacement + method_name[len(number):]
+
+        if __name__ == '__main__':
+            print('    -Processing Method ' + method_name + '.....')
+
+        if gateway:
+            send_arguments = [
+                ['id', "'action'"],
+                ['action', '%r' % orig_method_name],
+            ]
+
+        else:
+            send_arguments = [
+                ['id', "'action'"],
+                ['serviceId', '%r' % service_id],
+                ['action', '%r' % orig_method_name],
+                ['DeviceNum', 'self.id']
+            ]
         keywords = []
 
-        name = name.replace('/', '')
-        if name[0].isdigit():
-            name = NUMBER_MAPPING[name[0]] + name[1:]
+        arguments = action.find('%sargumentList' % service_xmlns)
 
         if arguments is not None:
             for argument in arguments:
                 direction = argument.find('%sdirection' % service_xmlns)
-                related = argument.find(
-                    '%srelatedStateVariable' % service_xmlns
-                )
 
-                if related is not None and related.text not in attributes:
-                    attributes += [related.text]
+                if direction is not None:
+                    if direction.text == 'out':
+                        related_variable = argument.find(
+                            '%srelatedStateVariable' % service_xmlns
+                        )
+                        if related_variable is not None:
+                            attr_name = related_variable.text
+                            orig_attr_name = related_variable.text
+                            if (attr_name, orig_attr_name) not in attributes:
+                                attributes += [(attr_name, orig_attr_name)]
 
-                if direction is not None and direction.text == 'in':
-                    arg_name = argument.find('%sname' % service_xmlns).text
-
-                    if arg_name in ('DeviceNum', 'DataFormat'):
-                        continue
-
-                    p_arg_name = parse_string(arg_name)
-                    if p_arg_name == 'reload':
-                        p_arg_name = 'lua_reload'
-
-                    send_arguments += [[arg_name, p_arg_name]]
-                    keywords += [p_arg_name]
-
-        p_name = parse_string(name)
-        if p_name == 'continue':
-            p_name = 'Continue'
-
-        if not gateway and 'DeviceNum' in attributes:
-            send_arguments += [['DeviceNum', 'self.DeviceNum']]
-
-        if p_name not in methods:
-            methods[p_name] = [keywords, send_arguments]
+                    if direction.text == 'in':
+                        orig_variable_name = argument.find('%sname' % service_xmlns).text
 
 
-def create_class_attributes(service_xmlns, state_variables, attributes):
+                        if orig_variable_name == 'DataFormat':
+                            continue
+
+                        if not gateway and orig_variable_name == 'DeviceNum':
+                            continue
+
+                        variable_name = parse_string(orig_variable_name)
+                        if variable_name == 'reload':
+                            variable_name = 'lua_reload'
+
+                        send_arguments += [[orig_variable_name, variable_name]]
+                        keywords += [variable_name]
+
+        if method_name not in methods:
+            methods[method_name] = [keywords, send_arguments]
+
+
+def create_class_attributes(
+    service_xmlns,
+    service_id,
+    state_variables,
+    attributes,
+    properties
+):
     class_doc_templates = []
 
     for state_variable in state_variables:
         attr_name = state_variable.find('%sname' % service_xmlns).text
+
+        if __name__ == '__main__':
+            print('    -Processing attribute ' + attr_name + '.....')
 
         data_type = state_variable.find('%sdataType' % service_xmlns).text
 
@@ -662,15 +751,32 @@ def create_class_attributes(service_xmlns, state_variables, attributes):
                 values='\n                '.join(a_values)
             )
 
-        second_name = attr_name.replace('.', '')
+        orig_attr_name = attr_name
 
-        if (attr_name, second_name) not in attributes:
+        attr_name = attr_name.replace('.', '')
 
-            attributes += [(attr_name, second_name)]
+        if attr_name != 'Name' and attr_name not in properties:
+
+            send_arguments = [
+                ['DeviceNum', 'self.id'],
+                ['Value', 'value'],
+                ['Variable', repr(str(orig_attr_name))],
+                ['id', "'variableset'"],
+                ['serviceId', repr(str(service_id))]
+            ]
+
+            properties[attr_name] = [
+                orig_attr_name,
+                send_arguments
+            ]
+
+        if (attr_name, orig_attr_name) not in attributes:
+
+            attributes += [(attr_name, orig_attr_name)]
 
             class_doc_templates += [
                 ATTR_DOC_TEMPLATE.format(
-                    attr_name=second_name,
+                    attr_name=attr_name,
                     attr_type=data_type,
                     attr_docs=attr_docs
                 )
@@ -816,7 +922,38 @@ def get_data(url):
     return response, xmlns
 
 
-def build_files(ip_address):
+def convert_id_to_type(in_id):
+    in_id = in_id.split(':')
+    if len(in_id) == 5:
+        return ':'.join(in_id)
+
+    out_id = in_id[-1]
+    out_type = ''
+    while out_id[-1].isdigit():
+        out_type = out_id[-1] + out_type
+        out_id = out_id[:-1]
+
+    return ':'.join(in_id[:-1] + [out_id, out_type])
+
+
+def convert_type_to_id(in_type):
+
+    in_type = in_type.split(':')
+
+    if len(in_type) == 4:
+        return ':'.join(in_type)
+
+    in_type[3] = (
+            in_type[3][:1].upper() + in_type[3][1:] + in_type[4]
+    )
+    return ':'.join(in_type[:4])
+
+
+def build_files(ip_address, log=False):
+
+    if log:
+        global __name__
+        __name__ = '__main__'
 
     def get_data_file(data_file_name):
         return get_data(
@@ -835,8 +972,7 @@ def build_files(ip_address):
     )
     device_files = ['vera.xml.lzo']
     service_files = []
-
-    service_ids = dict()
+    found_service_files = dict()
 
     for f in response.content.split('\n'):
         if f.endswith('.xml.lzo'):
@@ -854,66 +990,53 @@ def build_files(ip_address):
 
         xml_root = ElementTree.fromstring(response)
         device_type = xml_root.find('.//%sdeviceType' % root_xmlns).text
+        device_id = convert_type_to_id(device_type)
 
-        split_type = device_type.split(':')
-        split_type[3] = (
-            split_type[3][:1].upper() + split_type[3][1:] + split_type[4]
-        )
+        if device_type not in found_devices:
+            if __name__ == '__main__':
+                print('-Processing Device ' + device_type + '.....')
 
-        device_id = ':'.join(split_type[:4])
-
-        if device_id not in found_devices:
-
-            found_devices[device_id] = dict(
+            found_devices[device_type] = dict(
                 subclasses=[],
                 device_type=device_type,
                 device_id=device_id
             )
 
-        subclasses = found_devices[device_id]['subclasses']
+        subclasses = found_devices[device_type]['subclasses']
 
         services = xml_root.findall('.//*%sserviceList/' % root_xmlns)
 
         for service in services:
             service_type = service.find('%sserviceType' % root_xmlns).text
             service_id = service.find('%sserviceId' % root_xmlns).text
-            scpd_url = service.find('%sSCPDURL' % root_xmlns).text
+            se_type = convert_id_to_type(service_id)
+            if se_type != service_type:
+                service_type = se_type
 
-            if scpd_url not in service_ids:
-                service_ids[scpd_url + '.lzo'] = service_type
+            scpd_url = service.find('%sSCPDURL' % root_xmlns).text + '.lzo'
+
+            if scpd_url in service_files:
+                service_files.remove(scpd_url)
+
+            if scpd_url not in found_service_files:
+                found_service_files[scpd_url] = service_type
 
             if service_type not in subclasses:
                 subclasses += [service_type]
 
-        found_devices[device_id]['subclasses'] = subclasses[:]
+        found_devices[device_type]['subclasses'] = subclasses[:]
 
-    for service_file in service_files:
-        response, service_xmlns = get_data_file(service_file)
+    def build_service(svc_file, svc_type):
+        svc_id = convert_type_to_id(svc_type)
+        response, service_xmlns = get_data_file(svc_file)
 
         if response is None:
-            continue
+            return None
 
         service_xml = ElementTree.fromstring(response)
 
-        for scpd, svc_type in service_ids.items():
-            if service_file == scpd:
-                service_type = svc_type
-                break
-        else:
-            service_name = service_file.replace('S_', '').replace('.xml.lzo', '')
-
-            service_type = ''
-            service_id = 'urn:micasaverde-com:serviceId:' + service_name
-
-            while service_name[-1].isdigit():
-                service_type += service_name[-1]
-                service_name = service_name[:-1]
-
-            service_type = 'urn:micasaverde-com:serviceId:' + service_name + ':' + service_type
-
-
-        if service_type in found_services:
-            svc = found_services[service_type]
+        if svc_type in found_services:
+            svc = found_services[svc_type]
             methods = svc['methods']
             attributes = svc['attributes']
             class_doc = svc['class_doc']
@@ -921,7 +1044,7 @@ def build_files(ip_address):
 
         else:
             if __name__ == "__main__":
-                print('-Processing ' + service_type + '.....')
+                print('-Processing Service ' + svc_type + '.....')
             methods = dict()
             attributes = []
             class_doc = ''
@@ -932,7 +1055,7 @@ def build_files(ip_address):
         if actions is not None:
             create_class_methods(
                 service_xmlns,
-                service_id,
+                svc_id,
                 actions,
                 methods,
                 attributes
@@ -944,17 +1067,31 @@ def build_files(ip_address):
         if state_variables is not None:
             docs = create_class_attributes(
                 service_xmlns,
+                svc_id,
                 state_variables,
-                attributes
+                attributes,
+                properties
             )
             class_doc += docs
 
-        found_services[service_id] = dict(
+        found_services[svc_type] = dict(
             methods=methods,
             attributes=attributes,
             class_doc=class_doc,
             properties=properties,
         )
+
+    for service_file, service_type in found_service_files.items():
+
+        build_service(service_file, service_type)
+
+    for service_file in service_files:
+
+        service_name = service_file.replace('S_', '').replace('.xml.lzo', '')
+        service_id = 'urn:micasaverde-com:serviceId:' + service_name
+        service_type = convert_id_to_type(service_id)
+
+        build_service(service_file, service_type)
 
 
     make_templates(found_devices, found_services)
@@ -988,8 +1125,10 @@ def invoke(ip_address):
                 class_doc = ''
                 for device_line in device_data.split('\n'):
                     command_found = device_line.find('<a href=')
+
                     found_service = device_line.find('<br><i>')
                     if found_service > -1:
+
                         if service_type:
                             services[service_type] = dict(
                                 methods=methods,
@@ -1004,16 +1143,11 @@ def invoke(ip_address):
                             properties = dict()
 
                         service_id = (
-                            device_line[found_service + 7: device_line.find('</i>')]
+                            device_line[
+                            found_service + 7: device_line.find('</i>')]
                         )
 
-                        service_type = ''
-                        while service_id[-1].isdigit():
-                            service_type = service_type + service_id[-1]
-                            service_id = service_id[:-1]
-
-                        service_type = service_id + ':' + service_type
-                        service_id += service_type.split(':')[-1]
+                        service_type = convert_id_to_type(service_id)
 
                         if service_type in services:
                             svc = services[service_type]
@@ -1023,7 +1157,7 @@ def invoke(ip_address):
                             properties = svc['properties']
                         else:
                             if __name__ == "__main__":
-                                print('-Processing ' + service_type + '.....')
+                                print('-Processing Service' + service_type + '.....')
                             services[service_type] = dict()
 
                     if command_found > -1:
@@ -1071,29 +1205,37 @@ def invoke(ip_address):
 
                         if params['id'] == 'action':
                             method_name = parse_string(params['action'])
+
+                            if method_name in ('get_name', 'set_name'):
+                                continue
+
                             if method_name not in methods:
+                                if __name__ == '__main__':
+                                    print('    -Processing Method ' + method_name + '.....')
                                 methods[method_name] = [
                                     keywords,
                                     send_arguments
                                 ]
 
                         if params['id'] == 'variableset':
-                            property_name = params['Variable'].replace('.', '')
-                            if property_name not in properties:
-                                properties[property_name] = [
-                                    params['Variable'],
+
+                            orig_attr_name = params['Variable']
+                            attr_name = orig_attr_name.replace('.', '')
+                            if attr_name not in properties:
+                                if __name__ == '__main__':
+                                    print('    -Processing Property ' + attr_name + '.....')
+                                properties[attr_name] = [
+                                    orig_attr_name,
                                     send_arguments
                                 ]
 
                             if (
-                                (params['Variable'], property_name)
+                                (attr_name, orig_attr_name)
                                 not in attributes
                             ):
                                 attributes += [
-                                    (params['Variable'], property_name)
+                                    (attr_name, orig_attr_name)
                                 ]
-
-
 
                 if service_type:
                     svc = services[service_type]
