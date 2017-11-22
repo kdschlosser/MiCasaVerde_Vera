@@ -41,6 +41,7 @@ class VeraConnect(object):
         self._lock = threading.Lock()
         self._thread = None
         self._data_version = 0
+        self._load_time = 0
         self.URL = 'http://{0}:3480/data_request'.format(ip_address)
 
     def start_poll(self, interval):
@@ -58,31 +59,25 @@ class VeraConnect(object):
         self._thread.join(3.0)
 
     def run_poll(self, interval):
-        params = dict(
-            output_format='json',
-            id='status'
-        )
         self._event.clear()
 
         while not self._event.isSet():
+            self._event.wait(interval)
             self._lock.acquire()
-            params['DataVersion'] = self._data_version
 
             def connect():
                 if self._event.isSet():
-                    return '{"DataVersion": 0}'
+                    return '{}'
                 try:
-                    response = requests.get(self.URL, params=params)
+                    response = requests.get(self.URL, params={'id': 'user_data'})
                     return response.content
                 except requests.ConnectionError:
                     self._event.wait(2.0)
                     return connect()
-                    
+
             data = json.loads(connect())
-            self._data_version = data['DataVersion']
             self._parent.queue_data(data)
             self._lock.release()
-            self._event.wait(interval)
 
     @property
     def is_running(self):

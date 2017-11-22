@@ -113,11 +113,7 @@ class Devices(object):
 
                     return found_device
 
-                try:
-                    devices += [get_device()]
-                except AttributeError:
-                    print id
-                    # self._parent.reload()
+                devices += [get_device()]
 
             if full:
                 for device in self._devices:

@@ -255,16 +255,27 @@ class Scene(object):
                         trigger=found_trigger,
                         attribute='triggers'
                     )
-            
+
             del self._triggers[:]
 
         self._triggers += triggers
 
         for key, value in node.items():
-            old_value = getattr(self, key, None)
+
+            if key == 'name':
+                old_value = self._name
+            elif key == 'notification_only':
+                old_value = self._notification_only
+            elif key == 'modeStatus':
+                old_value = self._modeStatus
+            elif key == 'users':
+                old_value = self._users
+            elif key == 'room':
+                old_value = self._room
+            else:
+                old_value = getattr(self, key, None)
 
             if old_value is None:
-
                 for event_handler in self._bindings:
                     event_handler(
                         'new',
@@ -284,7 +295,19 @@ class Scene(object):
                         attribute=key,
                         value=value
                     )
-                setattr(self, key, value)
+
+                if key == 'name':
+                    self._name = value
+                elif key == 'notification_only':
+                    self._notification_only = value
+                elif key == 'modeStatus':
+                    self._modeStatus = value
+                elif key == 'users':
+                    self._users = value
+                elif key == 'room':
+                    self._room = value
+                else:
+                    setattr(self, key, value)
 
 
 class SceneArgument(object):
@@ -386,7 +409,7 @@ class SceneTrigger(object):
             id = argument['id']
             for found_argument in self._arguments[:]:
                 if found_argument.id == id:
-                    self._arguments.remove(argument)
+                    self._arguments.remove(found_argument)
             else:
                 found_argument = SceneArgument(self, argument)
 
@@ -424,27 +447,41 @@ class SceneTrigger(object):
 
         self._arguments += arguments
 
-
-        for key, value in node:
+        for key, value in node.items():
             old_value = getattr(self, key, None)
 
             if old_value is None:
-                event_handler(
-                    'new',
-                    scene=self._parent,
-                    trigger=self,
-                    attribute=key,
-                    value=value
-                )
-
+                for event_handler in self._bindings:
+                    event_handler(
+                        'new',
+                        scene=self._parent,
+                        trigger=self,
+                        attribute=key,
+                        value=value
+                    )
                 setattr(self, key, value)
 
             elif old_value != value:
-                event_handler(
-                    'changed',
-                    scene=self._parent,
-                    trigger=self,
-                    attribute=key,
-                    value=value
-                )
-                setattr(self, key, value)
+                for event_handler in self._bindings:
+                    event_handler(
+                        'changed',
+                        scene=self._parent,
+                        trigger=self,
+                        attribute=key,
+                        value=value
+                    )
+
+                if key == 'device':
+                    self._device = value
+                elif key == 'name':
+                    self._name = value
+                elif key == 'enabled':
+                    self._enabled = value
+                elif key == 'template':
+                    self._template = value
+                elif key == 'lua':
+                    self._lua = value
+                elif key == 'encoded_lua':
+                    self._encoded_lua = value
+                else:
+                    setattr(self, key, value)

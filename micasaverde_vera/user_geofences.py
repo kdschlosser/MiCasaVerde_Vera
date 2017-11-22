@@ -32,7 +32,7 @@ from event import EventHandler
 
 
 class UserGeofences(object):
-    
+
 
     def __init__(self, parent, node):
         self._parent = parent
@@ -54,7 +54,7 @@ class UserGeofences(object):
 
     def get_user(self, number):
         return self._parent.get_user(number)
-    
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -76,14 +76,14 @@ class UserGeofences(object):
                         break
                 else:
                     found_geofence = UserGeoFence(self, geofence)
-                    
+
                     for event_handler in self._bindings:
                         event_handler('new', geofence=found_geofence)
 
                 geofences += [found_geofence]
             if full:
                 for geofence in self._geofences:
-                    
+
                     for event_handler in self._bindings:
                         event_handler('remove', geofence=geofence)
                 del self._geofences[:]
@@ -101,81 +101,25 @@ class GeoTag(object):
 
         self._PK_User = get('PK_User')
         self.id = get('id')
-        self._accuracy = get('accuracy')
+        self.accuracy = get('accuracy')
         self.ishome = get('ishome')
         self.notify = get('notify')
-        self._radius = get('radius')
-        self._address = get('address')
-        self._color = get('color')
-        self._latitude = get('latitude')
-        self._longitude = get('longitude')
-        self._name = get('name')
+        self.radius = get('radius')
+        self.address = get('address')
+        self.color = get('color')
+        self.latitude = get('latitude')
+        self.longitude = get('longitude')
+        self.name = get('name')
         self.status = get('status')
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-
     @property
     def PK_User(self):
         return self._parent.get_user(self._PK_User)
 
-    @property
-    def accuracy(self):
-        return self._accuracy
 
-    @accuracy.setter
-    def accuracy(self, accuracy):
-        pass
-
-    @property
-    def radius(self):
-        return self._radius
-
-    @radius.setter
-    def radius(self, radius):
-        pass
-
-    @property
-    def address(self):
-        return self._address
-
-    @address.setter
-    def address(self, address):
-        pass
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, color):
-        pass
-
-    @property
-    def latitude(self):
-        return self._latitude
-
-    @latitude.setter
-    def latitude(self, latitude):
-        pass
-
-    @property
-    def longitude(self):
-        return self._longitude
-
-    @longitude.setter
-    def longitude(self, longitude):
-        pass
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        pass
-    
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -187,7 +131,11 @@ class GeoTag(object):
     def update_node(self, node):
 
         for key, value in node.items():
-            old_value = getattr(self, key, None)
+
+            if key == 'PK_User':
+                old_value = self._PK_User
+            else:
+                old_value = getattr(self, key, None)
 
             if old_value is None:
                 event_handler(
@@ -197,7 +145,7 @@ class GeoTag(object):
                     attribute=key,
                     value=value
                 )
-                
+
                 setattr(self, key, value)
 
             elif old_value != value:
@@ -208,16 +156,18 @@ class GeoTag(object):
                     attribute=key,
                     value=value
                 )
-                
-                setattr(self, key, value)
+                if key == 'PK_User':
+                    self._PK_User = value
+                else:
+                    setattr(self, key, value)
 
 
 class UserGeoFence(object):
-    
+
     def __init__(self, parent, node):
         self._parent = parent
         self._bindings = []
-        
+
         self._geotags = []
         self.iduser = node.pop('iduser', None)
 
@@ -227,7 +177,7 @@ class UserGeoFence(object):
     def __iter__(self):
         for geotag in self._geotags:
             yield geotag
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]

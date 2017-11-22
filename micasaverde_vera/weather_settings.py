@@ -39,7 +39,7 @@ class WeatherSettings(object):
 
             for key, value in node.items():
                 self.__dict__[key] = value
-                
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -75,7 +75,16 @@ class WeatherSettings(object):
     def update_node(self, node, full=False):
         if node is not None:
             for key, value in node.items():
-                old_value = getattr(self, key, None)
+
+                if key == 'weatherCountry':
+                    old_value = self._weatherCountry
+                elif key == 'weatherCity':
+                    old_value = self._weatherCity
+                elif key == 'tempFormat':
+                    old_value = self._tempFormat
+                else:
+                    old_value = getattr(self, key, None)
+
                 if old_value is None:
                     for event_handler in self._bindings:
                         event_handler(
@@ -84,8 +93,9 @@ class WeatherSettings(object):
                             attribute=key,
                             value=value
                         )
-                    
+
                     setattr(self, key, value)
+
                 elif old_value != value:
                     for event_handler in self._bindings:
                         event_handler(
@@ -94,5 +104,11 @@ class WeatherSettings(object):
                             attribute=key,
                             value=value
                         )
-                        
-                    setattr(self, key, value)
+                    if key == 'weatherCountry':
+                        self._weatherCountry = value
+                    elif key == 'weatherCity':
+                        self._weatherCity = value
+                    elif key == 'tempFormat':
+                        self._tempFormat = value
+                    else:
+                        setattr(self, key, value)

@@ -284,11 +284,18 @@ class {class_name}({subclasses}):
         This is internally used.
         """
         
-        del node['tooltip']
+        if 'tooltip' in node:
+            del node['tooltip']
         
         def check_value(variable, value):
-            found_value = getattr(self, variable, None)
-            if found_value is None:
+            for attrib_names, attrib_value in self._variables.items():
+                if variable in attrib_names:
+                    old_value = attrib_value
+                    break
+            else:
+                old_value = None
+                
+            if old_value is None:
                 for event_handler in self._bindings:
                     event_handler(
                         'new',
@@ -299,7 +306,7 @@ class {class_name}({subclasses}):
                 
                 self._variables[(variable, variable)] = value
             
-            elif found_value != value:
+            elif old_value != value:
                 for event_handler in self._bindings:
                     event_handler(
                         'change',
@@ -308,16 +315,16 @@ class {class_name}({subclasses}):
                         value=value
                     )
                 
-                for key in self._variables.keys()[:]:
-                    if variable in key:
-                        self._variables[key] = value
+                for attrib_names in self._variables.keys()[:]:
+                    if variable in attrib_names:
+                        self._variables[attrib_names] = value
         
         if node is not None:
             for state in node.pop('states', []):
                 check_value(state['variable'], state['value'])
             
-            for item in node.items():
-                check_value(*item)
+            for node_key, node_value in node.items():
+                check_value(node_key, node_value)
     
     def __dir__(self):
         """
@@ -352,8 +359,7 @@ class {class_name}(object):
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         for key, value in _default_variables.items():
-            if key not in self._variables:
-                self._variables[key] = value
+            self._variables[key] = value
 {properties}{methods}
 '''
 
@@ -483,13 +489,12 @@ def make_method_template(method, keywords, send_arguments):
 
 def make_class_template(
     service_type,
+    class_name,
     methods,
     attributes,
     class_doc,
     properties
 ):
-    service_name = create_service_name(service_type)
-    class_name = service_name.replace('_', '')
 
     cls_methods = ''
     for method_name, params in methods.items():
@@ -546,7 +551,7 @@ def make_templates(devices, services):
         print('Building Templates....')
 
     for device_type, params in devices.items():
-        device_id = params['device_id']
+        device_id = convert_type_to_id(device_type)
         device_name = create_service_name(device_type)
         class_name = device_name.replace('_', '')
         class_name = class_name[0].upper() + class_name[1:]
@@ -592,16 +597,20 @@ def make_templates(devices, services):
 
         file_path = os.path.join(DEVICES_PATH, file_name)
 
+        if __name__ == "__main__":
+            print('Writing File {0} ....'.format(file_path))
+
         with open(file_path, 'w') as f:
             f.write(HEADER)
             f.write(template)
 
-    for service_type, params in services.items():
-        service_name = create_service_name(service_type)
-        class_name = service_name.replace('_', '')
+    for service_name, params in services.items():
+        service_type = params.pop('service_type')
+        service_id = params.pop('service_id')
+        class_name = params.pop('class_name').replace('_', '')
         file_name = parse_string(class_name) + '.py'
 
-        template = make_class_template(service_type, **params)
+        template = make_class_template(service_type, class_name, **params)
         template = template.replace(
             'self, ):',
             'self):'
@@ -611,6 +620,7 @@ def make_templates(devices, services):
         )
 
         file_path = os.path.join(SERVICES_PATH, file_name)
+
         if __name__ == "__main__":
             print('Writing File {0} ....'.format(file_path))
 
@@ -990,7 +1000,6 @@ def build_files(ip_address, log=False):
 
         xml_root = ElementTree.fromstring(response)
         device_type = xml_root.find('.//%sdeviceType' % root_xmlns).text
-        device_id = convert_type_to_id(device_type)
 
         if device_type not in found_devices:
             if __name__ == '__main__':
@@ -998,8 +1007,7 @@ def build_files(ip_address, log=False):
 
             found_devices[device_type] = dict(
                 subclasses=[],
-                device_type=device_type,
-                device_id=device_id
+                device_type=device_type
             )
 
         subclasses = found_devices[device_type]['subclasses']
@@ -1009,9 +1017,8 @@ def build_files(ip_address, log=False):
         for service in services:
             service_type = service.find('%sserviceType' % root_xmlns).text
             service_id = service.find('%sserviceId' % root_xmlns).text
-            se_type = convert_id_to_type(service_id)
-            if se_type != service_type:
-                service_type = se_type
+
+            service_name = create_service_name(service_id)
 
             scpd_url = service.find('%sSCPDURL' % root_xmlns).text + '.lzo'
 
@@ -1019,15 +1026,18 @@ def build_files(ip_address, log=False):
                 service_files.remove(scpd_url)
 
             if scpd_url not in found_service_files:
-                found_service_files[scpd_url] = service_type
+                found_service_files[scpd_url] = [
+                    service_name,
+                    service_type,
+                    service_id
+                ]
 
             if service_type not in subclasses:
                 subclasses += [service_type]
 
         found_devices[device_type]['subclasses'] = subclasses[:]
 
-    def build_service(svc_file, svc_type):
-        svc_id = convert_type_to_id(svc_type)
+    def build_service(svc_file, svc_name, svc_type, svc_id):
         response, service_xmlns = get_data_file(svc_file)
 
         if response is None:
@@ -1035,8 +1045,8 @@ def build_files(ip_address, log=False):
 
         service_xml = ElementTree.fromstring(response)
 
-        if svc_type in found_services:
-            svc = found_services[svc_type]
+        if svc_name in found_services:
+            svc = found_services[svc_name]
             methods = svc['methods']
             attributes = svc['attributes']
             class_doc = svc['class_doc']
@@ -1044,7 +1054,7 @@ def build_files(ip_address, log=False):
 
         else:
             if __name__ == "__main__":
-                print('-Processing Service ' + svc_type + '.....')
+                print('-Processing Service ' + svc_id + '.....')
             methods = dict()
             attributes = []
             class_doc = ''
@@ -1074,16 +1084,19 @@ def build_files(ip_address, log=False):
             )
             class_doc += docs
 
-        found_services[svc_type] = dict(
+        found_services[svc_name] = dict(
+            class_name=svc_name,
+            service_type=svc_type,
+            service_id=svc_id,
             methods=methods,
             attributes=attributes,
             class_doc=class_doc,
             properties=properties,
         )
 
-    for service_file, service_type in found_service_files.items():
+    for service_file, service_params in found_service_files.items():
 
-        build_service(service_file, service_type)
+        build_service(service_file, *service_params)
 
     for service_file in service_files:
 
@@ -1091,7 +1104,7 @@ def build_files(ip_address, log=False):
         service_id = 'urn:micasaverde-com:serviceId:' + service_name
         service_type = convert_id_to_type(service_id)
 
-        build_service(service_file, service_type)
+        build_service(service_file, service_name, service_type, service_id)
 
 
     make_templates(found_devices, found_services)
@@ -1114,7 +1127,7 @@ def invoke(ip_address):
                 )
             )
             if 'RunScene' not in line:
-                service_type = ''
+                service_name = ''
                 response = requests.get(
                     'http://{ip}:3480/{path}'.format(ip=ip_address, path=line)
                 )
@@ -1129,8 +1142,8 @@ def invoke(ip_address):
                     found_service = device_line.find('<br><i>')
                     if found_service > -1:
 
-                        if service_type:
-                            services[service_type] = dict(
+                        if service_name:
+                            services[service_name] = dict(
                                 methods=methods,
                                 attributes=attributes,
                                 class_doc=class_doc,
@@ -1147,18 +1160,18 @@ def invoke(ip_address):
                             found_service + 7: device_line.find('</i>')]
                         )
 
-                        service_type = convert_id_to_type(service_id)
+                        service_name = create_service_name(service_id)
 
-                        if service_type in services:
-                            svc = services[service_type]
+                        if service_name in services:
+                            svc = services[service_name]
                             methods = svc['methods']
                             attributes = svc['attributes']
                             class_doc = svc['class_doc']
                             properties = svc['properties']
                         else:
                             if __name__ == "__main__":
-                                print('-Processing Service' + service_type + '.....')
-                            services[service_type] = dict()
+                                print('-Processing Service' + service_id + '.....')
+                            services[service_name] = dict()
 
                     if command_found > -1:
                         send_arguments = []
@@ -1237,8 +1250,10 @@ def invoke(ip_address):
                                     (attr_name, orig_attr_name)
                                 ]
 
-                if service_type:
-                    svc = services[service_type]
+                if service_name:
+                    svc = services[service_name]
+                    svc['class_name'] = service_name
+                    svc['service_id'] = service_id
                     svc['methods'] = methods
                     svc['attributes'] = attributes
                     svc['class_doc'] = class_doc

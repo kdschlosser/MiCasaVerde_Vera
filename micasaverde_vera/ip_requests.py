@@ -43,7 +43,7 @@ class IPRequests(object):
     def __iter__(self):
         for request in self._ip_requests.values():
             yield request
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -51,7 +51,7 @@ class IPRequests(object):
     def unregister_event(self, event_handler):
         if event_handler in self._bindings:
             self._bindings.remove(event_handler)
-            
+
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -62,7 +62,7 @@ class IPRequests(object):
                 found_request = self._ip_requests.get(ip, None)
                 if found_request is None:
                     found_request = IPRequest(self, request)
-                    
+
                     for event_handler in self._bindings:
                         event_handler('new', ip_request=found_request)
 
@@ -70,7 +70,7 @@ class IPRequests(object):
 
                 else:
                     found_date = date
-                    for sub_request in found_requests:
+                    for sub_request in found_request:
                         found_date = max([found_date, sub_request.date])
 
                     if found_date == date:
@@ -78,7 +78,7 @@ class IPRequests(object):
 
                         for event_handler in self._bindings:
                             event_handler('new', ip_request=found_request[-1])
-                
+
                 requests[ip] = found_request
 
             if full:
@@ -92,7 +92,7 @@ class IPRequest(object):
         self._parent = parent
         for key, value in node.items():
             self.__dict__[key] = value
-            
+
     def register_event(self, callback, attribute=None):
         return self._parent.register_event(callback)
 

@@ -28,7 +28,7 @@ from event import EventHandler
 
 
 class Rooms(object):
-    
+
     def __init__(self, parent, node):
         self._rooms = []
         self._parent = parent
@@ -38,7 +38,7 @@ class Rooms(object):
         if node is not None:
             for room in node:
                 self._rooms += [Room(self, room)]
-                
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -48,6 +48,10 @@ class Rooms(object):
             self._bindings.remove(event_handler)
 
     def get_room(self, number):
+        number = str(number)
+        if number.isdigit():
+            number = int(number)
+
         for room in self._rooms:
             if number in (room.name, room.id):
                 return room
@@ -60,7 +64,7 @@ class Rooms(object):
             rooms = []
             for room in node:
                 id = room['id']
-                
+
                 for found_room in self._rooms[:]:
                     if found_room.id == id:
                         found_room.update_node(room)
@@ -68,19 +72,19 @@ class Rooms(object):
                         break
                 else:
                     found_room = Room(self, room)
-                    
+
                     for event_handler in self._bindings:
                         event_handler('new', room=found_room)
-                        
+
                 rooms += [found_room]
-                
+
             if full:
                 for room in self._rooms:
                     for event_handler in self._bindings:
                         event_handler('remove', room=room)
-                
+
                 del self._rooms[:]
-            
+
             self._rooms += rooms
 
 
@@ -98,7 +102,7 @@ class Room(object):
 
         for key, value in node.items():
             self.__dict__[key] = value
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -124,19 +128,29 @@ class Room(object):
 
     def update_node(self, node):
         for key, value in node.items():
-            old_value = getattr(self, key, None)
+            if key == 'name':
+                old_value = self._name
+            elif key == 'section':
+                old_value = self._section
+            else:
+                old_value = getattr(self, key, None)
+
             if old_value is None:
                 for event_handler in self._bindings:
                     event_handler('new', room=self, attribute=key, value=value)
-                
                 setattr(self, key, value)
-            
+
             elif old_value != value:
                 for event_handler in self._bindings:
                     event_handler(
-                        'changed', 
-                        room=self, 
+                        'changed',
+                        room=self,
                         attribute=key,
                         value=value
                     )
-                setattr(self, key, value)
+                if key == 'name':
+                    self._name = value
+                elif key == 'section':
+                    self._section = value
+                else:
+                    setattr(self, key, value)

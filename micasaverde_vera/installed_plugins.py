@@ -49,7 +49,7 @@ class InstalledPlugins(object):
         if node is not None:
             for plugin in node:
                 self._plugins += [InstalledPlugin(self, plugin)]
-                
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -91,7 +91,7 @@ class InstalledPlugins(object):
                 for plugin in self._plugins:
                     for event_handler in self._bindings:
                         event_handler('remove', plugin=plugin)
-                        
+
                 del self._plugins[:]
 
             self._plugins += plugins[:]
@@ -168,23 +168,23 @@ class InstalledPlugin(object):
 
         for plugin_device in node.pop('Devices', []):
             device_type = plugin_device['DeviceType']
-            
+
             for device in self.devices[:]:
                 if device.device_type == device_type:
                     devices += [device]
                     self.devices.remove(device)
-                    
+
             for device in self._parent._parent.devices:
                 if device.device_type == device_type and device not in devices:
                     for event_handler in self._bindings:
                         event_handler('new', plugin=self, device=device)
-                    
+
                     devices += [device]
 
         if full:
-            for device in self._devices:
+            for device in self.devices:
                 for event_handler in self._bindings:
                     event_handler('remove', plugin=self, device=device)
-                        
-            del self._devices[:]
-        self._devices += devices[:]
+
+            del self.devices[:]
+        self.devices += devices[:]

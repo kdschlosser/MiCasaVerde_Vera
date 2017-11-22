@@ -22,7 +22,7 @@ import vera_build
 import json
 import sys
 import os
-
+from copy import deepcopy
 from scenes import Scenes
 from sections import Sections
 from ip_requests import IPRequests
@@ -44,6 +44,15 @@ from vera_exception import (
     VeraNotImplimentedError
 )
 
+_UNWANTED_ITEMS =(
+    'static_data',
+    'InstalledPlugins',
+    'SetupDevices',
+    'SetupDevices',
+    'category_filter',
+    'categories',
+    'startup'
+)
 
 BUILD_PATH = vera_build.BUILD_PATH
 BUILD_COMPLETE = os.path.exists(BUILD_PATH)
@@ -286,14 +295,9 @@ class _Vera(object):
         self.vera_connection = VeraConnect(self, ip_address)
         data = self.vera_connection.send(id='user_data')
 
-        if 'static_data' in data:
-            del data['static_data']
-        if 'InstalledPlugins' in data:
-            del data['InstalledPlugins']
-        if 'SetupDevices' in data:
-            del data['SetupDevices']
-        if 'category_filter' in data:
-            del data['category_filter']
+        for item in _UNWANTED_ITEMS:
+            if item in data:
+                del data[item]
 
         self.categories = Categories(self, vera_build.get_categories(ip_address))
         self.sections = self.__build(Sections, 'sections', data)
@@ -341,7 +345,7 @@ class _Vera(object):
         )
 
     def __update(self, obj, key, data):
-        obj.update_node(data.pop(key, None))
+        obj.update_node(data.pop(key, None), True)
 
     def send(self, **kwargs):
         return self.vera_connection.send(**kwargs)
@@ -371,20 +375,21 @@ class _Vera(object):
             self.vera_connection.start_poll(interval)
 
     def _data_handler(self):
+        last_data = dict()
         while not self._data_event.isSet():
             self._data_wait.clear()
             self._lock.acquire()
             while self._queue:
                 data = self._queue.pop(0)
 
-                if 'static_data' in data:
-                    del data['static_data']
-                if 'InstalledPlugins' in data:
-                    del data['InstalledPlugins']
-                if 'SetupDevices' in data:
-                    del data['SetupDevices']
-                if 'category_filter' in data:
-                    del data['category_filter']
+                if data == last_data:
+                    continue
+
+                last_data = deepcopy(data)
+
+                for item in _UNWANTED_ITEMS:
+                    if item in data:
+                        del data[item]
 
                 self.__update(self.sections, 'sections', data)
                 self.__update(self.users, 'users', data)
@@ -401,6 +406,3 @@ class _Vera(object):
 
             self._lock.release()
             self._data_wait.wait()
-
-
-

@@ -36,7 +36,7 @@ class Sections(object):
         if node is not None:
             for section in node:
                 self._sections += [Section(self, section)]
-                
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -47,18 +47,18 @@ class Sections(object):
 
     def get_section(self, number):
         number = str(number)
-        
+
         if number.isdigit():
             number = int(number)
-            
+
         for section in self._sections:
             if number in (section.name, section.id):
                 return section
-            
+
     def update_node(self, node, full=False):
         if node is not None:
             sections = []
-            
+
             for section in node:
                 id = section['id']
                 for found_section in self._sections[:]:
@@ -67,20 +67,20 @@ class Sections(object):
                         break
                 else:
                     found_section = Section(self, section)
-                    
+
                     for event_handler in self._bindings:
                         event_handler('new', section=found_section)
-                  
+
                 sections += [found_section]
-                
+
             if full:
                 for section in self._sections:
                     for event_handler in self._bindings:
                         event_handler('remove', section=section)
-                        
+
                 del self._sections[:]
-                
-            
+
+
             self._sections += sections
 
 
@@ -89,19 +89,5 @@ class Section(object):
     def __init__(self, parent, node):
         self._parent = parent
 
-        def get(attr):
-            return node.pop(attr, None)
-
-        self.id = get('id')
-        self._name = get('name')
-
         for key, value in node.items():
-            setattr(self, key, value)
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        pass
+            self.__dict__[key] = value

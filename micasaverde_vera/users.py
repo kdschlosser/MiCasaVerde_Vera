@@ -37,7 +37,7 @@ class Users(object):
         if node is not None:
             for user in node:
                 self._users += [User(self, user)]
-                
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -47,11 +47,11 @@ class Users(object):
             self._bindings.remove(event_handler)
 
     def get_user(self, number):
-        
+
         number = str(number)
         if number.isdigit():
             number = int(number)
-            
+
         for user in self._users:
             if number in (user.name, user.id):
                 return user
@@ -61,19 +61,19 @@ class Users(object):
 
     def get_geofences(self, number):
         return self._parent.get_geofences(number)
-    
+
     def update_node(self, node, full=False):
-        
+
         if node is not None:
             users = []
             for user in node:
                 id = user['id']
                 for found_user in self._users:
-                    if found_uder.id == id:
-                        found_user.update_node(node)
+                    if found_user.id == id:
+                        found_user.update_node(user)
                         self._users.remove(found_user)
                         break
-                        
+
                 else:
                     found_user = User(self, user)
                     for event_handler in self._bindings:
@@ -83,7 +83,7 @@ class Users(object):
                         )
 
                 users += [found_user]
-                
+
             if full:
                 for user in self._users:
                     for event_handler in self._bindings:
@@ -91,9 +91,9 @@ class Users(object):
                             'remove',
                             user=found_user
                         )
-                    
+
                 del self._users[:]
-                
+
             self._users += users
 
 
@@ -108,11 +108,11 @@ class User(object):
         self.id = get('id')
         self.Level = get('Level')
         self.IsGuest = get('IsGuest')
-        self._name = get('name')
+        self._name = get('Name')
 
         for key, value in node.items():
             self.__dict__[key] = value
-            
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, attribute)]
         return self._bindings[-1]
@@ -122,11 +122,11 @@ class User(object):
             self._bindings.remove(event_handler)
 
     @property
-    def name(self):
+    def Name(self):
         return self._name
 
-    @name.setter
-    def name(self, name):
+    @Name.setter
+    def Name(self, name):
         self._parent.send(
             id='user',
             action='rename',
@@ -141,12 +141,15 @@ class User(object):
     @property
     def geofences(self):
         return self._parent.get_geofences(self.id)
-    
+
     def update_node(self, node):
-        
+
         for key, value in node.items():
-            old_value = getattr(self, key, None)
-            
+            if key == 'Name':
+                old_value = self._name
+            else:
+                old_value = getattr(self, key, None)
+
             if old_value is None:
                 for event_handler in self._bindings:
                     event_handler(
@@ -155,7 +158,7 @@ class User(object):
                         attribute=key,
                         value=value
                     )
-             
+
                 setattr(self, key, value)
             elif old_value != value:
                 for event_handler in self._bindings:
@@ -165,5 +168,8 @@ class User(object):
                         attribute=key,
                         value=value
                     )
-                    
-                setattr(self, key, value)
+
+                if key == 'Name':
+                    self._name = value
+                else:
+                    setattr(self, key, value)
