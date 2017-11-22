@@ -207,7 +207,7 @@ class {class_name}({subclasses}):
                 return value
         raise AttributeError('Attribute name is not found.')
         
-    @name.setter
+    @Name.setter
     def Name(self, value):
         for key in self._variables.keys():
             if 'name' in key or 'Name' in key:
@@ -349,7 +349,6 @@ class {class_name}(object):
     """
     
     def __init__(self, parent):
-        self.id = 0
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         for key, value in _default_variables.items():
@@ -550,6 +549,7 @@ def make_templates(devices, services):
         device_id = params['device_id']
         device_name = create_service_name(device_type)
         class_name = device_name.replace('_', '')
+        class_name = class_name[0].upper() + class_name[1:]
         file_name = parse_string(class_name) + '.py'
 
         imports = []
