@@ -16,26 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-<InstalledPlugins2>
-    <InstalledPlugins Version="25742" AllowMultiple="0" Title="Wunderground Weather Plugin" Icon="plugins/icons/45.png" Instructions="http://code.mios.com/trac/mios_weather" Hidden="0" AutoUpdate="1" VersionMajor="1" VersionMinor="58" SupportedPlatforms="**((NULL))**" MinimumVersion="**((NULL))**" DevStatus="**((NULL))**" Approved="1" id="45" timestamp="1486651137">
-        <Files>
-            <File SourceName="D_Weather.xml" SourcePath="**((NULL))**" DestName="D_Weather.xml" DestPath="" Compress="1" Encrypt="0" Role="D"></File>
-            <File SourceName="D_Weather.json" SourcePath="**((NULL))**" DestName="D_Weather.json" DestPath="" Compress="1" Encrypt="0" Role="J"></File>
-            <File SourceName="S_Weather.xml" SourcePath="**((NULL))**" DestName="S_Weather.xml" DestPath="" Compress="1" Encrypt="0" Role="S"></File>
-            <File SourceName="I_WUIWeather.xml" SourcePath="**((NULL))**" DestName="I_WUIWeather.xml" DestPath="" Compress="1" Encrypt="1" Role="I"></File>
-        </Files>
-        <Devices>
-            <Device DeviceFileName="D_Weather.xml" DeviceType="urn:demo-micasaverde-com:device:weather:1" ImplFile="I_WUIWeather.xml" Invisible="0" CategoryNum="**((NULL))**"></Device>
-        </Devices>
-        <Lua>
-            <Lu FileName="L_LuaXP.lua"></Lu>
-            <Lu FileName="L_SiteSensor1.lua"></Lu>
-        </Lua>
-    </InstalledPlugins>
-</InstalledPlugins2>
-"""
-
 from event import EventHandler
 
 

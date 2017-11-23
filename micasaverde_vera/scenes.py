@@ -16,20 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-<scenes>
-    <scene name="Freezing" notification_only="111" modeStatus="0" id="17" users="1880772" Timestamp="1494221451" last_run="1509100826" room="0">
-        <triggers>
-            <trigger device="111" name="Freezing" enabled="1" template="2" lua="" encoded_lua="1" last_run="1509100826" last_eval="0">
-                <arguments>
-                    <argument id="1" value="0"></argument>
-                </arguments>
-            </trigger>
-        </triggers>
-    </scene>
-</scenes>
-"""
-
 
 import base64
 from event import EventHandler

@@ -17,13 +17,6 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-
-"""
-<rooms>
-    <room id="1" section="1" name="Living Room"></room>
-</rooms>
-"""
-
 from event import EventHandler
 
 

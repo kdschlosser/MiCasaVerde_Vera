@@ -17,12 +17,6 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-<ip_requests>
-    <ip_request mac="44:74:6C:B8:0D:F2" ip="192.168.1.65" date="1507633407"></ip_request>
-</ip_requests>
-"""
-
 from event import EventHandler
 
 

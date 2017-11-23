@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-"""<weatherSettings tempFormat="C" weatherCity="kingston upon hull england Region:" weatherCountry="united kingdom"></weatherSettings>"""
 
 from event import EventHandler
 

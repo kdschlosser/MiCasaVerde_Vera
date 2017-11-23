@@ -16,13 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
-"""
-<users>
-    <user id="1880772" Name="holdmade" Level="1" IsGuest="0"></user>
-</users>
-"""
-
 from event import EventHandler
 
 

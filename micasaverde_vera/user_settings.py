@@ -17,13 +17,6 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-<users_settings>
-    <users_setting id="1880772" ishome="1"></users_setting>
-</users_settings>
-
-"""
-
 from event import EventHandler
 
 
@@ -51,7 +44,7 @@ class UserSettings(object):
 
     def get_user(self, number):
         return self._parent.get_user(number)
-    
+
     def register_event(self, callback, attribute=None):
         self._bindings += [EventHandler(self, callback, None)]
         return self._bindings[-1]
@@ -75,18 +68,18 @@ class UserSettings(object):
                     found_setting = UserSetting(self, setting)
                     for event_handler in self._bindings:
                         event_handler('new', users_setting=found_setting)
-                    
+
                 ishome = setting.get('ishome', None)
 
                 if ishome is not None and ishome != found_setting.ishome:
                     for event_handler in self._bindings:
                         event_handler(
-                            'change', 
+                            'change',
                             users_setting=found_setting,
                             attribute='ishome',
                             value=ishome
                         )
-                        
+
                     found_setting.ishome = ishome
 
                 settings += [found_setting]

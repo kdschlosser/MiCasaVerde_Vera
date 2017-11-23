@@ -16,11 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-<sections>
-    <section id="1" name="My Home"></section>
-</sections>
-"""
 
 from event import EventHandler
 

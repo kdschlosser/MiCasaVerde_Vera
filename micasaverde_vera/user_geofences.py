@@ -17,17 +17,6 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-<usergeofences>
-    <usergeofence iduser="1880772">
-        <geotags>
-            <geotag PK_User="1880772" id="1" accuracy="0" ishome="1" notify="1" radius="100" address="2 Apple Tree Close Hull" color="006e45" latitude="53.86623362359894" longitude="-0.2878858521580696" name="HOME" status="Enter"></geotag>
-            <geotag PK_User="1880772" id="2" accuracy="0" ishome="0" notify="1" radius="500" address="2 Apple Tree Close Hull" color="006e45" latitude="53.86622769250586" longitude="-0.28796833008527756" name="500m from home" status="Enter"></geotag>
-        </geotags>
-    </usergeofence>
-</usergeofences>
-"""
-
 from event import EventHandler
 
 
