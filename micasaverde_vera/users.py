@@ -119,9 +119,8 @@ class User(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(self, 'User.{0}.{1}.Changed'.format(self.id, key))
-
                 if key == 'Name':
                     self._name = value
                 else:
                     setattr(self, key, value)
+                Notify(self, 'User.{0}.{1}.Changed'.format(self.id, key))

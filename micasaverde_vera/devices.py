@@ -202,12 +202,11 @@ class Device(object):
                 if variable in attrib_names:
                     break
             else:
-
                 attrib_names = (variable, variable)
                 old_value = None
 
             if old_value != value:
-                print variable, old_value, value, attrib_names
+                self._variables[attrib_names] = value
                 Notify(
                     self,
                     'Device.{0}.{1}.Changed'.format(
@@ -215,7 +214,6 @@ class Device(object):
                         variable.replace('.', '')
                     )
                 )
-                self._variables[attrib_names] = value
 
         if node is not None:
             for state in node.pop('states', []):

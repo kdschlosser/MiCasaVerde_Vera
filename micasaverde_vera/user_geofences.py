@@ -113,6 +113,11 @@ class GeoTag(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
+                if key == 'PK_User':
+                    self._PK_User = value
+                else:
+                    setattr(self, key, value)
+
                 Notify(
                     self,
                     'UserGeoFence.{0}.GeoTag.{1}.{2}'.format(
@@ -121,10 +126,6 @@ class GeoTag(object):
                         key
                     )
                 )
-                if key == 'PK_User':
-                    self._PK_User = value
-                else:
-                    setattr(self, key, value)
 
 
 class UserGeoFence(object):

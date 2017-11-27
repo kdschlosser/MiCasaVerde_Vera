@@ -93,11 +93,12 @@ class Scenes(SceneController1, HaDevice1):
                     old_value = getattr(self, key, None)
 
                     if old_value != value:
+                        setattr(self, key, value)
                         Notify(
                             self,
                             'Device.{0}.{1}.Changed'.format(self.id, key)
                         )
-                        setattr(self, key, value)
+
 
 class Scene(Scene1):
     _service_id = 'urn:schemas-micasaverde-com:deviceId:Scene1'
@@ -128,8 +129,6 @@ class Scene(Scene1):
         self.devices = parent._parent.devices
         self._parent = parent
         self.id = id
-        Notify(self, 'Scene.{0}.Created'.format(self.id))
-
         self._room = room
         self._name = name
         self._triggers_operator = triggers_operator
@@ -142,6 +141,7 @@ class Scene(Scene1):
         self._encoded_lua = encoded_lua
         self._lua = lua
 
+        Notify(self, 'Scene.{0}.Created'.format(self.id))
         self.groups = Groups(self, groups)
         self.triggers = Triggers(self, triggers)
         self.timers = Timers(self, timers)
@@ -268,9 +268,9 @@ class Scene(Scene1):
     def update_node(self, node, full=False):
         triggers = []
 
-        self.triggers.update_node(node.pop('triggers', []), full=full)
-        self.groups.update_node(node.pop('groups', []), full=full)
-        self.timers.update_node(node.pop('timers', []), full=full)
+        _triggers = node.pop('triggers', [])
+        _groups = node.pop('groups', [])
+        _timers = node.pop('timers', [])
 
         for key, value in node.items():
             if key == 'name':
@@ -295,8 +295,6 @@ class Scene(Scene1):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(self, 'Scene.{0}.{1}.Changed'.format(self.id, key))
-
                 if key == 'name':
                     self._name = value
                 elif key == 'notification_only':
@@ -317,6 +315,12 @@ class Scene(Scene1):
                     self._encoded_lua = value
                 else:
                     setattr(self, key, value)
+
+                Notify(self, 'Scene.{0}.{1}.Changed'.format(self.id, key))
+
+        self.triggers.update_node(_triggers, full=full)
+        self.groups.update_node(_groups, full=full)
+        self.timers.update_node(_timers, full=full)
 
 
 class Actions(object):
@@ -392,7 +396,10 @@ class Action(object):
         action='',
         arguments=[]
     ):
-
+        self._parent = parent
+        self.device = device
+        self.service = service
+        self._action = action
         Notify(
             self,
             'Scene.{0}.Action.{1}.Created'.format(
@@ -400,11 +407,6 @@ class Action(object):
                 action
             )
         )
-
-        self._parent = parent
-        self.device = device
-        self.service = service
-        self._action = action
         self.arguments = list(
             Argument(self, **argument) for argument in arguments
         )
@@ -486,6 +488,7 @@ class Action(object):
         for key, value in node.items():
             old_value = getattr(self, key, None)
             if old_value != value:
+                setattr(self, key, value)
                 Notify(
                     self,
                     'Scene.{0}.Action.{1}.{2}.Changed'.format(
@@ -495,7 +498,7 @@ class Action(object):
                     )
                 )
 
-                setattr(self, key, value)
+
 
 
 class AvailableDevices(object):
@@ -620,16 +623,17 @@ class Groups(object):
 class Group(object):
 
     def __init__(self, parent, delay=0, actions=[]):
+
+
+        self._parent = parent
+        self.devices = parent.devices
+        self._delay = delay
         Notify(
             self,
             'Scene.{0}.Group.Created'.format(
                 parent._parent.id
             )
         )
-
-        self._parent = parent
-        self.devices = parent.devices
-        self._delay = delay
         self.actions = Actions(parent, actions)
 
     @property
@@ -745,7 +749,13 @@ class Trigger(object):
     ):
         self._parent = parent
         self._name = name
-
+        self._device = device
+        self._template = template
+        self._enabled = enabled
+        self._lua = lua
+        self._encoded_lua = encoded_lua
+        self.last_run = last_run
+        self.last_eval = last_eval
         Notify(
             self,
             'Scene.{0}.Trigger.{1}.Created'.format(
@@ -753,17 +763,10 @@ class Trigger(object):
                 self.name
             )
         )
-
-        self._device = device
-        self._template = template
-        self._enabled = enabled
-        self._lua = lua
-        self._encoded_lua = encoded_lua
         self.arguments = list(
             Argument(self, **argument) for argument in arguments
         )
-        self.last_run = last_run
-        self.last_eval = last_eval
+
 
     @property
     def name(self):
@@ -901,15 +904,6 @@ class Trigger(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(
-                    self,
-                    'Scene.{0}.Trigger.{1}.{2}.Changed'.format(
-                        self._parent._parent.id,
-                        self.name,
-                        key
-                    )
-                )
-
                 if key == 'device':
                     self._device = value
                 elif key == 'name':
@@ -924,6 +918,15 @@ class Trigger(object):
                     self._encoded_lua = value
                 else:
                     setattr(self, key, value)
+
+                Notify(
+                    self,
+                    'Scene.{0}.Trigger.{1}.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        key
+                    )
+                )
 
 
 class Timers(object):
@@ -1009,15 +1012,6 @@ class Timer(object):
             name = 'NO NAME ASSIGNED'
         self._parent = parent
         self.id = id
-
-        Notify(
-            self,
-            'Scene.{0}.Timer.{1}.Created'.format(
-                parent._parent.id,
-                self.id
-            )
-        )
-
         self._name = name
         self._type = type
         self._enabled = enabled
@@ -1026,7 +1020,13 @@ class Timer(object):
         self.next_run = next_run
         self.last_run = last_run
 
-
+        Notify(
+            self,
+            'Scene.{0}.Timer.{1}.Created'.format(
+                parent._parent.id,
+                self.id
+            )
+        )
 
     @property
     def name(self):
@@ -1093,15 +1093,6 @@ class Timer(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(
-                    self,
-                    'Scene.{0}.Timer.{1}.{2}.Changed'.format(
-                        self._parent._parent.id,
-                        self.name,
-                        key
-                    )
-                )
-
                 if key == 'type':
                     self._type = value
                 elif key == 'enabled':
@@ -1112,6 +1103,15 @@ class Timer(object):
                     self._time = value
                 else:
                     setattr(self, key, value)
+
+                Notify(
+                    self,
+                    'Scene.{0}.Timer.{1}.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        key
+                    )
+                )
 
 
 class Argument(object):

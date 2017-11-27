@@ -211,11 +211,11 @@ class Room(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(self, 'Room.{0}.{1}.Changed'.format(self.id, key))
-
                 if key == 'name':
                     self._name = value
                 elif key == 'section':
                     self._section = value
                 else:
                     setattr(self, key, value)
+
+                Notify(self, 'Room.{0}.{1}.Changed'.format(self.id, key))

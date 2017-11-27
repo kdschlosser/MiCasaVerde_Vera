@@ -75,8 +75,6 @@ class WeatherSettings(object):
                     old_value = getattr(self, key, None)
 
                 if old_value != value:
-                    Notify(self, 'WeatherSetting.{0}.Changed'.format(key))
-
                     if key == 'weatherCountry':
                         self._weatherCountry = value
                     elif key == 'weatherCity':
@@ -85,3 +83,4 @@ class WeatherSettings(object):
                         self._tempFormat = value
                     else:
                         setattr(self, key, value)
+                    Notify(self, 'WeatherSetting.{0}.Changed'.format(key))
