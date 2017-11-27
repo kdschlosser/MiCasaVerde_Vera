@@ -216,14 +216,18 @@ class Vera(object):
             package_name += '.' + __name__
 
         module_name = package_name + '.core'
+        # if vera_build.BUILD_PATH not in __path__:
+        #    __path__.append(vera_build.BUILD_PATH)
 
         if module_name not in sys.modules:
             import imp
-            core = imp.new_module(module_name)
+            core = imp.load_source(
+                'micasaverde_vera.core',
+                os.path.join(vera_build.BUILD_PATH, '__init__.py')
+            )
             core.__name__ = module_name
             core.__path__ = [vera_build.BUILD_PATH]
             core.__package__ = package_name
-            sys.modules[module_name] = core
 
         from micasaverde_vera.core.devices import home_automation_gateway_1
 
@@ -240,13 +244,26 @@ class Vera(object):
                 )
                 del self.init_data
 
+                plugin_dir = os.path.join(
+                    os.path.dirname(__file__),
+                    'external_plugins'
+                )
+
+                plugins = list(
+                    os.path.splitext(f)[0] for f in os.listdir(plugin_dir)
+                    if f.endswith('.py') and not f.startswith('_')
+                )
+
+                for plugin in plugins:
+                    self.external_plugins.register(__import__(plugin))
+
             def __dir__(self):
                 """
                 Modifies the output when using dir()
 
-                This modifies the output when dir() is used on an instance of this 
-                device. The purpose for this is not all devices will use every 
-                component of this class.
+                This modifies the output when dir() is used on an instance of
+                this device. The purpose for this is not all devices will use
+                every component of this class.
                 """
 
                 dir_list = dir(self.__class__)
@@ -439,7 +456,11 @@ class _Vera(object):
                 self.__update(self.user_settings, 'users_settings', data)
                 self.__update(self.user_geofences, 'usergeofences', data)
                 self.__update(self.alerts, 'alerts', data)
-                self.__update(self.installed_plugins, 'InstalledPlugins2', data)
+                self.__update(
+                    self.installed_plugins,
+                    'InstalledPlugins2',
+                    data
+                )
 
             self._lock.release()
             self._data_wait.wait()
