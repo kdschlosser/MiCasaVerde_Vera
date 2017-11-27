@@ -65,7 +65,7 @@ class Rooms(object):
 
     def update_node(self, node, full=False):
         if node is not None:
-            rooms = []
+            rooms = [self._rooms.pop(0)]
             for room in node:
                 id = room['id']
 
