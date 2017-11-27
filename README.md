@@ -64,26 +64,38 @@ The biggest purpose for this library/API is to be able to offload some of
 that burden from the Vera and also extend it's ability to control devices
 that it would normally not be able to.
 
+I changed the event system to make it far easier to use. the old way has
+been completely removed.
 
-If you would like to receive events for various things changing this is
-the way to go about it.
+the following will register for an event. this specific example is if you
+do not know the device number but you know the device name. This will trigger
+an event if the Status variable changes
 
     def callback(event):
-        print event.device.id, event.device.name
-        print 'event type:', event.event_type
-        print 'attribute:', event.attribute
-        print 'new value:', event.value
+        print event.name
 
-    device = vera.get_device('Some device Name')
-    device.register_event(callback)
+    device = vera.get_device('My device')
+    registered_event = vera.bind('Device.{0}.Status.Changed'.format(device.id), callback)
 
-This will spit out events for changes to any attributes(variables) for that
-specific device.
+if you know the device number
 
-If you want to target a specific attribute then you would replace the last
-line with something similar to this one.
+    registered_event = vera.bind('Device.2.Status.Changed', callback)
 
-    device.register_event(callback, 'Status')
+if you want to register for an event for all devices where a specific variable changes
+in this example it will trigger an event for any dimmer switch that changes value
+
+    registered_event = vera.bind('Device.*.loadLevelStatus.Changed', callback)
+
+if you need to unbind from an event
+
+    registered_event.unbind()
+
+a good way for you to get to learn the events would be
+
+    def callback(event):
+        print event.event
+
+    vera.bind('*', callback)
 
 If you are using events from the Vera to cause other things to take place
 (Scenes Hint Hint) you need to create a never ending loop at the end of your script.
