@@ -17,46 +17,81 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
+from fnmatch import fnmatch
+
+class _NotificationHandler(object):
+
+    def __init__(self):
+        self._callbacks = {}
+
+    def bind(self, event, callback):
+        if event not in self._callbacks:
+            self._callbacks[event] = []
+
+        event_handler = EventHandler(event, callback)
+        self._callbacks[event] += [event_handler]
+        return event_handler
+
+    def unbind(self, event_handler):
+        event = event_handler.event
+        if event in self._callbacks:
+            if event_handler in self._callbacks[event]:
+                self._callbacks[event].remove(event_handler)
+                if not self._callbacks[event]:
+                    del self._callbacks[event]
+
+
+    def notify(self, event_object, event):
+        for event_name, event_handlers in self._callbacks.items():
+            if '*' in event_name or '?' in event_name:
+                if fnmatch(event, event_name):
+                    for event_handler in event_handlers:
+                        event_handler.event = event
+                        event_handler.event_object = event_object
+            elif event_name == event:
+                for event_handler in event_handlers:
+                    event_handler.event = event
+                    event_handler.event_object = event_object
+
+NotificationHandler = _NotificationHandler()
+Notify = NotificationHandler.notify
+
+
+class AttributeEvent(object):
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
 class EventHandler(object):
 
-    def __init__(self, parent, callback, attribute):
-        self._parent = parent
-        self._callback = callback
-        self._attribute = attribute
-        self._last_event = dict()
+    def __init__(self, event, callback):
+        self.__event = event
+        self._event_name = None
+        self.__callback = callback
+        self.__event_object = None
 
-    def __call__(self, event_type, **kwargs):
-        if self._attribute is None:
-            self._last_event.clear()
-            self._last_event['event_type'] = event_type
-            for key, value in kwargs.items():
-                self._last_event[key] = value
+    @property
+    def event(self):
+        return self.__event if self.__event_name is None else self.__event_name
 
-            self._callback(self)
+    @event.setter
+    def event(self, event):
+        self.__event_name = event
 
-        else:
-            if (
-                'attribute' in kwargs and
-                kwargs['attribute'] == self._attribute
-            ):
-                self._last_event.clear()
-                self._last_event['event_type'] = event_type
-                for key, value in kwargs.items():
-                    self._last_event[key] = value
+    def event_object(self, event_object):
+        self.__event_object = event_object
+        self.__callback(self)
 
-                self._callback(self)
-                
+    event_object = property(fset=event_object)
+
     def __getattr__(self, item):
         if item in self.__dict__:
             return self.__dict__[item]
 
-        if item in self._last_event:
-            return self._last_event[item]
+        return getattr(self.__event_object, item)
 
-        if item.startswith('_'):
-            raise AttributeError
+    def unbind(self):
+        NotificationHandler.unbind(self)
 
-        return None
-
-    def unregister(self):
-        self._parent.unregister_event(self)

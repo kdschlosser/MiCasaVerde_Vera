@@ -18,117 +18,150 @@
 
 
 import base64
-from event import EventHandler
+from micasaverde_vera.core.services.scene_1 import Scene1
+from micasaverde_vera.core.services.scene_controller_1 import SceneController1
+from micasaverde_vera.core.services.ha_device_1 import HaDevice1
+from event import Notify, AttributeEvent
 
 
-class Scenes(object):
-
+class Scenes(SceneController1, HaDevice1):
+    _service_id = 'urn:schemas-micasaverde-com:deviceId:SceneController1'
+    _service_type = 'urn:schemas-micasaverde-com:device:SceneController:1'
 
     def __init__(self, parent, node):
         self._scenes = []
         self._parent = parent
         self.send = parent.send
-        self._bindings = []
+        SceneController1.__init__(self, parent)
+        HaDevice1.__init__(self, parent)
 
-        if node is not None:
-            for scene in node:
-                self._scenes += [Scene(self, scene)]
+        for key, value in node.items():
+            setattr(self, key, value)
 
-    def get_device(self, number):
-        return self._parent.get_device(number)
+        Notify(
+            self,
+            'Device.{0}.Created'.format(self.id)
+        )
 
-    def get_room(self, number):
-        return self._parent.get_room(number)
+    def __iter__(self):
+        return iter(self._scenes)
 
-    def get_user(self, number):
-        return self._parent.get_user(number)
+    def get_device(self, device):
+        return self._parent.get_device(device)
 
-    def get_scene(self, number):
-        for scene in self._scenes:
-            if number in (scene.id, scene.name):
-                return scene
+    def get_room(self, room):
+        return self._parent.get_room(room)
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
+    def get_user(self, user):
+        return self._parent.get_user(user)
 
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
+    def get_scene(self, scene):
+        if isinstance(scene, Scene):
+            return scene
+        scene = str(scene)
+        if scene.isdigit():
+            scene = int(scene)
+        for s in self._scenes:
+            if scene in (s.id, s.name):
+                return s
 
     def update_node(self, node, full=False):
         if node is not None:
-            scenes = []
-            for scene in node:
-                id = scene['id']
+            if isinstance(node, list):
+                scenes = []
+                for scene in node:
+                    id = scene['id']
 
-                for found_scene in self._scenes[:]:
-                    if found_scene.id == id:
-                        found_scene.update_node(scene)
-                        self._scenes.remove(found_scene)
-                        break
-                else:
-                    found_scene = Scene(self, scene)
-                    for event_handler in self._bindings:
-                        event_handler('new', scene=found_scene)
+                    for found_scene in self._scenes[:]:
+                        if found_scene.id == id:
+                            found_scene.update_node(scene, full)
+                            self._scenes.remove(found_scene)
+                            break
+                    else:
+                        found_scene = Scene(self, **scene)
 
-                scenes += [found_scene]
+                    scenes += [found_scene]
 
-            if full:
-                for scene in self._scenes:
-                    for event_handler in self._bindings:
-                        event_handler('remove', scene=scene)
+                if full:
+                    for scene in self._scenes:
+                        Notify(scene, 'Scene.{0}.Removed'.format(scene.id))
+                    del self._scenes[:]
 
-                del self._scenes[:]
+                self._scenes += scenes
+            elif isinstance(node, dict):
+                for key, value in node.items():
+                    old_value = getattr(self, key, None)
 
-            self._scenes += scenes
+                    if old_value != value:
+                        event = AttributeEvent(key, value)
+                        Notify(
+                            event,
+                            'Device.{0}.{1}.Changed'.format(self.id, key)
+                        )
+                        setattr(self, key, value)
 
+class Scene(Scene1):
+    _service_id = 'urn:schemas-micasaverde-com:deviceId:Scene1'
+    _service_type = 'urn:schemas-micasaverde-com:device:Scene:1'
 
-class Scene(object):
+    def __init__(
+        self,
+        parent,
+        id,
+        last_run=0,
+        room=0,
+        active_on_any=0,
+        modeStatus=0,
+        notification_only=0,
+        encoded_lua=0,
+        lua='',
+        name='',
+        users='',
+        Timestamp='',
+        triggers_operator='',
+        triggers=[],
+        timers=[],
+        groups=[]
+    ):
+        if not name:
+            name = 'NO NAME ASSIGNED'
 
-
-    def __init__(self, parent, node):
+        self.devices = parent._parent.devices
         self._parent = parent
-        self._triggers = []
-        self._bindings = []
+        self.id = id
+        Notify(self, 'Scene.{0}.Created'.format(self.id))
 
-        def get(attr):
-            return node.pop(attr, None)
+        self._room = room
+        self._name = name
+        self._triggers_operator = triggers_operator
+        self._users = users
+        self._modeStatus = modeStatus
+        self._active_on_any = active_on_any
+        self.Timestamp = Timestamp
+        self.last_run = last_run
+        self._notification_only = notification_only
+        self._encoded_lua = encoded_lua
+        self._lua = lua
 
-        self._name = get('name')
-        self._notification_only = get('notification_only')
-        self._modeStatus = get('modeStatus')
-        self.id = get('id')
-        self._users = get('users')
-        self.Timestamp = get('Timestamp')
-        self.last_run = get('last_run')
-        self._room = get('room')
+        self.groups = Groups(self, groups)
+        self.triggers = Triggers(self, triggers)
+        self.timers = Timers(self, timers)
 
-        for trigger in node.pop('triggers', []):
-            self._triggers += [SceneTrigger(self, trigger)]
+        Scene1.__init__(self, parent)
 
-        self.__dict__.update(node)
+    @property
+    def name(self):
+        return self._name
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
-
-    def get_device(self, number):
-        return self._parent.get_device(number)
-
-    def get_trigger(self, number):
-        number = str(number)
-
-        if number.isdigit():
-            number = int(number)
-
-        for trigger in self._triggers:
-            if number in (trigger.id, trigger.name):
-                return trigger
+    @name.setter
+    def name(self, name):
+        self._parent.send(
+            id='scene',
+            action='rename',
+            scene=self.id,
+            name=name,
+            room=self.room.name
+        )
 
     @property
     def room(self):
@@ -148,12 +181,47 @@ class Scene(object):
         )
 
     @property
+    def encoded_lua(self):
+        return self._encoded_lua
+
+    @encoded_lua.setter
+    def encoded_lua(self, encoded_lua):
+        if int(encoded_lua) and not int(self._encoded_lua):
+            self._lua = base64.b64encode(self._lua)
+
+        elif not int(encoded_lua) and int(self._encoded_lua):
+            self._lua = base64.b64decode(self._lua)
+
+        self._encoded_lua = encoded_lua
+
+    @property
+    def lua(self):
+        if int(self._encoded_lua):
+            return base64.b64decode(self._lua)
+        return self._lua
+
+    @lua.setter
+    def lua(self, lua):
+        if int(self._encoded_lua):
+            self._lua = base64.b64encode(lua)
+        else:
+            self._lua = lua
+
+    @property
+    def triggers_operator(self):
+        return self._triggers_operator
+
+    @triggers_operator.setter
+    def triggers_operator(self, triggers_operator):
+        self._triggers_operator = triggers_operator
+
+    @property
     def users(self):
-        return self._parent.get_user(self._users)
+        return self._users
 
     @users.setter
     def users(self, users):
-        pass
+        self._users = users
 
     @property
     def modeStatus(self):
@@ -161,28 +229,34 @@ class Scene(object):
 
     @modeStatus.setter
     def modeStatus(self, modeStatus):
-        pass
+        self._modeStatus = modeStatus
+
+    @property
+    def active_on_any(self):
+        return self._active_on_any
+
+    @active_on_any.setter
+    def active_on_any(self, active_on_any):
+        self._active_on_any = active_on_any
 
     @property
     def notification_only(self):
-        return self._parent.get_device(self._notification_only)
+        return self._notification_only
 
     @notification_only.setter
     def notification_only(self, notification_only):
-        pass
+        self._notification_only = notification_only
 
-    @property
-    def name(self):
-        return self._name
+    def add_action_group(self, delay=0):
+        self.groups += [Group(self, delay=delay)]
+        return self.groups[-1]
 
-    @name.setter
-    def name(self, name):
+    def stop_scene(self):
         self._parent.send(
-            id='scene',
-            action='rename',
-            scene=self.id,
-            name=name,
-            room=self.room.name
+            id='action',
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            action='SceneOff',
+            SceneNum=self.id
         )
 
     def delete(self):
@@ -192,62 +266,14 @@ class Scene(object):
             scene=self.id
         )
 
-    def off(self):
-        self._parent.send(
-            id='action',
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            action='SceneOff',
-            SceneNum=self.id
-        )
-
-    def run(self):
-        self._parent.send(
-            id='action',
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            action='RunScene',
-            SceneNum=self.id
-        )
-
     def update_node(self, node, full=False):
         triggers = []
 
-        for trigger in node.pop('triggers', []):
-            name = trigger['name']
-            for found_trigger in self._triggers[:]:
-                if found_trigger.name == name:
-                    found_trigger.update_node(trigger, full)
-                    self._triggers.remove(found_trigger)
-                    break
-            else:
-                found_trigger = SceneTrigger(self, trigger)
-
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        scene=self,
-                        trigger=found_trigger,
-                        attribute='triggers'
-                    )
-
-
-            triggers += [found_trigger]
-
-        if full:
-            for trigger in self._triggers:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'remove',
-                        scene=self,
-                        trigger=found_trigger,
-                        attribute='triggers'
-                    )
-
-            del self._triggers[:]
-
-        self._triggers += triggers
+        self.triggers.update_node(node.pop('triggers', []), full=full)
+        self.groups.update_node(node.pop('groups', []), full=full)
+        self.timers.update_node(node.pop('timers', []), full=full)
 
         for key, value in node.items():
-
             if key == 'name':
                 old_value = self._name
             elif key == 'notification_only':
@@ -258,29 +284,20 @@ class Scene(object):
                 old_value = self._users
             elif key == 'room':
                 old_value = self._room
+            elif key == 'triggers_operator':
+                old_value = self._triggers_operator
+            elif key == 'active_on_any':
+                old_value = self._active_on_any
+            elif key == 'lua':
+                old_value = self._lua
+            elif key == 'encoded_lua':
+                old_value = self._encoded_lua
             else:
                 old_value = getattr(self, key, None)
 
-            if old_value is None:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        scene=self,
-                        attribute=key,
-                        value=value
-                    )
-
-                setattr(self, key, value)
-
-            elif old_value != value:
-
-                for event_handler in self._bindings:
-                    event_handler(
-                        'changed',
-                        scene=self,
-                        attribute=key,
-                        value=value
-                    )
+            if old_value != value:
+                event = AttributeEvent(key, value)
+                Notify(event, 'Scene.{0}.{1}.Changed'.format(self.id, key))
 
                 if key == 'name':
                     self._name = value
@@ -292,66 +309,477 @@ class Scene(object):
                     self._users = value
                 elif key == 'room':
                     self._room = value
+                elif key == 'triggers_operator':
+                    self._triggers_operator = value
+                elif key == 'active_on_any':
+                    self._active_on_any = value
+                elif key == 'lua':
+                    self._lua = value
+                elif key == 'encoded_lua':
+                    self._encoded_lua = value
                 else:
                     setattr(self, key, value)
 
 
-class SceneArgument(object):
-
-    def __init__(self, parent, node):
+class Actions(object):
+    def __init__(self, parent, actions=[]):
         self._parent = parent
-        for key, value in node.items():
-            self.__dict__[key] = value
+        self.actions = list(Action(self, **action) for action in actions)
+        self.available_devices = AvailableDevices(self, parent.devices)
+
+    def __iter__(self):
+        return iter(self.actions)
+
+    def new_action(self):
+        self.actions += [Action(self)]
+        return self.actions[-1]
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for action in self.actions:
+            if item == action.action:
+                return action
+
+        raise AttributeError(
+            'Action {0} is not added.'.format(item)
+        )
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.actions[item]
+
+        for action in self.actions:
+            if item == action.action:
+                return action
+
+        raise KeyError(
+            'Action {0} is not added.'.format(item)
+        )
+
+    def update_node(self, node, full):
+        actions = []
 
 
-class SceneTrigger(object):
+        while node and self.actions:
+            action = node.pop(0)
+            found_action = self.actions.pop(0)
+            found_action.update_node(action, full)
+            actions += [found_action]
 
-    def __init__(self, parent, node):
+        for action in node:
+            actions += [Action(self, **action)]
+
+        if full:
+            for action in self.actions:
+                Notify(
+                    action,
+                    'Scene.{0}.Action.{1}.Removed'.format(
+                        self._parent.id,
+                        action.action
+                    )
+                )
+            del self.actions[:]
+
+        self.actions += actions
+
+
+class Action(object):
+    def __init__(
+        self,
+        parent,
+        device=None,
+        service='',
+        action='',
+        arguments=[]
+    ):
+
+        Notify(
+            self,
+            'Scene.{0}.Action.{1}.Created'.format(
+                parent._parent._parent.id,
+                action
+            )
+        )
+
         self._parent = parent
-        self._arguments = []
-        self._bindings = []
+        self.device = device
+        self.service = service
+        self._action = action
+        self.arguments = list(
+            Argument(self, **argument) for argument in arguments
+        )
 
-        def get(attr):
-            return node.pop(attr, None)
+    @property
+    def action(self):
+        if not self._action:
+            return 'NO NAME ASSIGNED'
+        return self._action
 
-        self._device = get('device')
-        self._name = get('name')
-        self._enabled = get('enabled')
-        self._template = get('template')
-        self._lua = get('lua')
-        self._encoded_lua = get('encoded_lua')
-        self.last_run = get('last_run')
-        self.last_eval = get('last_eval')
+
+    def new_argument(self):
+        self.arguments += [
+            Argument(self, name='', value=None)
+        ]
+        return self.arguments[-1]
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for argument in self.arguments:
+            if item == argument.name:
+                return argument
+
+        raise AttributeError(
+            'No agrument named {0} for action {1}'.format(item, self.action)
+        )
+
+    def delete(self):
+        Notify(
+            self,
+            'Scene.{0}.Action.{1}.Removed'.format(
+                self._parent._parent.id,
+                self.action
+            )
+        )
+        self._parent.actions.remove(self)
+
+    def update_node(self, node, full):
+        arguments = []
 
         for argument in node.pop('arguments', []):
-            self._arguments += [SceneArgument(self, argument)]
+            name = argument['name']
+
+            for found_argument in self.arguments[:]:
+                if found_argument.name == name:
+                    self.arguments.remove(found_argument)
+                    break
+            else:
+                found_argument = Argument(self, **argument)
+
+            arguments += [found_argument]
+
+            if argument['value'] != found_argument.value:
+                found_argument.value = argument['value']
+                Notify(
+                    found_argument,
+                    'Scene.{0}.Action.{1}.Argument.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.action,
+                        found_argument.name
+                    )
+                )
+        if full:
+            for argument in self.arguments:
+                Notify(
+                    argument,
+                    'Scene.{0}.Action.{1}.Argument.{2}.Removed'.format(
+                        self._parent._parent.id,
+                        self.action,
+                        argument.name
+                    )
+                )
+            del self.arguments[:]
+
+        self.arguments += arguments
 
         for key, value in node.items():
-            self.__dict__[key] = value
+            old_value = getattr(self, key, None)
+            if old_value != value:
+                event = AttributeEvent(key, value)
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
+                Notify(
+                    event,
+                    'Scene.{0}.Action.{1}.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.action,
+                        key
+                    )
+                )
 
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
+                setattr(self, key, value)
+
+
+class AvailableDevices(object):
+
+    def __init__(self, parent, devices):
+        self._parent = parent
+        self._devices = devices
+
+    def __iter__(self):
+        for device in self._devices:
+            yield AvailableDevice(self._parent, device)
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for device in self._devices:
+            if device.name == item:
+                return AvailableDevice(self._parent, device)
+
+        raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for device in self._devices:
+            if item in (device.id, device.name):
+                return AvailableDevice(self._parent, device)
+
+        if isinstance(item, int):
+            raise IndexError
+
+        raise KeyError
+
+
+class AvailableDevice(object):
+
+    def __init__(self, parent, device):
+        self._parent = parent
+        self.name = device.name
+        self.id = device.id
+        self._actions = []
+
+        for params in device.argument_mapping.values():
+            arguments = []
+            for key, argument in params.items():
+                if key == 'orig_name':
+                    continue
+                arguments += [
+                    dict(
+                        name=argument,
+                        value=None
+                    )
+                ]
+
+            self._actions += [
+                Action(
+                    parent=parent,
+                    action=params['orig_name'],
+                    service=device._serviceId,
+                    device=device.id,
+                    arguments=arguments
+                )
+            ]
+
+    def __iter__(self):
+        return iter(self._actions)
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for action in self._actions:
+            if item == action.action:
+                return action
+
+        raise AttributeError('Action {0} not found.'.format(item))
+
+
+class Groups(object):
+    def __init__(self, parent, groups):
+        self._parent = parent
+        self.devices = parent._parent._parent.devices
+        self.groups = list(
+            Group(parent, **group) for group in groups
+        )
+
+    def __iter__(self):
+        return iter(self.groups)
+
+    def new_group(self, name):
+        self.groups += [Group(self)]
+        return self.groups[-1]
+
+    def update_node(self, node, full):
+        groups = []
+
+        while node and self.groups:
+            group = node.pop(0)
+            found_group = self.groups.pop(0)
+            found_group.update_node(group, full)
+            groups += [found_group]
+
+        for group in node:
+            groups += [Group(self, **group)]
+
+        if full:
+            for group in self.groups:
+                Notify(
+                    group,
+                    'Scene.{0}.Group.Removed'.format(
+                        self._parent.id
+                    )
+                )
+            del self.groups[:]
+
+        self.groups += groups
+
+
+class Group(object):
+
+    def __init__(self, parent, delay=0, actions=[]):
+        Notify(
+            self,
+            'Scene.{0}.Group.Created'.format(
+                parent._parent.id
+            )
+        )
+
+        self._parent = parent
+        self.devices = parent.devices
+        self._delay = delay
+        self.actions = Actions(parent, actions)
 
     @property
-    def enabled(self):
-        return self._enabled
+    def delay(self):
+        return self._delay
 
-    @enabled.setter
-    def enabled(self, enabled):
-        pass
+    @delay.setter
+    def delay(self, delay):
+        self._delay = delay
+
+    def delete(self):
+        Notify(
+            self,
+            'Scene.{0}.Group.Removed'.format(
+                self._parent._parent.id
+            )
+        )
+        self._parent.groups.remove(self)
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.actions[item]
+
+        return self.actions[item]
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for action in self.actions:
+            if action.action == item:
+                return action
+
+        raise AttributeError(
+            'Scene {0} does not have action {1}'.format(self._parent.id, item)
+        )
+
+    def update_node(self, node, full):
+        if self._delay != node['delay']:
+            self._delay = node['delay']
+            event = AttributeEvent('delay', self._delay)
+            Notify(
+                event,
+                'Scene.{0}.Group.Delay.Changed'.format(
+                    self._parent._parent.id
+                )
+            )
+        self.actions.update_node(node['actions'], full)
+
+
+class Triggers(object):
+
+    def __init__(self, parent, triggers):
+        self._parent = parent
+        self.triggers = list(
+            Trigger(self, **trigger) for trigger in triggers
+        )
+
+    def __iter__(self):
+        return iter(self.triggers)
+
+    def new_trigger(self):
+        self.triggers += [Trigger(self, '')]
+        return self.triggers[-1]
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for trigger in self.triggers:
+            if trigger.name == item:
+                return trigger
+
+        raise AttributeError
+
+    def update_node(self, node, full):
+        triggers = []
+
+        while node and self.triggers:
+            trigger = node.pop(0)
+            found_trigger = self.triggers.pop(0)
+
+            found_trigger.update_node(trigger, full)
+            triggers += [found_trigger]
+
+        for trigger in node:
+            triggers += [Trigger(self, **trigger)]
+
+        if full:
+            for trigger in self.triggers:
+                Notify(
+                    trigger,
+                    'Scene.{0}.Trigger.{1}.Removed'.format(
+                        self._parent.id,
+                        trigger.name
+                    )
+                )
+            del self.triggers[:]
+
+        self.triggers += triggers
+
+class Trigger(object):
+    def __init__(self,
+        parent,
+        name,
+        device=None,
+        template=None,
+        enabled=1,
+        lua='',
+        encoded_lua=0,
+        arguments=[],
+        last_run=0,
+        last_eval=0
+    ):
+        self._parent = parent
+        self._name = name
+
+        Notify(
+            self,
+            'Scene.{0}.Trigger.{1}.Created'.format(
+                parent._parent.id,
+                self.name
+            )
+        )
+
+        self._device = device
+        self._template = template
+        self._enabled = enabled
+        self._lua = lua
+        self._encoded_lua = encoded_lua
+        self.arguments = list(
+            Argument(self, **argument) for argument in arguments
+        )
+        self.last_run = last_run
+        self.last_eval = last_eval
 
     @property
-    def encoded_lua(self):
-        return self._encoded_lua
+    def name(self):
+        if not self._name:
+            return  'NO NAME ASSIGNED'
 
-    @encoded_lua.setter
-    def encoded_lua(self, encoded_lua):
-        pass
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @property
     def device(self):
@@ -359,15 +787,9 @@ class SceneTrigger(object):
 
     @device.setter
     def device(self, device):
-        pass
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        pass
+        device = self._parent.get_device(device)
+        if device is not None:
+            self._device = device.id
 
     @property
     def template(self):
@@ -375,87 +797,124 @@ class SceneTrigger(object):
 
     @template.setter
     def template(self, template):
-        pass
+        self._template = template
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, enabled):
+        self._enabled = enabled
+
+    @property
+    def encoded_lua(self):
+        return self._encoded_lua
+
+    @encoded_lua.setter
+    def encoded_lua(self, encoded_lua):
+        if int(encoded_lua) and not int(self._encoded_lua):
+            self._lua = base64.b64encode(self._lua)
+
+        elif not int(encoded_lua) and int(self._encoded_lua):
+            self._lua = base64.b64decode(self._lua)
+
+        self._encoded_lua = encoded_lua
 
     @property
     def lua(self):
-        if self._encoded_lua == '1':
+        if int(self._encoded_lua):
             return base64.b64decode(self._lua)
+        return self._lua
 
     @lua.setter
     def lua(self, lua):
-        if self._encoded_lua == '1':
-            base64.b64encode(lua)
+        if int(self._encoded_lua):
+            self._lua = base64.b64encode(lua)
+        else:
+            self._lua = lua
 
+    def new_argument(self):
+        self.arguments += [
+            Argument(self, id=len(self.arguments), value=None)
+        ]
+        return self.arguments[-1]
+
+    def delete(self):
+        Notify(
+            self,
+            'Scene.{0}.Trigger.{1}.Removed'.format(
+                self._parent._parent.id,
+                self.name
+            )
+        )
+        self._parent.triggers.remove(self)
 
     def update_node(self, node, full=False):
 
         arguments = []
         for argument in node.pop('arguments', []):
             id = argument['id']
-            for found_argument in self._arguments[:]:
+            for found_argument in self.arguments[:]:
                 if found_argument.id == id:
-                    self._arguments.remove(found_argument)
+                    self.arguments.remove(found_argument)
+                    break
             else:
-                found_argument = SceneArgument(self, argument)
-
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        scene=self._parent,
-                        trigger=self,
-                        argument=found_argument,
-                        attribute='arguments'
-                    )
+                found_argument = Argument(self, **argument)
 
             if found_argument.value != argument['value']:
-                event_handler(
-                    'changed',
-                    scene=self._parent,
-                    trigger=self,
-                    argument=found_argument,
-                    attribute='arguments'
+                found_argument.value = argument['value']
+                Notify(
+                    found_argument,
+                    'Scene.{0}.Trigger.{1}.Argument.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        found_argument.id
+                    )
                 )
 
             arguments += [found_argument]
 
         if full:
-            for argument in self._arguments:
-                event_handler(
-                    'remove',
-                    scene=self._parent,
-                    trigger=self,
-                    argument=argument,
-                    attribute='arguments'
+            for argument in self.arguments:
+                Notify(
+                    argument,
+                    'Scene.{0}.Trigger.{1}.Argument.{2}.Removed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        argument.id
+                    )
                 )
+            del self.arguments[:]
 
-            del self._arguments[:]
-
-        self._arguments += arguments
+        self.arguments += arguments
 
         for key, value in node.items():
-            old_value = getattr(self, key, None)
+            if key == 'device':
+                old_value = self._device
+            elif key == 'name':
+                old_value = self._name
+            elif key == 'enabled':
+                old_value = self._enabled
+            elif key == 'template':
+                old_value = self._template
+            elif key == 'lua':
+                old_value = self._lua
+            elif key == 'encoded_lua':
+                old_value = self._encoded_lua
+            else:
+                old_value = getattr(self, key, None)
 
-            if old_value is None:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        scene=self._parent,
-                        trigger=self,
-                        attribute=key,
-                        value=value
+            if old_value != value:
+                event = AttributeEvent(key, value)
+                Notify(
+                    event,
+                    'Scene.{0}.Trigger.{1}.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        key
                     )
-                setattr(self, key, value)
-
-            elif old_value != value:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'changed',
-                        scene=self._parent,
-                        trigger=self,
-                        attribute=key,
-                        value=value
-                    )
+                )
 
                 if key == 'device':
                     self._device = value
@@ -471,3 +930,255 @@ class SceneTrigger(object):
                     self._encoded_lua = value
                 else:
                     setattr(self, key, value)
+
+
+class Timers(object):
+
+    def __init__(self, parent, timers):
+        self._parent = parent
+        self.timers = list(Timer(self, **timer) for timer in timers)
+
+
+    def new_timer(self, name):
+        self.timers += [Timer(self, len(self.timers), name)]
+        return self.timers[-1]
+
+    def __iter__(self):
+        return iter(self.timers)
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for timer in self.timers:
+            if timer.name == item:
+                return timer
+
+        raise AttributeError
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.timers[item - 1]
+
+        for timer in self.timers:
+            if timer.name == item:
+                return timer
+
+        raise KeyError
+
+    def update_node(self, node, full):
+        timers = []
+
+        for timer in node:
+            id = timer['id']
+
+            for found_timer in self.timers[:]:
+                if found_timer.id == id:
+                    found_timer.update_node(timer, full)
+                    self.timers.remove(found_timer)
+                    break
+            else:
+                found_timer = Timer(self, **timer)
+
+            timers += [found_timer]
+
+        if full:
+            for timer in self.timers:
+                Notify(
+                    timer,
+                    'Scene.{0}.Timer.{1}.Removed'.format(
+                        self._parent.id,
+                        timer.name
+                    )
+                )
+            del self.timers[:]
+
+        self.timers += timers
+
+
+class Timer(object):
+
+    def __init__(
+        self,
+        parent,
+        id,
+        name='',
+        type='',
+        enabled=1,
+        days_of_week='',
+        time='',
+        next_run=0,
+        last_run=0
+    ):
+
+        if not name:
+            name = 'NO NAME ASSIGNED'
+        self._parent = parent
+        self.id = id
+
+        Notify(
+            self,
+            'Scene.{0}.Timer.{1}.Created'.format(
+                parent._parent.id,
+                self.id
+            )
+        )
+
+        self._name = name
+        self._type = type
+        self._enabled = enabled
+        self._days_of_week = days_of_week
+        self._time = time
+        self.next_run = next_run
+        self.last_run = last_run
+
+
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+    @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        self._type = type
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, enabled):
+        self._enabled = enabled
+
+    @property
+    def days_of_week(self):
+        return self._days_of_week
+
+    @name.setter
+    def days_of_week(self, days_of_week):
+        self._days_of_week = days_of_week
+
+    @property
+    def time(self):
+        return self._time
+
+    @time.setter
+    def time(self, name):
+        self._time = time
+
+    def delete(self):
+        Notify(
+            self,
+            'Scene.{0}.Timer.{1}.Removed'.format(
+                self._parent._parent.id,
+                self.name
+            )
+        )
+        self._parent.timers.remove(self)
+
+    def update_node(self, node, full):
+
+        for key, value in node.items():
+            if key == 'type':
+                old_value = self._type
+            elif key == 'enabled':
+                old_value = self._enabled
+            elif key == 'days_of_week':
+                old_value = self._days_of_week
+            elif key == 'time':
+                old_value = self._time
+            else:
+                old_value = getattr(self, key, None)
+
+            if old_value != value:
+                event = AttributeEvent(key, value)
+                Notify(
+                    event,
+                    'Scene.{0}.Timer.{1}.{2}.Changed'.format(
+                        self._parent._parent.id,
+                        self.name,
+                        key
+                    )
+                )
+
+                if key == 'type':
+                    self._type = value
+                elif key == 'enabled':
+                    self._enabled = value
+                elif key == 'days_of_week':
+                    self._days_of_week = value
+                elif key == 'time':
+                    self._time = value
+                else:
+                    setattr(self, key, value)
+
+
+class Argument(object):
+    def __init__(self, parent, value, name=None, id=None):
+        self._parent = parent
+        if name is not None:
+            if not name:
+                name = 'NO NAME ASSIGNED'
+            self.name = name
+        if id is not None:
+            self.id = id
+
+        self._value = value
+
+        if isinstance(parent, Action):
+            event = 'Action.{0}.Argument.{1}'.format(parent.action, name)
+        elif isinstance(parent, Trigger):
+            event = 'Trigger.{0}.Argument.{1}'.format(parent.name, id)
+        else:
+            event = ''
+
+        if event:
+            Notify(
+                self,
+                'Scene.{0}.{1}.Created'.format(
+                    parent._parent._parent._parent.id,
+                    event
+                )
+            )
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+
+    def delete(self):
+        if isinstance(self._parent, Action):
+            event = 'Action.{0}.Argument.{1}'.format(
+                self._parent.action,
+                self.name
+            )
+        elif isinstance(self._parent, Trigger):
+            event = 'Trigger.{0}.Argument.{1}'.format(
+                self._parent.name,
+                self.id
+            )
+        else:
+            event = ''
+
+        if event:
+            Notify(
+                self,
+                'Scene.{0}.{1}.Removed'.format(
+                    self._parent._parent._parent.id,
+                    event
+                )
+            )
+        if self in self._parent.arguments:
+            self._parent.arguments.remove(self)
+

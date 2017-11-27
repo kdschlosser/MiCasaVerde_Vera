@@ -21,7 +21,11 @@ import os
 import sys
 import socket
 import requests
+import json
+import threading
+import random
 import xml.etree.cElementTree as ElementTree
+import time
 from utils import parse_string, create_service_name
 
 
@@ -62,25 +66,6 @@ else:
 DEVICES_PATH = os.path.join(BUILD_PATH, 'devices')
 SERVICES_PATH = os.path.join(BUILD_PATH, 'services')
 
-
-if not os.path.exists(BUILD_PATH):
-    os.makedirs(BUILD_PATH)
-    with open(os.path.join(BUILD_PATH, '__init__.py'), 'w') as f:
-        f.write('')
-
-if not os.path.exists(DEVICES_PATH):
-    os.makedirs(DEVICES_PATH)
-    with open(os.path.join(DEVICES_PATH, '__init__.py'), 'w') as f:
-        f.write('')
-
-if not os.path.exists(SERVICES_PATH):
-    os.makedirs(SERVICES_PATH)
-    with open(os.path.join(SERVICES_PATH, '__init__.py'), 'w') as f:
-        f.write('')
-
-
-# sys.path.append(BUILD_PATH)
-
 SSDP_ADDR = "239.255.255.250"
 SSDP_PORT = 1900
 SSDP_MX = 10
@@ -102,24 +87,23 @@ DEVICE_SUBCLASS_INIT_TEMPLATE = (
     '''        _{class_name}.__init__(self, parent)\n'''
 )
 DEVICE_CLASS_TEMPLATE = '''
-from micasaverde_vera.event import EventHandler
+from micasaverde_vera.event import Notify, AttributeEvent
+from micasaverde_vera.devices import Device
 
 {imports}
 
-class {class_name}({subclasses}):
+class {class_name}(Device, {subclasses}):
     _service_id = '{device_id}'
     _service_type = '{device_type}'
     
     def __init__(self, parent, node):
         self._parent = parent
         self._variables = dict()
-        self._bindings = []
         self._jobs = []
         self._pending_jobs = 0
         self._configured = 0
         
-{subclass_inits}
-        if node is not None:
+{subclass_inits}        if node is not None:
             def update_variables(key, value):
                 for k in self._variables.keys()[:]:
                     if key in k:
@@ -134,14 +118,8 @@ class {class_name}({subclasses}):
             for attr_name, attr_value in node.items():
                 update_variables(attr_name, attr_value)
                 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
-            
+            Notify(self, 'Device.{{0}}.Created'.format(self.id))
+    
     def create_variable(self, variable, value):
         """
         Creates a New Variable
@@ -155,12 +133,12 @@ class {class_name}({subclasses}):
         else:
             self._variables[(variable, orig_variable)] = value
         
-        def var_getter(self):
+        def var_getter():
             for key, val in self._variables.items():
                 if orig_variable in key:
                     return val
             
-        def var_setter(self, val):
+        def var_setter(val):
             for key in self._variables.keys():
                 if orig_variable in key:
                     self._parent.send(
@@ -201,14 +179,14 @@ class {class_name}({subclasses}):
         )
             
     @property
-    def Name(self):
+    def name(self):
         for key, value in self._variables.items():
             if 'name' in key or 'Name' in key:
                 return value
         raise AttributeError('Attribute name is not found.')
         
-    @Name.setter
-    def Name(self, value):
+    @name.setter
+    def name(self, value):
         for key in self._variables.keys():
             if 'name' in key or 'Name' in key:
                 self._parent.send(
@@ -261,7 +239,7 @@ class {class_name}({subclasses}):
         raise AttributeError('Attribute {{0}} is not found.'.format(item))
     
     def __setattr__(self, key, value):
-        if key.startswith('_'):
+        if key.startswith('_') or key == 'argument_mapping':
             object.__setattr__(self, key, value)
         elif isinstance(getattr(self.__class__, key, None), property):
             object.__setattr__(self, key, value)
@@ -283,7 +261,7 @@ class {class_name}({subclasses}):
         
         This is internally used.
         """
-        
+
         if 'tooltip' in node:
             del node['tooltip']
         
@@ -295,26 +273,9 @@ class {class_name}({subclasses}):
             else:
                 old_value = None
                 
-            if old_value is None:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        device=self,
-                        attribute=variable,
-                        value=value
-                    )
-                
-                self._variables[(variable, variable)] = value
-            
-            elif old_value != value:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'change',
-                        device=self,
-                        attribute=variable,
-                        value=value
-                    )
-                
+            if old_value != value:
+                event = AttributeEvent(variable, value)
+                Notify(event, 'Device.{{0}}.{{1}}'.format(self.id, variable))
                 for attrib_names in self._variables.keys()[:]:
                     if variable in attrib_names:
                         self._variables[attrib_names] = value
@@ -348,6 +309,9 @@ CLASS_TEMPLATE = '''
 _default_variables = {{{attributes}
 }}
 
+_argument_mapping = {{{argument_mappings}
+}}
+
 
 class {class_name}(object):
     """
@@ -358,8 +322,18 @@ class {class_name}(object):
     def __init__(self, parent):
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
-        for key, value in _default_variables.items():
-            self._variables[key] = value
+        self.argument_mapping = getattr(self, 'argument_mapping', dict())
+        
+        def iter_mapping(mapping, storage):
+            for key, value in mapping.items():
+                if isinstance(value, dict):
+                    storage[key] = dict()
+                    iter_mapping(value, storage[key])
+                else:
+                    storage[key] = value
+                
+        iter_mapping(_default_variables, self._variables)
+        iter_mapping(_argument_mapping, self.argument_mapping)
 {properties}{methods}
 '''
 
@@ -375,6 +349,13 @@ ALLOWED_RANGE_TEMPLATE = '''
                 {values}
 '''
 
+ARGUMENT_TEMPLATE = ''',
+                '{argument_name}': '{orig_argument_name}\''''
+
+METHOD_ARGUMENT_TEMPLATE = '''
+            '{method_name}': {{
+                'orig_name': '{orig_method_name}'{arguments}
+            }},'''
 
 SEND_TEMPLATE = '''        self._parent.send({send_arguments}
         )'''
@@ -432,8 +413,6 @@ SYS_INFO = URL + 'sysinfo.sh'
 CATEGORIES = 'http://{ip_address}/cmh/js/config/constants.js'
 CATEGORY_LANG = 'http://{ip_address}/cmh/js/config/lang.js'
 VERA_INFO = 'http://{ip_address}/upnp/vera.xml'
-
-vera_files = os.listdir(BUILD_PATH)
 
 
 def print_list(l, indent):
@@ -497,8 +476,19 @@ def make_class_template(
 ):
 
     cls_methods = ''
+    argument_mappings = ''
     for method_name, params in methods.items():
-        keywords, send_arguments = params
+        keywords = params['keywords']
+        send_arguments = params['send_arguments']
+        method_argument_mapping = params['method_argument_mapping']
+
+        method_argument_mapping['arguments'] = ''.join(
+            ARGUMENT_TEMPLATE.format(**argument)
+            for argument in method_argument_mapping['arguments']
+        )
+        argument_mappings += (
+            METHOD_ARGUMENT_TEMPLATE.format(**method_argument_mapping)
+        )
 
         send_arguments = ''.join(
             SEND_ARGUMENT_TEMPLATE.format(
@@ -528,11 +518,15 @@ def make_class_template(
 
 
     cls_attributes = ''.join(
-        STATE_TEMPLATE.format(attr_name=attr_name, orig_attr_name=orig_attr_name)
+        STATE_TEMPLATE.format(
+            attr_name=attr_name,
+            orig_attr_name=orig_attr_name
+        )
         for attr_name, orig_attr_name in attributes
     )
 
     template = CLASS_TEMPLATE.format(
+        argument_mappings=argument_mappings,
         class_name=class_name,
         methods=cls_methods,
         properties=cls_properties,
@@ -550,17 +544,16 @@ def make_templates(devices, services):
         print('')
         print('Building Templates....')
 
-    for device_type, params in devices.items():
-        device_id = convert_type_to_id(device_type)
-        device_name = create_service_name(device_type)
-        class_name = device_name.replace('_', '')
-        class_name = class_name[0].upper() + class_name[1:]
-        file_name = parse_string(class_name) + '.py'
+    for params in devices.values():
+        device_type = params['device_type']
+        device_id = params['device_id']
+        device_name = params['device_name']
+        class_name = params['device_class_name']
+        file_path = params['device_gen_file']
 
         imports = []
         subclasses = []
         subclass_inits = []
-
         for subclass in params['subclasses']:
             subclass_name = create_service_name(subclass).replace('_', '')
             subclass_module = parse_string(subclass_name)
@@ -595,8 +588,6 @@ def make_templates(devices, services):
             '\n        )'
         )
 
-        file_path = os.path.join(DEVICES_PATH, file_name)
-
         if __name__ == "__main__":
             print('Writing File {0} ....'.format(file_path))
 
@@ -607,8 +598,8 @@ def make_templates(devices, services):
     for service_name, params in services.items():
         service_type = params.pop('service_type')
         service_id = params.pop('service_id')
-        class_name = params.pop('class_name').replace('_', '')
-        file_name = parse_string(class_name) + '.py'
+        class_name = params.pop('service_class_name')
+        file_path = params.pop('service_gen_file')
 
         template = make_class_template(service_type, class_name, **params)
         template = template.replace(
@@ -618,8 +609,6 @@ def make_templates(devices, services):
             ',\n        )',
             '\n        )'
         )
-
-        file_path = os.path.join(SERVICES_PATH, file_name)
 
         if __name__ == "__main__":
             print('Writing File {0} ....'.format(file_path))
@@ -670,10 +659,16 @@ def create_class_methods(
                 ['DeviceNum', 'self.id']
             ]
         keywords = []
+        method_argument_mapping = dict(
+            method_name=method_name,
+            orig_method_name=orig_method_name
+        )
+        argument_mapping = []
 
         arguments = action.find('%sargumentList' % service_xmlns)
 
         if arguments is not None:
+
             for argument in arguments:
                 direction = argument.find('%sdirection' % service_xmlns)
 
@@ -689,8 +684,9 @@ def create_class_methods(
                                 attributes += [(attr_name, orig_attr_name)]
 
                     if direction.text == 'in':
-                        orig_variable_name = argument.find('%sname' % service_xmlns).text
-
+                        orig_variable_name = (
+                            argument.find('%sname' % service_xmlns).text
+                        )
 
                         if orig_variable_name == 'DataFormat':
                             continue
@@ -704,9 +700,20 @@ def create_class_methods(
 
                         send_arguments += [[orig_variable_name, variable_name]]
                         keywords += [variable_name]
+                        argument_mapping += [
+                            dict(
+                                argument_name=variable_name,
+                                orig_argument_name=orig_variable_name
+                            )
+                        ]
 
+        method_argument_mapping['arguments'] = argument_mapping
         if method_name not in methods:
-            methods[method_name] = [keywords, send_arguments]
+            methods[method_name] = dict(
+                keywords=keywords,
+                send_arguments=send_arguments,
+                method_argument_mapping=method_argument_mapping
+            )
 
 
 def create_class_attributes(
@@ -809,7 +816,7 @@ def discover():
 
         try:
             while True:
-                data, address = sock.recvfrom(1024) # buffer size is 1024 bytes
+                data, address = sock.recvfrom(1024)
                 if 'luaupnp.xml' in data:
                     return address[0]
         except socket.timeout:
@@ -836,7 +843,6 @@ def get_categories(ip_address):
         timeout=5
     )
 
-    import json
     category_mapping = json.loads(response.content[15:-1])
     out_categories = dict()
 
@@ -914,14 +920,19 @@ def get_vera_info(ip_address):
 
 
 def get_data(url):
-    response = requests.get(url, timeout=5)
+
+    try:
+        response = requests.get(url, timeout=1)
+    except (requests.ConnectionError, requests.Timeout):
+        time.sleep(random.randrange(1, 3) / 10)
+        return get_data(url)
+
     response = response.content
 
     if 'doesn\'t exist' in response:
         return None, None
 
     if 'xmlns' in response:
-
         xmlns = (
             '{%s}' %
             response[response.find('xmlns="') + 7:response.find('">')]
@@ -934,6 +945,8 @@ def get_data(url):
 
 def convert_id_to_type(in_id):
     in_id = in_id.split(':')
+    in_id[2] = 'service'
+
     if len(in_id) == 5:
         return ':'.join(in_id)
 
@@ -947,8 +960,12 @@ def convert_id_to_type(in_id):
 
 
 def convert_type_to_id(in_type):
-
     in_type = in_type.split(':')
+
+    if len(in_type) == 3:
+        in_type.insert(2, 'deviceId')
+    else:
+        in_type[2] = 'deviceId'
 
     if len(in_type) == 4:
         return ':'.join(in_type)
@@ -959,13 +976,10 @@ def convert_type_to_id(in_type):
     return ':'.join(in_type[:4])
 
 
-def build_files(ip_address, log=False):
-
-    if log:
-        global __name__
-        __name__ = '__main__'
-
+def get_files(ip_address, update):
     def get_data_file(data_file_name):
+        if __name__ == '__main__':
+            print('-Retreiving File ' + data_file_name)
         return get_data(
             VIEW_UPNP_FILE.format(
                 ip_address=ip_address,
@@ -973,80 +987,179 @@ def build_files(ip_address, log=False):
             )
         )
 
-    found_services = invoke(ip_address)
-    found_devices = dict()
+    err = 0
 
-    response = requests.get(
-        GET_UPNP_FILES.format(ip_address=ip_address),
-        timeout=5
-    )
-    device_files = ['vera.xml.lzo']
-    service_files = []
-    found_service_files = dict()
+    while err < 10:
+        try:
+            response = requests.get(
+                GET_UPNP_FILES.format(ip_address=ip_address),
+                timeout=1
+            )
+            err = 10
+        except requests.ConnectTimeout:
+            if err == 9:
+                raise
+            err += 1
+
+    device_files = {}
+    service_files = {}
+    downloaded_files = {}
+
+    threads = []
+    lock = threading.Lock()
+
+    def get_thread(url):
+        response, xmlns = get_data_file(url)
+        if response is None:
+            downloaded_files[url] = None
+        else:
+            xml = ElementTree.fromstring(response)
+
+            device_type = xml.find(
+                './/%sdeviceType' % xmlns
+            )
+
+            lock.acquire()
+
+            if device_type is not None:
+                device_files[url] = dict(
+                    device_type=device_type.text,
+                    device_xml = xml,
+                    device_xmlns = xmlns
+                )
+            else:
+                service_files[url] = dict(
+                    service_xml=xml,
+                    service_xmlns=xmlns
+                )
+            lock.release()
+
+        threads.remove(threading.currentThread())
 
     for f in response.content.split('\n'):
         if f.endswith('.xml.lzo'):
-            if f.startswith('D_'):
-                device_files += [f]
+            while len(threads) > 9:
+                pass
 
-            elif f.startswith('S_'):
-                service_files += [f]
+            t = threading.Thread(target=get_thread, args=(f,))
+            threads += [t]
+            t.start()
 
-    for device_file in device_files:
-        response, root_xmlns = get_data_file(device_file)
+    while threads:
+        pass
 
-        if response is None:
-            continue
+    for device_params in device_files.values():
+        device_xml = device_params['device_xml']
+        device_xmlns = device_params['device_xmlns']
+        device_type = device_params['device_type']
+        device_id = convert_type_to_id(device_type)
+        device_name = create_service_name(device_type)
+        device_class_name = device_name.replace('_', '')
+        device_class_name = (
+            device_class_name[0].upper() + device_class_name[1:]
+        )
+        device_file_name = parse_string(device_class_name) + '.py'
 
-        xml_root = ElementTree.fromstring(response)
-        device_type = xml_root.find('.//%sdeviceType' % root_xmlns).text
-
-        if device_type not in found_devices:
-            if __name__ == '__main__':
-                print('-Processing Device ' + device_type + '.....')
-
-            found_devices[device_type] = dict(
-                subclasses=[],
-                device_type=device_type
+        device_params.update(
+            dict(
+                device_id=device_id,
+                device_name=device_name,
+                device_class_name=device_class_name,
+                device_file_name=device_file_name,
+                services=[]
             )
+        )
 
-        subclasses = found_devices[device_type]['subclasses']
+        services = device_xml.findall('.//*%sserviceList/' % device_xmlns)
 
-        services = xml_root.findall('.//*%sserviceList/' % root_xmlns)
+        implimentations = device_xml.findall(
+            './/*%simplementationList/' % device_xmlns
+        )
+
+        for implimentation in implimentations:
+            implimentation = implimentation.text + '.lzo'
+            if implimentation in service_files:
+                device_params['services'] += [implimentation]
 
         for service in services:
-            service_type = service.find('%sserviceType' % root_xmlns).text
-            service_id = service.find('%sserviceId' % root_xmlns).text
+            service_type = service.find(
+                '%sserviceType' % device_xmlns
+            ).text
+            service_id = service.find('%sserviceId' % device_xmlns).text
+
+            if service_type.endswith(':'):
+                service_type += '1'
+                if not service_id.endswith('1'):
+                    service_id += '1'
 
             service_name = create_service_name(service_id)
+            service_class_name = service_name.replace('_', '')
+            service_file_name = parse_string(service_class_name) + '.py'
 
-            scpd_url = service.find('%sSCPDURL' % root_xmlns).text + '.lzo'
+            scpd_url = (
+                service.find('%sSCPDURL' % device_xmlns).text + '.lzo'
+            )
+
+            scpd_url=scpd_url.replace('/dri/', '')
 
             if scpd_url in service_files:
-                service_files.remove(scpd_url)
+                device_params['services'] += [scpd_url]
 
-            if scpd_url not in found_service_files:
-                found_service_files[scpd_url] = [
-                    service_name,
-                    service_type,
-                    service_id
-                ]
+                if 'service_type' not in service_files[scpd_url]:
+                    service_params = service_files[scpd_url]
+                    service_params.update(
+                        dict(
+                            service_type=service_type,
+                            service_id=service_id,
+                            service_name=service_name,
+                            service_class_name=service_class_name,
+                            service_file_name=service_file_name
+                        )
+                    )
 
-            if service_type not in subclasses:
-                subclasses += [service_type]
+    return device_files, service_files
 
-        found_devices[device_type]['subclasses'] = subclasses[:]
 
-    def build_service(svc_file, svc_name, svc_type, svc_id):
-        response, service_xmlns = get_data_file(svc_file)
+def build_files(ip_address, log=False, update=False):
 
-        if response is None:
-            return None
+    if log:
+        global __name__
+        __name__ = '__main__'
 
-        service_xml = ElementTree.fromstring(response)
+    if not os.path.exists(BUILD_PATH):
+        os.makedirs(BUILD_PATH)
+        with open(os.path.join(BUILD_PATH, '__init__.py'), 'w') as f:
+            f.write('')
 
-        if svc_name in found_services:
-            svc = found_services[svc_name]
+    if not os.path.exists(DEVICES_PATH):
+        os.makedirs(DEVICES_PATH)
+        with open(os.path.join(DEVICES_PATH, '__init__.py'), 'w') as f:
+            f.write('')
+
+    if not os.path.exists(SERVICES_PATH):
+        os.makedirs(SERVICES_PATH)
+        with open(os.path.join(SERVICES_PATH, '__init__.py'), 'w') as f:
+            f.write('')
+
+    device_files, service_files = get_files(ip_address, update)
+
+    # found_services = invoke(ip_address, update)
+    found_services = dict()
+    found_devices = dict()
+
+
+    def build_service(
+        service_type,
+        service_id,
+        service_name,
+        service_xml,
+        service_xmlns,
+        service_class_name,
+        service_gen_file
+    ):
+
+        if service_name in found_services:
+            svc = found_services[service_name]
             methods = svc['methods']
             attributes = svc['attributes']
             class_doc = svc['class_doc']
@@ -1054,7 +1167,7 @@ def build_files(ip_address, log=False):
 
         else:
             if __name__ == "__main__":
-                print('-Processing Service ' + svc_id + '.....')
+                print('-Processing Service ' + service_id + '.....')
             methods = dict()
             attributes = []
             class_doc = ''
@@ -1065,7 +1178,7 @@ def build_files(ip_address, log=False):
         if actions is not None:
             create_class_methods(
                 service_xmlns,
-                svc_id,
+                service_id,
                 actions,
                 methods,
                 attributes
@@ -1077,40 +1190,160 @@ def build_files(ip_address, log=False):
         if state_variables is not None:
             docs = create_class_attributes(
                 service_xmlns,
-                svc_id,
+                service_id,
                 state_variables,
                 attributes,
                 properties
             )
             class_doc += docs
 
-        found_services[svc_name] = dict(
-            class_name=svc_name,
-            service_type=svc_type,
-            service_id=svc_id,
+        found_services[service_name] = dict(
+            service_type=service_type,
+            service_id=service_id,
+            service_class_name=service_class_name,
+            service_gen_file=service_gen_file,
             methods=methods,
             attributes=attributes,
             class_doc=class_doc,
             properties=properties,
+
         )
 
-    for service_file, service_params in found_service_files.items():
+    for scpd_url, svc in service_files.items():
 
-        build_service(service_file, *service_params)
+        if 'service_type' not in svc:
+            svc_name = scpd_url.replace('S_', '').replace('.xml.lzo', '')
+            svc_id = 'urn:micasaverde-com:serviceId:' + svc_name
+            svc_type = convert_id_to_type(svc_id)
+            svc_class_name = svc_name.replace('_', '')
+            svc_file_name = parse_string(svc_class_name) + '.py'
+            svc_xml = svc['service_xml']
+            svc_xmlns = svc['service_xmlns']
 
-    for service_file in service_files:
+            svc_gen_file = os.path.join(
+                SERVICES_PATH,
+                svc_file_name
+            )
 
-        service_name = service_file.replace('S_', '').replace('.xml.lzo', '')
-        service_id = 'urn:micasaverde-com:serviceId:' + service_name
-        service_type = convert_id_to_type(service_id)
+            svc.update(
+                dict(
+                    service_type=svc_type,
+                    service_id=svc_id,
+                    service_name=svc_name,
+                    service_class_name=svc_class_name,
+                    service_gen_file=svc_gen_file
+                )
+            )
 
-        build_service(service_file, service_name, service_type, service_id)
+            save_service = (
+                not update or
+                (update and not os.path.exists(svc_gen_file))
+            )
 
+            if not save_service and update and __name__ == "__main__":
+                print('-File Exists ' + svc_gen_file)
+
+            if save_service:
+                build_service(
+                    service_type=svc_type,
+                    service_id=svc_id,
+                    service_name=svc_name,
+                    service_xml=svc_xml,
+                    service_xmlns=svc_xmlns,
+                    service_class_name=svc_class_name,
+                    service_gen_file=svc_gen_file
+                )
+
+    for device_file in device_files.keys()[:]:
+        device_data = device_files[device_file]
+        if not device_data:
+            del device_files[device_file]
+            continue
+        device_type = device_data['device_type']
+        device_id = device_data['device_id']
+        device_name = device_data['device_name']
+        device_class_name = device_data['device_class_name']
+        device_file_name = device_data['device_file_name']
+        services = device_data['services']
+
+        device_gen_file = os.path.join(
+            DEVICES_PATH,
+            device_file_name
+        )
+
+        save_device = (
+            not update or (update and not os.path.exists(device_gen_file))
+        )
+
+        if not save_device and update and __name__ == "__main__":
+            print('-File Exists ' + device_gen_file)
+
+        if save_device:
+            if device_type not in found_devices:
+                if __name__ == '__main__':
+                    print('-Processing Device ' + device_type + '.....')
+
+                found_devices[device_type] = dict(
+                    subclasses=[],
+                    device_type=device_type,
+                    device_id=device_id,
+                    device_name=device_name,
+                    device_class_name=device_class_name,
+                    device_gen_file=device_gen_file
+                )
+
+            subclasses = found_devices[device_type]['subclasses']
+        else:
+            subclasses = []
+
+        for scpd_url in services:
+            service_data = service_files[scpd_url]
+            if 'service_gen_file' in service_data:
+                svc_type = service_data['service_type']
+            else:
+                svc_type = service_data['service_type']
+                svc_id = service_data['service_id']
+                svc_name = service_data['service_name']
+                svc_class_name = service_data['service_class_name']
+                svc_file_name = service_data['service_file_name']
+                svc_xml = service_data['service_xml']
+                svc_xmlns = service_data['service_xmlns']
+
+                svc_gen_file = os.path.join(
+                    SERVICES_PATH,
+                    svc_file_name
+                )
+
+                save_service = (
+                    not update or
+                    (update and not os.path.exists(svc_gen_file))
+                )
+
+                if not save_service and update and __name__ == "__main__":
+                    print('-File Exists ' + svc_gen_file)
+
+                if save_service:
+                    build_service(
+                        service_type=svc_type,
+                        service_id=svc_id,
+                        service_name=svc_name,
+                        service_xml=svc_xml,
+                        service_xmlns=svc_xmlns,
+                        service_class_name=svc_class_name,
+                        service_gen_file=svc_gen_file
+                    )
+
+            if save_device:
+                if svc_type not in subclasses:
+                    subclasses += [svc_type]
+
+        if save_device:
+            found_devices[device_type]['subclasses'] = subclasses[:]
 
     make_templates(found_devices, found_services)
 
 
-def invoke(ip_address):
+def invoke(ip_address, update=False):
     url = 'http://{ip}:3480/data_request'.format(ip=ip_address)
 
     response = requests.get(url, params=dict(id='invoke'))
@@ -1141,19 +1374,50 @@ def invoke(ip_address):
 
                     found_service = device_line.find('<br><i>')
                     if found_service > -1:
-
                         if service_name:
-                            services[service_name] = dict(
-                                methods=methods,
-                                attributes=attributes,
-                                class_doc=class_doc,
-                                properties=properties
+                            service_class_name = service_name.replace('_', '')
+                            service_file_name = (
+                                parse_string(service_class_name) + '.py'
                             )
+
+                            service_gen_file = os.path.join(
+                                SERVICES_PATH,
+                                service_file_name
+                            )
+
+                            save_service = (
+                                not update or
+                                (
+                                    update and
+                                    not os.path.exists(service_gen_file)
+                                )
+                            )
+
+                            if (
+                                not save_service and
+                                update and
+                                __name__ == "__main__"
+                            ):
+                                print('-File Exists ' + service_gen_file)
+
+                            if save_service:
+
+                                services[service_name] = dict(
+                                    service_id=service_id,
+                                    service_class_name=service_class_name,
+                                    service_gen_file=service_gen_file,
+                                    methods=methods,
+                                    attributes=attributes,
+                                    class_doc=class_doc,
+                                    properties=properties
+                                )
 
                             methods = dict()
                             attributes = []
                             class_doc = ''
                             properties = dict()
+
+
 
                         service_id = (
                             device_line[
@@ -1168,10 +1432,19 @@ def invoke(ip_address):
                             attributes = svc['attributes']
                             class_doc = svc['class_doc']
                             properties = svc['properties']
+
                         else:
                             if __name__ == "__main__":
-                                print('-Processing Service' + service_id + '.....')
-                            services[service_name] = dict()
+                                print(
+                                    '-Processing Service' +
+                                    service_id +
+                                    '.....'
+                                )
+
+                            methods = dict()
+                            attributes = []
+                            class_doc = ''
+                            properties = dict()
 
                     if command_found > -1:
                         send_arguments = []
@@ -1224,7 +1497,11 @@ def invoke(ip_address):
 
                             if method_name not in methods:
                                 if __name__ == '__main__':
-                                    print('    -Processing Method ' + method_name + '.....')
+                                    print(
+                                        '    -Processing Method ' +
+                                        method_name +
+                                        '.....'
+                                    )
                                 methods[method_name] = [
                                     keywords,
                                     send_arguments
@@ -1236,7 +1513,11 @@ def invoke(ip_address):
                             attr_name = orig_attr_name.replace('.', '')
                             if attr_name not in properties:
                                 if __name__ == '__main__':
-                                    print('    -Processing Property ' + attr_name + '.....')
+                                    print(
+                                        '    -Processing Property ' +
+                                        attr_name +
+                                        '.....'
+                                    )
                                 properties[attr_name] = [
                                     orig_attr_name,
                                     send_arguments
@@ -1251,13 +1532,30 @@ def invoke(ip_address):
                                 ]
 
                 if service_name:
-                    svc = services[service_name]
-                    svc['class_name'] = service_name
-                    svc['service_id'] = service_id
-                    svc['methods'] = methods
-                    svc['attributes'] = attributes
-                    svc['class_doc'] = class_doc
-                    svc['properties'] = properties
+                    service_class_name = service_name.replace('_', '')
+                    service_file_name = (
+                        parse_string(service_class_name) + '.py'
+                    )
+
+                    service_gen_file = os.path.join(
+                        SERVICES_PATH,
+                        service_file_name
+                    )
+
+                    if (
+                        not update or
+                        (update and not os.path.exists(service_gen_file))
+                    ):
+
+                        services[service_name] = dict(
+                            service_id=service_id,
+                            service_class_name=service_class_name,
+                            service_gen_file=service_gen_file,
+                            methods=methods,
+                            attributes=attributes,
+                            class_doc=class_doc,
+                            properties=properties
+                        )
     return services
 
 def main(ip_address=''):

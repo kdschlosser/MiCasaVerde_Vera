@@ -17,8 +17,9 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify
 
+ATTRIBUTES = ('udn', 'name', 'url', 'ip', 'device_type', 'discovery_date')
 
 class UPNPDevices(object):
 
@@ -26,7 +27,6 @@ class UPNPDevices(object):
         self._parent = parent
         self.send = parent.send
         self._devices = []
-        self._bindings = []
 
         if node is not None:
             for device in node:
@@ -36,36 +36,26 @@ class UPNPDevices(object):
         for device in self._devices:
             yield device
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def update_node(self, node, full=False):
         if node is not None:
             devices = []
 
             for device in node:
-                udn = device['udn']
-
                 for found_device in self._devices[:]:
-                    if found_device.udn == udn:
+                    for attr in ATTRIBUTES:
+                        if found_device[attr] != device.get(attr, None):
+                            break
+                    else:
                         self._devices.remove(found_device)
+                        break
                 else:
                     found_device = UPNPDevice(self, device)
-                    for event_handler in self._bindings:
-                        event_handler('new', upnp_device=found_device)
+                    Notify(self, 'UPNPDevice.{0}.Created'.format(udn))
 
                 devices += [found_device]
 
             if full:
-                for device in self._devices:
-                    for event_handler in self._bindings:
-                        event_handler('remove', upnp_device=device)
-
                 del self._devices[:]
 
             self._devices += devices
@@ -73,7 +63,17 @@ class UPNPDevices(object):
 
 class UPNPDevice(object):
 
-    def __init__(self, parent, node):
+    def __init__(
+        self,
+        parent,
+        node
+    ):
         self._parent = parent
+
         for key, value in node.items():
             self.__dict__[key] = value
+
+    def __getitem__(self, item):
+        return self.__dict__.get(item, None)
+
+

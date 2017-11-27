@@ -16,27 +16,18 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from event import EventHandler
+from event import Notify
 
 
 class InstalledPlugins(object):
-    _plugins = []
 
     def __init__(self, parent, node):
+        self._plugins = []
         self._parent = parent
-        self._bindings = []
 
         if node is not None:
             for plugin in node:
                 self._plugins += [InstalledPlugin(self, plugin)]
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def get_category(self, number):
         return self._parent.get_category(number)
@@ -62,16 +53,15 @@ class InstalledPlugins(object):
                         break
                 else:
                     found_plugin = InstalledPlugin(self, plugin)
-                    for event_handler in self._bindings:
-                        event_handler('new', plugin=found_plugin)
 
                 plugins += [found_plugin]
 
             if full:
                 for plugin in self._plugins:
-                    for event_handler in self._bindings:
-                        event_handler('remove', plugin=plugin)
-
+                    Notify(
+                        plugin,
+                        'InstalledPlugin.{0}.Removed'.format(plugin.id)
+                    )
                 del self._plugins[:]
 
             self._plugins += plugins[:]
@@ -99,7 +89,6 @@ class InstalledPlugin(object):
 
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
 
         self.files = []
         self.lua = []
@@ -119,13 +108,7 @@ class InstalledPlugin(object):
 
         self.__dict__.update(node)
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
+        Notify(self, 'InstalledPlugin.{0}.Created'.format(self.id))
 
     def get_category(self, number):
         return self._parent.get_category(number)
@@ -156,15 +139,24 @@ class InstalledPlugin(object):
 
             for device in self._parent._parent.devices:
                 if device.device_type == device_type and device not in devices:
-                    for event_handler in self._bindings:
-                        event_handler('new', plugin=self, device=device)
-
+                    Notify(
+                        device,
+                        'InstalledPlugin.{0}.Device.{1}.Created'.format(
+                            self.id,
+                            device.id
+                        )
+                    )
                     devices += [device]
 
         if full:
             for device in self.devices:
-                for event_handler in self._bindings:
-                    event_handler('remove', plugin=self, device=device)
+                Notify(
+                    device,
+                    'InstalledPlugin.{0}.Device.{1}.Removed'.format(
+                        self.id,
+                        device.id
+                    )
+                )
 
             del self.devices[:]
         self.devices += devices[:]

@@ -20,7 +20,10 @@
 import threading
 import requests
 import json
+import random
+import time
 from vera_exception import VeraNotImplimentedError
+from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
 
 
 class VeraConnect(object):
@@ -52,6 +55,7 @@ class VeraConnect(object):
             target=self.run_poll,
             args=(interval,)
         )
+        self._thread.daemon = True
         self._thread.start()
 
     def stop_poll(self):
@@ -69,10 +73,14 @@ class VeraConnect(object):
                 if self._event.isSet():
                     return '{}'
                 try:
-                    response = requests.get(self.URL, params={'id': 'user_data'})
+                    response = requests.get(
+                        self.URL,
+                        params={'id': 'user_data'},
+                        timeout=1
+                    )
                     return response.content
-                except requests.ConnectionError:
-                    self._event.wait(2.0)
+                except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
+                    self._event.wait(random.randrange(1, 5) / 10)
                     return connect()
 
             data = json.loads(connect())
@@ -88,7 +96,16 @@ class VeraConnect(object):
             params['output_format'] = 'json'
 
         self._lock.acquire()
-        response = requests.get(self.URL, params=params).content
+
+        def send():
+            print params
+            try:
+                return requests.get(self.URL, params=params).content
+            except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
+                time.sleep(random.randrange(1, 5) / 10)
+                return send()
+
+        response = send()
         self._lock.release()
 
         try:
@@ -100,5 +117,3 @@ class VeraConnect(object):
                     raise VeraNotImplimentedError
 
             return response
-
-

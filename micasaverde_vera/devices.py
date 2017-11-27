@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+import importlib
 from event import EventHandler
 from utils import create_service_name, parse_string
 
@@ -26,28 +27,27 @@ class Devices(object):
         self._parent = parent
         self.send = parent.send
         self._devices = []
-        self._bindings = []
+        self._rebuilding_files = None
 
         if node is not None:
             for device in node[:]:
                 self._devices += [self.__build(device)]
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
+                if self._devices[-1] is None:
+                    self._devices.remove(None)
 
     def __build(self, device):
         device_type = device.get('device_type')
+
+        if 'SceneController:1' in device_type:
+            from scenes import Scenes
+
+            self._parent.scenes = Scenes(self._parent, device)
+            return self._parent.scenes
 
         cls_name = create_service_name(device_type)
         mod_name = parse_string(cls_name)
 
         try:
-            import importlib
             device_mod = importlib.import_module(
                 'micasaverde_vera.core.devices.' + mod_name
             )
@@ -56,10 +56,18 @@ class Devices(object):
                 cls_name[:1].upper() + cls_name[1:]
             )
 
-        except ImportError:
-            raise
+            return device_cls(self, device)
 
-        return device_cls(self, device)
+        except ImportError:
+            if self._rebuilding_files is not None:
+
+                def rebuild():
+                    self._parent.update_files()
+                    self._rebuilding_files = None
+
+                self._rebuilding_files = threading.Thread(target=rebuild)
+                self._rebuilding_files.daemon = True
+                self._rebuilding_files.start()
 
     def get_room(self, number):
         return self._parent.get_room(number)
@@ -99,26 +107,41 @@ class Devices(object):
             devices = []
             for device in node:
                 id = device['id']
-                def get_device():
-                    for found_device in self._devices[:]:
-                        if found_device.id == id:
-                            found_device.update_node(device, full)
-                            self._devices.remove(found_device)
-                            return found_device
+                for found_device in self._devices[:]:
+                    if found_device.id == id:
+                        found_device.update_node(device, full)
+                        self._devices.remove(found_device)
+                        break
+                else:
+                    if (
+                        'device_type' in device and
+                        'SceneController:1' in device['device_type']
+                    ):
+                        self._parent.scenes.update_node(device, full)
+                        found_device = self._parent.scenes
+                    else:
+                        found_device = self.__build(device)
 
-                    found_device = self.__build(device)
-
-                    for event_handler in self._bindings:
-                        event_handler('new', device=found_device)
-
-                    return found_device
-
-                devices += [get_device()]
+                if found_device is not None:
+                    devices += [found_device]
 
             if full:
                 for device in self._devices:
-                    for event_handler in self._bindings:
-                        event_handler('remove', device=found_device)
+                    Notify(
+                        device,
+                        'Device.{0}.Removed'.format(device.id)
+                    )
                 del self._devices[:]
 
             self._devices += devices[:]
+
+
+class Device(object):
+    """
+    This is imported by the generated device files.
+    
+    This gets used as a subclass for identification purposes only.
+    It makes it simpler for object identification.
+    
+    isinstance(instance, devices.Device)
+    """

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from event import EventHandler
+from event import Notify, AttributeEvent
 
 
 class Users(object):
@@ -25,19 +25,10 @@ class Users(object):
         self._parent = parent
         self.send = parent.send
         self._users = []
-        self._bindings = []
 
         if node is not None:
             for user in node:
                 self._users += [User(self, user)]
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def get_user(self, number):
 
@@ -69,22 +60,12 @@ class Users(object):
 
                 else:
                     found_user = User(self, user)
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'new',
-                            user=found_user
-                        )
 
                 users += [found_user]
 
             if full:
                 for user in self._users:
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'remove',
-                            user=found_user
-                        )
-
+                    Notify(user, 'User.{0}.Removed'.format(user.id))
                 del self._users[:]
 
             self._users += users
@@ -106,20 +87,14 @@ class User(object):
         for key, value in node.items():
             self.__dict__[key] = value
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
+        Notify(self, 'User.{0}.Created'.format(self.id))
 
     @property
-    def Name(self):
+    def name(self):
         return self._name
 
-    @Name.setter
-    def Name(self, name):
+    @name.setter
+    def name(self, name):
         self._parent.send(
             id='user',
             action='rename',
@@ -143,24 +118,9 @@ class User(object):
             else:
                 old_value = getattr(self, key, None)
 
-            if old_value is None:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        user=self,
-                        attribute=key,
-                        value=value
-                    )
-
-                setattr(self, key, value)
-            elif old_value != value:
-                for event_handler in self._bindings:
-                    event_handler(
-                        'change',
-                        user=self,
-                        attribute=key,
-                        value=value
-                    )
+            if old_value != value:
+                event = AttributeEvent(key, value)
+                Notify(event, 'User.{0}.{1}.Changed'.format(self.id, key))
 
                 if key == 'Name':
                     self._name = value

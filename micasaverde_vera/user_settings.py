@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify, AttributeEvent
 
 
 class UserSettings(object):
@@ -25,7 +25,6 @@ class UserSettings(object):
         self._parent = parent
         self.send = parent.send
         self._settings = dict()
-        self._bindings = []
 
         if node is not None:
 
@@ -45,14 +44,6 @@ class UserSettings(object):
     def get_user(self, number):
         return self._parent.get_user(number)
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
-
     def update_node(self, node, full=False):
         if node is not None:
             settings = []
@@ -66,31 +57,27 @@ class UserSettings(object):
                         break
                 else:
                     found_setting = UserSetting(self, setting)
-                    for event_handler in self._bindings:
-                        event_handler('new', users_setting=found_setting)
 
                 ishome = setting.get('ishome', None)
 
                 if ishome is not None and ishome != found_setting.ishome:
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'change',
-                            users_setting=found_setting,
-                            attribute='ishome',
-                            value=ishome
-                        )
-
                     found_setting.ishome = ishome
+                    event = AttributeEvent('ishome', ishome)
+                    Notify(
+                        event,
+                        'UserSetting.{0}.ishome.Changed'.format(
+                            found_setting.id,
+                        )
+                    )
 
                 settings += [found_setting]
 
             if full:
                 for setting in self._settings:
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'remove',
-                            users_setting=setting
-                        )
+                    Notify(
+                        setting,
+                        'UserSetting.{0}.Removed'.format(setting.id)
+                    )
                 del self._settings[:]
 
             self._settings += settings
@@ -101,6 +88,13 @@ class UserSetting(object):
         self._parent = parent
         for key, value in node.items():
             self.__dict__[key] = value
+
+        Notify(
+            self,
+            'UserSetting.{0}.Created'.format(
+                self.id,
+            )
+        )
 
     @property
     def user(self):

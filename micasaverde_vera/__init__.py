@@ -23,20 +23,7 @@ import json
 import sys
 import os
 from copy import deepcopy
-from scenes import Scenes
-from sections import Sections
-from ip_requests import IPRequests
-from weather_settings import WeatherSettings
-from devices import Devices
-from rooms import Rooms
-from user_settings import UserSettings
-from user_geofences import UserGeofences
-from upnp_devices import UPNPDevices
-from users import Users
-from categories import Categories
-from installed_plugins import InstalledPlugins
-from alerts import Alerts
-from vera_connect import VeraConnect
+
 from vera_exception import (
     VeraError,
     VeraNotFoundError,
@@ -54,10 +41,10 @@ _UNWANTED_ITEMS =(
     'startup'
 )
 
+
 BUILD_PATH = vera_build.BUILD_PATH
 BUILD_COMPLETE = os.path.exists(BUILD_PATH)
 build_files = vera_build.build_files
-
 
 
 class Vera(object):
@@ -207,7 +194,20 @@ class Vera(object):
 
         if not BUILD_COMPLETE:
             print 'MicasaVerde Vera: Building files please wait....'
-            build_files(ip_address)
+            event = threading.Event()
+            def build():
+                build_files(ip_address)
+                event.set()
+
+            t = threading.Thread(target=build)
+            t.daemon = True
+            t.start()
+
+            while not event.isSet():
+                event.wait(1)
+                sys.stdout.write('.')
+                sys.stdout.flush()
+            print
             print 'MicasaVerde Vera: Build complete.'
 
         package_name = __package__
@@ -285,8 +285,24 @@ class _Vera(object):
     _queue = []
     id = 0
 
+    def __init__(self, ip_address):
+        from event import NotificationHandler
+        from scenes import Scenes
+        from sections import Sections
+        from ip_requests import IPRequests
+        from weather_settings import WeatherSettings
+        from devices import Devices
+        from rooms import Rooms
+        from user_settings import UserSettings
+        from user_geofences import UserGeofences
+        from upnp_devices import UPNPDevices
+        from users import Users
+        from categories import Categories
+        from installed_plugins import InstalledPlugins
+        from alerts import Alerts
+        from vera_connect import VeraConnect
 
-    def __init__(self, ip_address=''):
+        self._ip_address = ip_address
         self._data_event = None
         self._data_wait = None
         self._data_thread = None
@@ -299,12 +315,16 @@ class _Vera(object):
             if item in data:
                 del data[item]
 
-        self.categories = Categories(self, vera_build.get_categories(ip_address))
+        self.categories = Categories(
+            self,
+            vera_build.get_categories(ip_address)
+        )
+
+        self.scenes = None
         self.sections = self.__build(Sections, 'sections', data)
         self.users = self.__build(Users, 'users', data)
-        self.rooms = self.__build(Rooms, 'rooms', data)
-        self.scenes = self.__build(Scenes, 'scenes', data)
         self.devices = self.__build(Devices, 'devices', data)
+        self.rooms = self.__build(Rooms, 'rooms', data)
         self.ip_requests = self.__build(IPRequests, 'ip_requests', data)
         self.upnp_devices = self.__build(UPNPDevices, 'upnp_devices', data)
         self.alerts = self.__build(Alerts, 'alerts', data)
@@ -331,12 +351,28 @@ class _Vera(object):
         self.ishome = self.user_settings.ishome
         self.get_geofences = self.user_geofences.get_geofences
         self.get_room = self.rooms.get_room
-        self.get_scene = self.scenes.get_scene
         self.get_device = self.devices.get_device
         self.get_plugin = self.installed_plugins.get_plugin
 
+
+        if self.scenes is None:
+            self.scenes = Scenes(self, dict(id='SceneController'))
+
+        self.__update(self.scenes, 'scenes', data)
+        self.get_scene = self.scenes.get_scene
+
+        self.bind = NotificationHandler.bind
+        self.unbind = NotificationHandler.unbind
+
         self.init_data = data
 
+    def rebuild_files(self, log=False):
+        import shutil
+        shutil.rmtree(BUILD_PATH, ignore_errors=True)
+        self.build_files(self._ip_address, log=log)
+
+    def update_files(self, log=False):
+        self.build_files(self._ip_address, update=True, log=log)
 
     def __build(self, obj, key, data):
         return obj(
@@ -371,6 +407,7 @@ class _Vera(object):
             self._data_event = threading.Event()
             self._data_wait = threading.Event()
             self._data_thread = threading.Thread(target=self._data_handler)
+            self._data_thread.daemon = True
             self._data_thread.start()
             self.vera_connection.start_poll(interval)
 

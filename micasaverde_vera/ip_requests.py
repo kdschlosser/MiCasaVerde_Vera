@@ -17,15 +17,14 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify
 
 
 class IPRequests(object):
-    _ip_requests = dict()
 
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
+        self._ip_requests = dict()
 
         if node is not None:
             for request in node:
@@ -38,15 +37,6 @@ class IPRequests(object):
         for request in self._ip_requests.values():
             yield request
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
-
-
     def update_node(self, node, full=False):
         if node is not None:
             requests = dict()
@@ -56,11 +46,10 @@ class IPRequests(object):
                 found_request = self._ip_requests.get(ip, None)
                 if found_request is None:
                     found_request = IPRequest(self, request)
-
-                    for event_handler in self._bindings:
-                        event_handler('new', ip_request=found_request)
-
-                    found_request = [found_request]
+                    Notify(
+                        self,
+                        'IPRequest.{0}.Created'.format(ip.replace('.', '-'))
+                    )
 
                 else:
                     found_date = date
@@ -69,9 +58,6 @@ class IPRequests(object):
 
                     if found_date == date:
                         found_request += [IPRequest(self, request)]
-
-                        for event_handler in self._bindings:
-                            event_handler('new', ip_request=found_request[-1])
 
                 requests[ip] = found_request
 
@@ -82,13 +68,8 @@ class IPRequests(object):
                 self._ip_requests[ip] = request
 
 class IPRequest(object):
+
     def __init__(self, parent, node):
         self._parent = parent
         for key, value in node.items():
             self.__dict__[key] = value
-
-    def register_event(self, callback, attribute=None):
-        return self._parent.register_event(callback)
-
-    def unregister_event(self, event_handler):
-        self._parent.unregister_event(event_handler)

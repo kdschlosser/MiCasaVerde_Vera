@@ -17,17 +17,15 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify, AttributeEvent
 
 
 class UserGeofences(object):
-
 
     def __init__(self, parent, node):
         self._parent = parent
         self.send = parent.send
         self._geofences = []
-        self._bindings = []
 
         if node is not None:
             for geofence in node:
@@ -44,14 +42,6 @@ class UserGeofences(object):
     def get_user(self, number):
         return self._parent.get_user(number)
 
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
-
     def update_node(self, node, full=False):
         if node is not None:
             geofences = []
@@ -66,15 +56,13 @@ class UserGeofences(object):
                 else:
                     found_geofence = UserGeoFence(self, geofence)
 
-                    for event_handler in self._bindings:
-                        event_handler('new', geofence=found_geofence)
-
                 geofences += [found_geofence]
             if full:
                 for geofence in self._geofences:
-
-                    for event_handler in self._bindings:
-                        event_handler('remove', geofence=geofence)
+                    Notify(
+                        geofence,
+                        'UserGeoFence.{0}.Removed'.format(geofence.iduser)
+                    )
                 del self._geofences[:]
 
             self._geofences += geofences
@@ -83,7 +71,6 @@ class UserGeofences(object):
 class GeoTag(object):
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
 
         def get(attr):
             return node.pop(attr, None)
@@ -104,18 +91,17 @@ class GeoTag(object):
         for key, value in node.items():
             self.__dict__[key] = value
 
+        Notify(
+            self,
+            'UserGeoFence.{0}.GeoTag.{1}.Created'.format(
+                parent.iduser,
+                self.id
+            )
+        )
+
     @property
     def PK_User(self):
         return self._parent.get_user(self._PK_User)
-
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def update_node(self, node):
 
@@ -126,24 +112,15 @@ class GeoTag(object):
             else:
                 old_value = getattr(self, key, None)
 
-            if old_value is None:
-                event_handler(
-                    'new',
-                    geofence=self._parent,
-                    geotag=self,
-                    attribute=key,
-                    value=value
-                )
-
-                setattr(self, key, value)
-
-            elif old_value != value:
-                event_handler(
-                    'changed',
-                    geofence=self._parent,
-                    geotag=self,
-                    attribute=key,
-                    value=value
+            if old_value != value:
+                event = AttributeEvent(key, value)
+                Notify(
+                    event,
+                    'UserGeoFence.{0}.GeoTag.{1}.{2}'.format(
+                        self._parent.iduser,
+                        self.id,
+                        key
+                    )
                 )
                 if key == 'PK_User':
                     self._PK_User = value
@@ -155,7 +132,6 @@ class UserGeoFence(object):
 
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
 
         self._geotags = []
         self.iduser = node.pop('iduser', None)
@@ -163,17 +139,11 @@ class UserGeoFence(object):
         for geotag in node.pop('geotags', []):
             self._geotags += [GeoTag(self, geotag)]
 
+        Notify(self, 'UserGeoFence.{0}.Created'.format(self.iduser))
+
     def __iter__(self):
         for geotag in self._geotags:
             yield geotag
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     @property
     def user(self):
@@ -195,25 +165,17 @@ class UserGeoFence(object):
                     break
             else:
                 found_geotag = GeoTag(self, geotag)
-
-                for event_handler in self._bindings:
-                    event_handler(
-                        'new',
-                        geofence=self,
-                        geotag=geotag
-                    )
-
             geotags += [found_geotag]
 
         if full:
             for geotag in self._geotags:
-
-                for event_handler in self._bindings:
-                    event_handler(
-                        'remove',
-                        geofence=self,
-                        geotag=geotag
+                Notify(
+                    geotag,
+                    'UserGeoFence.{0}.GeoTag.{1}.Removed'.format(
+                        self.iduser,
+                        geotag.id
                     )
+                )
             del self._geotags[:]
 
         self._geotags += geotags

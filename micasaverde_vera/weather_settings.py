@@ -17,17 +17,15 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify, AttributeEvent
 
 
 class WeatherSettings(object):
     def __init__(self, parent, node):
         self._parent = parent
         self.send = parent.send
-        self._bindings = []
 
         if node is not None:
-
             def get(attr):
                 return node.pop(attr, None)
 
@@ -38,14 +36,6 @@ class WeatherSettings(object):
 
             for key, value in node.items():
                 self.__dict__[key] = value
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, attribute)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     @property
     def tempFormat(self):
@@ -84,25 +74,10 @@ class WeatherSettings(object):
                 else:
                     old_value = getattr(self, key, None)
 
-                if old_value is None:
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'new',
-                            weather_setting=self,
-                            attribute=key,
-                            value=value
-                        )
+                if old_value != value:
+                    event = AttributeEvent(key, value)
+                    Notify(event, 'WeatherSetting.{0}.Changed'.format(key))
 
-                    setattr(self, key, value)
-
-                elif old_value != value:
-                    for event_handler in self._bindings:
-                        event_handler(
-                            'change',
-                            weather_setting=self,
-                            attribute=key,
-                            value=value
-                        )
                     if key == 'weatherCountry':
                         self._weatherCountry = value
                     elif key == 'weatherCity':

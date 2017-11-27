@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import EventHandler
+from event import Notify
 
 
 class Sections(object):
@@ -26,19 +26,10 @@ class Sections(object):
         self._parent = parent
         self.send = parent.send
         self._sections = []
-        self._bindings = []
 
         if node is not None:
             for section in node:
                 self._sections += [Section(self, section)]
-
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def get_section(self, number):
         number = str(number)
@@ -63,16 +54,11 @@ class Sections(object):
                 else:
                     found_section = Section(self, section)
 
-                    for event_handler in self._bindings:
-                        event_handler('new', section=found_section)
-
                 sections += [found_section]
 
             if full:
                 for section in self._sections:
-                    for event_handler in self._bindings:
-                        event_handler('remove', section=section)
-
+                    Notify(section, 'Section.{0}.Removed'.format(section.id))
                 del self._sections[:]
 
 
@@ -86,3 +72,6 @@ class Section(object):
 
         for key, value in node.items():
             self.__dict__[key] = value
+
+        Notify(self, 'Section.{0}.Created'.format(self.id))
+

@@ -16,27 +16,18 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from event import EventHandler
+from event import Notify
 
 
 class Alerts(object):
-    _alerts = []
 
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
+        self._alerts = []
 
         if node is not None:
             for alert in node:
                 self._alerts += [Alert(self, alert)]
-                
-    def register_event(self, callback, attribute=None):
-        self._bindings += [EventHandler(self, callback, None)]
-        return self._bindings[-1]
-
-    def unregister_event(self, event_handler):
-        if event_handler in self._bindings:
-            self._bindings.remove(event_handler)
 
     def get_room(self, room):
         return self._parent.get_room(room)
@@ -60,9 +51,7 @@ class Alerts(object):
                         break
                 else:
                     found_alert = Alert(self, alert)
-                    for event_handler in self._bindings:
-                        event_handler('new', alert=found_alert)
-                    
+
                 alerts += [found_alert]
 
             if full:
@@ -71,34 +60,40 @@ class Alerts(object):
             self._alerts += alerts[:]
 
 class Alert(object):
-    PK_Alert = ""
-    DeviceName = ""
-    Code = ""
-    Room = 10
-    Server_Storage = ""
-    EventType = 16
-    Users = ""
-    Severity = 5
-    PK_Device = 0
-    Argument = 0
-    PK_Store = ""
-    DeviceType = ""
-    Filesize = 0
-    Key = ""
-    LocalTimestamp = 0
-    Description = ""
-    Icon = ""
-    LocalDate = ""
-    NewValue = ""
-    SourceType = 0
+
+    """
+    Attributes:
+        PK_Alert (str):
+        DeviceName (str):
+        Code (str):
+        Room (int):
+        Server_Storage (str):
+        EventType (int):
+        Users (str):
+        Severity (int):
+        PK_Device (int):
+        Argument (int):
+        PK_Store (str):
+        DeviceType (str):
+        Filesize (int):
+        Key (str):
+        LocalTimestamp (int):
+        Description (str):
+        Icon (str):
+        LocalDate (str):
+        NewValue (str):
+        SourceType (int):
+    """
 
     def __init__(self, parent, node):
         self._parent = parent
-        
+
         self._room = node.pop('Room', None)
-        
+
         for key, value in node.items():
             self.__dict__[key] = value
+
+        Notify(self, 'Alert.{0}.Created'.format(self.PK_Alert))
 
     @property
     def Device(self):
@@ -107,11 +102,11 @@ class Alert(object):
     @property
     def Room(self):
         return self._parent.get_room(self._room)
-    
+
     def __setattr__(self, key, value):
         if key.startswith('_'):
             object.__setattr__(self, key, value)
-        
+
         raise AttributeError('The attribute {0} cannot be set.'.format(key))
 
 
