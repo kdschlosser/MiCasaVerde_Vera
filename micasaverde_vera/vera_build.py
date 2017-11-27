@@ -945,6 +945,9 @@ def get_files(ip_address, update):
     lock = threading.Lock()
 
     def get_thread(url):
+        if url.startswith('I_'):
+            threads.remove(threading.currentThread())
+            return
         response, xmlns = get_data_file(url)
         if response is None:
             downloaded_files[url] = None

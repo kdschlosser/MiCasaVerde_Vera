@@ -24,13 +24,20 @@ from event import Notify
 class Rooms(object):
 
     def __init__(self, parent, node):
-        self._rooms = []
         self._parent = parent
         self.send = parent.send
+        self._rooms = [Room(self, dict(id=0, name='No Room', section=1))]
 
         if node is not None:
             for room in node:
                 self._rooms += [Room(self, room)]
+
+    def new(self, name):
+        self._parent.send(
+            id='room',
+            action='create',
+            name=name
+        )
 
     @property
     def devices(self):
@@ -83,7 +90,6 @@ class Rooms(object):
 class Room(object):
     def __init__(self, parent, node):
         self._parent = parent
-        self.devices
 
         def get(attr):
             return node.pop(attr, None)
@@ -105,7 +111,7 @@ class Room(object):
         item = self._locate_item(item)
 
         if item is not None and item.room == self:
-            item.room = None
+            item.room = 0
 
     def remove_plugin(self, plugin):
         self.remove(self._parent.plugins.get_plugin(plugin))
@@ -151,7 +157,7 @@ class Room(object):
         item = self._locate_item(item)
 
         if item is not None and item.room == self:
-            item.room = None
+            item.room = 0
 
     def __contains__(self, item):
         item = self._locate_item(item)
@@ -196,10 +202,21 @@ class Room(object):
 
     @name.setter
     def name(self, name):
-        self._parent.send(id='room', action='rename', room=self.id, name=name)
+        if self.id:
+            self._parent.send(
+                id='room',
+                action='rename',
+                room=self.id,
+                name=name
+            )
 
     def delete(self):
-        self._parent.send(id='room', action='delete', room=self.id)
+        if self.id:
+            self._parent.send(
+                id='room',
+                action='delete',
+                room=self.id
+            )
 
     def update_node(self, node):
         for key, value in node.items():

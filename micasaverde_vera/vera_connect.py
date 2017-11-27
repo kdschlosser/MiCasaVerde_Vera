@@ -98,7 +98,6 @@ class VeraConnect(object):
         self._lock.acquire()
 
         def send():
-            print params
             try:
                 return requests.get(self.URL, params=params).content
             except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):

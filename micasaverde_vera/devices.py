@@ -164,6 +164,32 @@ class Device(object):
         return sorted(list(set(keys + dir_list)))
 
     @property
+    def room(self):
+        if ('room', 'room') in self._variables:
+            key = ('room', 'room')
+
+        elif ('Room', 'Room') in self._variables:
+            key = ('Room', 'Room')
+
+        else:
+            raise AttributeError
+
+        return self._parent.get_room(self._variables[key])
+
+    @room.setter
+    def room(self, room):
+        if not isinstance(room, (int, str)):
+            room = room.id
+
+        self._parent.send(
+            id='device',
+            action='rename',
+            device=self.id,
+            name=self.name,
+            room=room
+        )
+
+    @property
     def LastUpdate(self):
         try:
             return self._LastUpdate
@@ -177,6 +203,13 @@ class Device(object):
     @LastUpdate.setter
     def LastUpdate(self, last_update):
         self._LastUpdate = last_update
+
+    def delete(self):
+        self._parent.send(
+            id='device',
+            action='delete',
+            device=self.id
+        )
 
     def update_node(self, node, _):
         """
