@@ -21,7 +21,7 @@ import base64
 from micasaverde_vera.core.services.scene_1 import Scene1
 from micasaverde_vera.core.services.scene_controller_1 import SceneController1
 from micasaverde_vera.core.services.ha_device_1 import HaDevice1
-from event import Notify, AttributeEvent
+from event import Notify
 
 
 class Scenes(SceneController1, HaDevice1):
@@ -93,9 +93,8 @@ class Scenes(SceneController1, HaDevice1):
                     old_value = getattr(self, key, None)
 
                     if old_value != value:
-                        event = AttributeEvent(key, value)
                         Notify(
-                            event,
+                            self,
                             'Device.{0}.{1}.Changed'.format(self.id, key)
                         )
                         setattr(self, key, value)
@@ -296,8 +295,7 @@ class Scene(Scene1):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
-                Notify(event, 'Scene.{0}.{1}.Changed'.format(self.id, key))
+                Notify(self, 'Scene.{0}.{1}.Changed'.format(self.id, key))
 
                 if key == 'name':
                     self._name = value
@@ -465,7 +463,7 @@ class Action(object):
                 found_argument.value = argument['value']
                 Notify(
                     found_argument,
-                    'Scene.{0}.Action.{1}.Argument.{2}.Changed'.format(
+                    'Scene.{0}.Action.{1}.Argument.{2}.Value.Changed'.format(
                         self._parent._parent.id,
                         self.action,
                         found_argument.name
@@ -488,10 +486,8 @@ class Action(object):
         for key, value in node.items():
             old_value = getattr(self, key, None)
             if old_value != value:
-                event = AttributeEvent(key, value)
-
                 Notify(
-                    event,
+                    self,
                     'Scene.{0}.Action.{1}.{2}.Changed'.format(
                         self._parent._parent.id,
                         self.action,
@@ -674,9 +670,8 @@ class Group(object):
     def update_node(self, node, full):
         if self._delay != node['delay']:
             self._delay = node['delay']
-            event = AttributeEvent('delay', self._delay)
             Notify(
-                event,
+                self,
                 'Scene.{0}.Group.Delay.Changed'.format(
                     self._parent._parent.id
                 )
@@ -866,7 +861,7 @@ class Trigger(object):
                 found_argument.value = argument['value']
                 Notify(
                     found_argument,
-                    'Scene.{0}.Trigger.{1}.Argument.{2}.Changed'.format(
+                    'Scene.{0}.Trigger.{1}.Argument.{2}.Value.Changed'.format(
                         self._parent._parent.id,
                         self.name,
                         found_argument.id
@@ -906,9 +901,8 @@ class Trigger(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
                 Notify(
-                    event,
+                    self,
                     'Scene.{0}.Trigger.{1}.{2}.Changed'.format(
                         self._parent._parent.id,
                         self.name,
@@ -1099,9 +1093,8 @@ class Timer(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
                 Notify(
-                    event,
+                    self,
                     'Scene.{0}.Timer.{1}.{2}.Changed'.format(
                         self._parent._parent.id,
                         self.name,

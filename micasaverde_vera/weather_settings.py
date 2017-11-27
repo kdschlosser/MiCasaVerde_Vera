@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import Notify, AttributeEvent
+from event import Notify
 
 
 class WeatherSettings(object):
@@ -75,8 +75,7 @@ class WeatherSettings(object):
                     old_value = getattr(self, key, None)
 
                 if old_value != value:
-                    event = AttributeEvent(key, value)
-                    Notify(event, 'WeatherSetting.{0}.Changed'.format(key))
+                    Notify(self, 'WeatherSetting.{0}.Changed'.format(key))
 
                     if key == 'weatherCountry':
                         self._weatherCountry = value

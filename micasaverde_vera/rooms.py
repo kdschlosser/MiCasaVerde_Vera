@@ -19,7 +19,7 @@
 from devices import Device
 from scenes import Scene
 from installed_plugins import InstalledPlugin
-from event import Notify, AttributeEvent
+from event import Notify
 
 class Rooms(object):
 
@@ -211,8 +211,7 @@ class Room(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
-                Notify(event, 'Room.{0}.{1}.Changed'.format(self.id, key))
+                Notify(self, 'Room.{0}.{1}.Changed'.format(self.id, key))
 
                 if key == 'name':
                     self._name = value

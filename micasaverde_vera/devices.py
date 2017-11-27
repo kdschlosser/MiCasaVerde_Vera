@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import importlib
-from event import EventHandler
+from event import Notify
 from utils import create_service_name, parse_string
 
 
@@ -140,8 +140,101 @@ class Device(object):
     """
     This is imported by the generated device files.
     
-    This gets used as a subclass for identification purposes only.
-    It makes it simpler for object identification.
+    This gets used as a subclass for identification purposes as well as houses
+    a couple of common methods.
     
     isinstance(instance, devices.Device)
     """
+
+    def __dir__(self):
+        """
+        Modifies the output when using dir()
+
+        This modifies the output when dir() is used on an instance of this 
+        device. The purpose for this is not all devices will use every 
+        component of this class.
+        """
+
+        dir_list = dir(self.__class__)
+        keys = list(
+            key[1] for (key, value) in self._variables.items()
+                if value is not None
+        )
+
+        return sorted(list(set(keys + dir_list)))
+
+    @property
+    def LastUpdate(self):
+        try:
+            return self._LastUpdate
+        except AttributeError:
+            if ('LastUpdate', 'LastUpdate') in self._variables.keys():
+                self._LastUpdate = self._variables[('LastUpdate', 'LastUpdate')]
+                return self._LastUpdate
+            raise AttributeError('Device does not have variable LastUpdate')
+
+
+    @LastUpdate.setter
+    def LastUpdate(self, last_update):
+        self._LastUpdate = last_update
+
+    def update_node(self, node, _):
+        """
+        Updates the device with data retreived from the Vera
+
+        This is internally used.
+        """
+
+        if 'tooltip' in node:
+            del node['tooltip']
+
+        def check_value(variable, value):
+            if variable == 'LastUpdate':
+                if self.LastUpdate != value:
+                    self.LastUpdate = value
+                    Notify(
+                        self,
+                        'Device.{0}.LastUpdate.Changed'.format(self.id)
+                    )
+                return
+
+            for attrib_names, old_value in self._variables.items():
+                if variable in attrib_names:
+                    break
+            else:
+
+                attrib_names = (variable, variable)
+                old_value = None
+
+            if old_value != value:
+                print variable, old_value, value, attrib_names
+                Notify(
+                    self,
+                    'Device.{0}.{1}.Changed'.format(
+                        self.id,
+                        variable.replace('.', '')
+                    )
+                )
+                self._variables[attrib_names] = value
+
+        if node is not None:
+            for state in node.pop('states', []):
+                check_value(state['variable'], state['value'])
+
+            for node_key, node_value in node.items():
+                check_value(node_key, node_value)
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for key, value in self._variables.items():
+            if item in key:
+                if value is None:
+                    raise AttributeError(
+                        'Attribute {0} is not used '
+                        'for this device.'.format(item)
+                    )
+                return value
+
+        raise AttributeError('Attribute {0} is not found.'.format(item))

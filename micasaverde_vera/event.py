@@ -56,14 +56,6 @@ class _NotificationHandler(object):
 NotificationHandler = _NotificationHandler()
 Notify = NotificationHandler.notify
 
-
-class AttributeEvent(object):
-
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-
 class EventHandler(object):
 
     def __init__(self, event, callback):

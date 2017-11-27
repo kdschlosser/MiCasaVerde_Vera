@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import Notify, AttributeEvent
+from event import Notify
 
 
 class UserSettings(object):
@@ -62,9 +62,8 @@ class UserSettings(object):
 
                 if ishome is not None and ishome != found_setting.ishome:
                     found_setting.ishome = ishome
-                    event = AttributeEvent('ishome', ishome)
                     Notify(
-                        event,
+                        self,
                         'UserSetting.{0}.ishome.Changed'.format(
                             found_setting.id,
                         )

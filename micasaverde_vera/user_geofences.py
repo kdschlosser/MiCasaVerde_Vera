@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from event import Notify, AttributeEvent
+from event import Notify
 
 
 class UserGeofences(object):
@@ -113,9 +113,8 @@ class GeoTag(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
                 Notify(
-                    event,
+                    self,
                     'UserGeoFence.{0}.GeoTag.{1}.{2}'.format(
                         self._parent.iduser,
                         self.id,

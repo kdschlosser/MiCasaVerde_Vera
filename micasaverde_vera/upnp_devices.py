@@ -51,7 +51,10 @@ class UPNPDevices(object):
                         break
                 else:
                     found_device = UPNPDevice(self, device)
-                    Notify(self, 'UPNPDevice.{0}.Created'.format(udn))
+                    Notify(
+                        self,
+                        'UPNPDevice.{0}.Created'.format(device['udn'])
+                    )
 
                 devices += [found_device]
 

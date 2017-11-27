@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from event import Notify, AttributeEvent
+from event import Notify
 
 
 class Users(object):
@@ -119,8 +119,7 @@ class User(object):
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                event = AttributeEvent(key, value)
-                Notify(event, 'User.{0}.{1}.Changed'.format(self.id, key))
+                Notify(self, 'User.{0}.{1}.Changed'.format(self.id, key))
 
                 if key == 'Name':
                     self._name = value

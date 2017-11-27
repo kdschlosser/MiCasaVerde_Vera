@@ -87,7 +87,7 @@ DEVICE_SUBCLASS_INIT_TEMPLATE = (
     '''        _{class_name}.__init__(self, parent)\n'''
 )
 DEVICE_CLASS_TEMPLATE = '''
-from micasaverde_vera.event import Notify, AttributeEvent
+from micasaverde_vera.event import Notify
 from micasaverde_vera.devices import Device
 
 {imports}
@@ -223,21 +223,6 @@ class {class_name}(Device, {subclasses}):
     def Configured(self, value):
         self._configured = value
     
-    def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
-            
-        for key, value in self._variables.items():
-            if item in key:
-                if value is None:
-                    raise AttributeError(
-                        'Attribute {{0}} is not used '
-                        'for this device.'.format(item)
-                    )
-                return value
-            
-        raise AttributeError('Attribute {{0}} is not found.'.format(item))
-    
     def __setattr__(self, key, value):
         if key.startswith('_') or key == 'argument_mapping':
             object.__setattr__(self, key, value)
@@ -254,55 +239,6 @@ class {class_name}(Device, {subclasses}):
             raise AttributeError(
                 'You are not allowed to set attribute {{0}}.'.format(key)
             )
-    
-    def update_node(self, node, _):
-        """
-        Updates the device with data retreived from the Vera
-        
-        This is internally used.
-        """
-
-        if 'tooltip' in node:
-            del node['tooltip']
-        
-        def check_value(variable, value):
-            for attrib_names, attrib_value in self._variables.items():
-                if variable in attrib_names:
-                    old_value = attrib_value
-                    break
-            else:
-                old_value = None
-                
-            if old_value != value:
-                event = AttributeEvent(variable, value)
-                Notify(event, 'Device.{{0}}.{{1}}'.format(self.id, variable))
-                for attrib_names in self._variables.keys()[:]:
-                    if variable in attrib_names:
-                        self._variables[attrib_names] = value
-        
-        if node is not None:
-            for state in node.pop('states', []):
-                check_value(state['variable'], state['value'])
-            
-            for node_key, node_value in node.items():
-                check_value(node_key, node_value)
-    
-    def __dir__(self):
-        """
-        Modifies the output when using dir()
-        
-        This modifies the output when dir() is used on an instance of this 
-        device. The purpose for this is not all devices will use every 
-        component of this class.
-        """
-        
-        dir_list = dir(self.__class__)
-        keys = list(
-            key[1] for (key, value) in self._variables.items()
-            if value is not None
-        )
-        
-        return sorted(list(set(keys + dir_list)))
 '''
 
 CLASS_TEMPLATE = '''
