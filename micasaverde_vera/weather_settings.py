@@ -42,7 +42,7 @@ class WeatherSettings(object):
         return self._tempFormat
 
     @tempFormat.setter
-    def tempFormat(self, tempFormat):
+    def tempFormat(self, temp_format):
         pass
 
     @property
@@ -50,7 +50,7 @@ class WeatherSettings(object):
         return self._weatherCity
 
     @weatherCity.setter
-    def weatherCity(self, weatherCity):
+    def weatherCity(self, weather_city):
         pass
 
     @property
@@ -58,10 +58,10 @@ class WeatherSettings(object):
         return self._weatherCountry
 
     @weatherCountry.setter
-    def weatherCountry(self, weatherCountry):
+    def weatherCountry(self, weather_country):
         pass
 
-    def update_node(self, node, full=False):
+    def update_node(self, node, _):
         if node is not None:
             for key, value in node.items():
 

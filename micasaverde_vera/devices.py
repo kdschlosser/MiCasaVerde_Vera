@@ -17,6 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import importlib
+import threading
 from event import Notify
 from utils import create_service_name, parse_string
 
@@ -106,6 +107,7 @@ class Devices(object):
                 del node['status']
             devices = []
             for device in node:
+                # noinspection PyShadowingBuiltins
                 id = device['id']
                 for found_device in self._devices[:]:
                     if found_device.id == id:
@@ -136,6 +138,7 @@ class Devices(object):
             self._devices += devices[:]
 
 
+# noinspection PyAttributeOutsideInit
 class Device(object):
     """
     This is imported by the generated device files.
@@ -158,7 +161,7 @@ class Device(object):
         dir_list = dir(self.__class__)
         keys = list(
             key[1] for (key, value) in self._variables.items()
-                if value is not None
+            if value is not None
         )
 
         return sorted(list(set(keys + dir_list)))
@@ -195,10 +198,11 @@ class Device(object):
             return self._LastUpdate
         except AttributeError:
             if ('LastUpdate', 'LastUpdate') in self._variables.keys():
-                self._LastUpdate = self._variables[('LastUpdate', 'LastUpdate')]
+                self._LastUpdate = (
+                    self._variables[('LastUpdate', 'LastUpdate')]
+                )
                 return self._LastUpdate
             raise AttributeError('Device does not have variable LastUpdate')
-
 
     @LastUpdate.setter
     def LastUpdate(self, last_update):
@@ -213,7 +217,7 @@ class Device(object):
 
     def update_node(self, node, _):
         """
-        Updates the device with data retreived from the Vera
+        Updates the device with data retrieved from the Vera
 
         This is internally used.
         """

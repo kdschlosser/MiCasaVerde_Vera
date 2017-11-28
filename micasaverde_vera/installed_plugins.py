@@ -23,14 +23,14 @@ class InstalledPlugins(object):
 
     def __init__(self, parent, node):
         self._plugins = []
-        self._parent = parent
+        self.parent = parent
 
         if node is not None:
             for plugin in node:
                 self._plugins += [InstalledPlugin(self, plugin)]
 
     def get_category(self, number):
-        return self._parent.get_category(number)
+        return self.parent.get_category(number)
 
     def get_plugin(self, number):
         number = str(number)
@@ -45,6 +45,7 @@ class InstalledPlugins(object):
         if node is not None:
             plugins = []
             for plugin in node:
+                # noinspection PyShadowingBuiltins
                 id = plugin['id']
                 for found_plugin in self._plugins:
                     if found_plugin.id == id:
@@ -77,6 +78,8 @@ class File(object):
 class Lua(object):
     def __init__(self, parent, node):
         self._parent = parent
+        self.CategoryNum = node.pop('CategoryNum', None)
+
         for key, value in node.items():
             self.__dict__[key] = value
 
@@ -102,11 +105,14 @@ class InstalledPlugin(object):
 
         for plugin_device in node.pop('Devices', []):
             device_type = plugin_device['DeviceType']
-            for device in parent._parent.devices:
+            for device in parent.parent.devices:
                 if device.device_type == device_type:
                     self.devices += [device]
 
-        self.__dict__.update(node)
+        self.id = node.pop('id', None)
+
+        for k, v in node.items():
+            self.__dict__[k] = v
 
         Notify(self, 'InstalledPlugin.{0}.Created'.format(self.id))
 
@@ -137,7 +143,7 @@ class InstalledPlugin(object):
                     devices += [device]
                     self.devices.remove(device)
 
-            for device in self._parent._parent.devices:
+            for device in self._parent.parent.devices:
                 if device.device_type == device_type and device not in devices:
                     Notify(
                         device,

@@ -21,6 +21,7 @@ from event import Notify
 
 ATTRIBUTES = ('udn', 'name', 'url', 'ip', 'device_type', 'discovery_date')
 
+
 class UPNPDevices(object):
 
     def __init__(self, parent, node):
@@ -35,7 +36,6 @@ class UPNPDevices(object):
     def __iter__(self):
         for device in self._devices:
             yield device
-
 
     def update_node(self, node, full=False):
         if node is not None:

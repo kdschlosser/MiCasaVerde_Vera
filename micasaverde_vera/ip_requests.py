@@ -67,9 +67,12 @@ class IPRequests(object):
             for ip, request in requests.items():
                 self._ip_requests[ip] = request
 
+
 class IPRequest(object):
 
     def __init__(self, parent, node):
         self._parent = parent
+        self.ip = node.pop('ip', None)
+
         for key, value in node.items():
             self.__dict__[key] = value

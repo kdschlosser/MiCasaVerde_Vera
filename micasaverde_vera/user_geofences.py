@@ -156,6 +156,7 @@ class UserGeoFence(object):
         geotags = []
 
         for geotag in node.pop('geotags', []):
+            # noinspection PyShadowingBuiltins
             id = geotag['id']
 
             for found_geotag in self._geotags[:]:

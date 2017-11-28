@@ -17,9 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import threading
-import requests
 import vera_build
-import json
 import sys
 import os
 from copy import deepcopy
@@ -31,7 +29,7 @@ from vera_exception import (
     VeraNotImplimentedError
 )
 
-_UNWANTED_ITEMS =(
+_UNWANTED_ITEMS = (
     'static_data',
     'InstalledPlugins',
     'SetupDevices',
@@ -184,7 +182,7 @@ class Vera(object):
     BUILD_COMPLETE = BUILD_COMPLETE
     discover = vera_build.discover
 
-    def __init__(self, ip_address=''):
+    def __init__(self):
         pass
 
     def __new__(cls, ip_address=''):
@@ -195,6 +193,7 @@ class Vera(object):
         if not BUILD_COMPLETE:
             print 'MicasaVerde Vera: Building files please wait....'
             event = threading.Event()
+
             def build():
                 build_files(ip_address)
                 event.set()
@@ -229,8 +228,8 @@ class Vera(object):
             core.__path__ = [vera_build.BUILD_PATH]
             core.__package__ = package_name
 
+        # noinspection PyUnresolvedReferences
         from micasaverde_vera.core.devices import home_automation_gateway_1
-
 
         del home_automation_gateway_1.HomeAutomationGateway1.__setattr__
 
@@ -270,7 +269,7 @@ class Vera(object):
                 dir_list += self.__dict__.keys()
                 dir_list += list(
                     key for (key, value) in self._variables.items()
-                        if value is not None
+                    if value is not None
                 )
 
                 return sorted(set(dir_list))
@@ -302,6 +301,7 @@ class _Vera(object):
     _queue = []
     id = 0
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, ip_address):
         from event import NotificationHandler
         from scenes import Scenes
@@ -371,9 +371,8 @@ class _Vera(object):
         self.get_device = self.devices.get_device
         self.get_plugin = self.installed_plugins.get_plugin
 
-
-        if self.scenes is None:
-            self.scenes = Scenes(self, dict(id='SceneController'))
+        # if self.scenes is None:
+        #    self.scenes = Scenes(self, dict(id='SceneController'))
 
         self.__update(self.scenes, 'scenes', data)
         self.get_scene = self.scenes.get_scene
@@ -397,6 +396,7 @@ class _Vera(object):
             data.pop(key, None)
         )
 
+    # noinspection PyMethodMayBeStatic
     def __update(self, obj, key, data):
         obj.update_node(data.pop(key, None), True)
 

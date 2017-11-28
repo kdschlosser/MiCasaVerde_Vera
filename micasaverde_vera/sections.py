@@ -46,6 +46,7 @@ class Sections(object):
             sections = []
 
             for section in node:
+                # noinspection PyShadowingBuiltins
                 id = section['id']
                 for found_section in self._sections[:]:
                     if found_section.id == id:
@@ -61,7 +62,6 @@ class Sections(object):
                     Notify(section, 'Section.{0}.Removed'.format(section.id))
                 del self._sections[:]
 
-
             self._sections += sections
 
 
@@ -70,8 +70,9 @@ class Section(object):
     def __init__(self, parent, node):
         self._parent = parent
 
+        self.id = node.pop('id', None)
+
         for key, value in node.items():
             self.__dict__[key] = value
 
         Notify(self, 'Section.{0}.Created'.format(self.id))
-

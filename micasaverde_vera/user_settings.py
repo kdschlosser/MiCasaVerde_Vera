@@ -24,7 +24,7 @@ class UserSettings(object):
     def __init__(self, parent, node):
         self._parent = parent
         self.send = parent.send
-        self._settings = dict()
+        self._settings = []
 
         if node is not None:
 
@@ -49,6 +49,7 @@ class UserSettings(object):
             settings = []
 
             for setting in node:
+                # noinspection PyShadowingBuiltins
                 id = setting['id']
 
                 for found_setting in self._settings[:]:
@@ -65,7 +66,7 @@ class UserSettings(object):
                     Notify(
                         self,
                         'UserSetting.{0}.ishome.Changed'.format(
-                            found_setting.id,
+                            found_setting.id
                         )
                     )
 
@@ -85,23 +86,14 @@ class UserSettings(object):
 class UserSetting(object):
     def __init__(self, parent, node):
         self._parent = parent
+
+        self.id = node.pop('id', None)
+
         for key, value in node.items():
             self.__dict__[key] = value
 
-        Notify(
-            self,
-            'UserSetting.{0}.Created'.format(
-                self.id,
-            )
-        )
+        Notify(self, 'UserSetting.{0}.Created'.format(self.id))
 
     @property
     def user(self):
         return self._parent.get_user(self.id)
-
-
-
-
-
-
-

@@ -21,12 +21,13 @@ from scenes import Scene
 from installed_plugins import InstalledPlugin
 from event import Notify
 
+
 class Rooms(object):
 
     def __init__(self, parent, node):
         self._parent = parent
         self.send = parent.send
-        self._rooms = [Room(self, dict(id=0, name='No Room', section=1))]
+        self._rooms = [Room(self, {'id': 0, 'name': 'No Room', 'section': 1})]
 
         if node is not None:
             for room in node:
@@ -67,6 +68,7 @@ class Rooms(object):
         if node is not None:
             rooms = [self._rooms.pop(0)]
             for room in node:
+                # noinspection PyShadowingBuiltins
                 id = room['id']
 
                 for found_room in self._rooms[:]:

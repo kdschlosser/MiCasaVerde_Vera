@@ -51,6 +51,7 @@ class Users(object):
         if node is not None:
             users = []
             for user in node:
+                # noinspection PyShadowingBuiltins
                 id = user['id']
                 for found_user in self._users:
                     if found_user.id == id:

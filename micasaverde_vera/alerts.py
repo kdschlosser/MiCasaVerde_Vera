@@ -59,56 +59,74 @@ class Alerts(object):
 
             self._alerts += alerts[:]
 
-class Alert(object):
 
+class Alert(object):
     """
-    Attributes:
-        PK_Alert (str):
-        DeviceName (str):
-        Code (str):
-        Room (int):
-        Server_Storage (str):
-        EventType (int):
-        Users (str):
-        Severity (int):
-        PK_Device (int):
-        Argument (int):
-        PK_Store (str):
-        DeviceType (str):
-        Filesize (int):
-        Key (str):
-        LocalTimestamp (int):
-        Description (str):
-        Icon (str):
-        LocalDate (str):
-        NewValue (str):
-        SourceType (int):
-    """
+        Attributes:
+            PK_Alert (str):
+            DeviceName (str):
+            Code (str):
+            Room (int):
+            Server_Storage (str):
+            EventType (int):
+            Users (str):
+            Severity (int):
+            PK_Device (int):
+            Argument (int):
+            PK_Store (str):
+            DeviceType (str):
+            Filesize (int):
+            Key (str):
+            LocalTimestamp (int):
+            Description (str):
+            Icon (str):
+            LocalDate (str):
+            NewValue (str):
+            SourceType (int):
+        """
 
     def __init__(self, parent, node):
         self._parent = parent
 
-        self._room = node.pop('Room', None)
+        def get(key):
+            return node.pop(key, None)
 
-        for key, value in node.items():
-            self.__dict__[key] = value
+        self.PK_Alert = get('PK_Alert')
+        self.DeviceName = get('DeviceName')
+        self.Code = get('Code')
+        self.Room = get('Room')
+        self.Server_Storage = get('Server_Storage')
+        self.EventType = get('EventType')
+        self.Users = get('Users')
+        self.Severity = get('Severity')
+        self.PK_Device = get('PK_Device')
+        self.Argument = get('Argument')
+        self.PK_Store = get('PK_Store')
+        self.DeviceType = get('DeviceType')
+        self.Filesize = get('Filesize')
+        self.Key = get('Key')
+        self.LocalTimestamp = get('LocalTimestamp')
+        self.Description = get('Description')
+        self.Icon = get('Icon')
+        self.LocalDate = get('LocalDate')
+        self.NewValue = get('NewValue')
+        self.SourceType = get('SourceType')
+
+        for k, v in node.items():
+            self.__dict__[k] = v
 
         Notify(self, 'Alert.{0}.Created'.format(self.PK_Alert))
 
     @property
-    def Device(self):
+    def device(self):
         return self._parent.get_device(self.PK_Device)
 
     @property
-    def Room(self):
-        return self._parent.get_room(self._room)
+    def room(self):
+        return self._parent.get_room(self.Room)
 
     def __setattr__(self, key, value):
         if key.startswith('_'):
             object.__setattr__(self, key, value)
 
         raise AttributeError('The attribute {0} cannot be set.'.format(key))
-
-
-
-

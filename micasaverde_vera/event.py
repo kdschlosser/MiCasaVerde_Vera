@@ -19,6 +19,7 @@
 
 from fnmatch import fnmatch
 
+
 class _NotificationHandler(object):
 
     def __init__(self):
@@ -40,7 +41,6 @@ class _NotificationHandler(object):
                 if not self._callbacks[event]:
                     del self._callbacks[event]
 
-
     def notify(self, event_object, event):
         for event_name, event_handlers in self._callbacks.items():
             if '*' in event_name or '?' in event_name:
@@ -56,11 +56,12 @@ class _NotificationHandler(object):
 NotificationHandler = _NotificationHandler()
 Notify = NotificationHandler.notify
 
+
 class EventHandler(object):
 
     def __init__(self, event, callback):
         self.__event = event
-        self._event_name = None
+        self.__event_name = None
         self.__callback = callback
         self.__event_object = None
 
@@ -86,4 +87,3 @@ class EventHandler(object):
 
     def unbind(self):
         NotificationHandler.unbind(self)
-

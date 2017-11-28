@@ -42,6 +42,7 @@ def parse_string(word):
         new_word = new_word[:-2] + last_char.lower()
     return new_word
 
+
 def create_service_name(service_type):
     service_type = service_type.split(':')
 

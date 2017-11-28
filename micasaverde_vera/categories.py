@@ -18,17 +18,16 @@
 
 
 class Categories(object):
-    _categories = dict()
 
     def __init__(self, parent, node):
         self._parent = parent
-        self._categories.update(node)
+        self._categories = node
 
     def get_category(self, number):
         number = str(number)
-        
+
         number = number.split('.')
         if len(number) == 1:
             number += ['0']
-            
+
         return self._categories[number[0]][number[1]]
