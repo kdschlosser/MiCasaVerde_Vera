@@ -1068,7 +1068,7 @@ def build_files(ip_address, log=False, update=False):
     if not os.path.exists(BUILD_PATH):
         os.makedirs(BUILD_PATH)
         with open(os.path.join(BUILD_PATH, '__init__.py'), 'w') as f:
-            f.write('')
+            f.write("__import__('pkg_resources').declare_namespace('core')\n")
 
     if not os.path.exists(DEVICES_PATH):
         os.makedirs(DEVICES_PATH)
@@ -1085,7 +1085,6 @@ def build_files(ip_address, log=False, update=False):
     # found_services = invoke(ip_address, update)
     found_services = dict()
     found_devices = dict()
-
 
     def build_service(
         service_type,
