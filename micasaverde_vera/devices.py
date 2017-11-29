@@ -149,6 +149,11 @@ class Device(object):
     isinstance(instance, devices.Device)
     """
 
+    def __init__(self):
+        self._variables = getattr(self, '_variables', dict())
+        self.service_ids = getattr(self, 'service_ids', [])
+        self.id = getattr(self, 'id', None)
+
     def __dir__(self):
         """
         Modifies the output when using dir()
@@ -166,110 +171,65 @@ class Device(object):
 
         return sorted(list(set(keys + dir_list)))
 
-    @property
-    def room(self):
-        if ('room', 'room') in self._variables:
-            key = ('room', 'room')
-
-        elif ('Room', 'Room') in self._variables:
-            key = ('Room', 'Room')
-
-        else:
-            raise AttributeError
-
-        return self._parent.get_room(self._variables[key])
-
-    @room.setter
-    def room(self, room):
-        if not isinstance(room, (int, str)):
-            room = room.id
-
-        self._parent.send(
-            id='device',
-            action='rename',
-            device=self.id,
-            name=self.name,
-            room=room
-        )
-
-    @property
-    def LastUpdate(self):
-        try:
-            return self._LastUpdate
-        except AttributeError:
-            if ('LastUpdate', 'LastUpdate') in self._variables.keys():
-                self._LastUpdate = (
-                    self._variables[('LastUpdate', 'LastUpdate')]
-                )
-                return self._LastUpdate
-            raise AttributeError('Device does not have variable LastUpdate')
-
-    @LastUpdate.setter
-    def LastUpdate(self, last_update):
-        self._LastUpdate = last_update
-
-    def delete(self):
-        self._parent.send(
-            id='device',
-            action='delete',
-            device=self.id
-        )
-
-    def update_node(self, node, _):
+    def update_node(self, node, full=False):
         """
         Updates the device with data retrieved from the Vera
 
         This is internally used.
         """
 
-        if 'tooltip' in node:
-            del node['tooltip']
+        def check_value(variable, value, service=None):
+            if service is not None:
+                if service not in self._variables:
+                    self._variables[service] = dict()
 
-        def check_value(variable, value):
-            if variable == 'LastUpdate':
-                if self.LastUpdate != value:
-                    self.LastUpdate = value
-                    Notify(
-                        self,
-                        'Device.{0}.LastUpdate.Changed'.format(self.id)
+                try:
+                    old_value, service, keys = self._get_variable(
+                        variable,
+                        service
                     )
-                return
+                except NotImplementedError:
+                    old_value = None
+                    keys = (variable, variable)
 
-            for attrib_names, old_value in self._variables.items():
-                if variable in attrib_names:
-                    break
             else:
-                attrib_names = (variable, variable)
-                old_value = None
+                try:
+                    old_value, service, keys = self._get_variable(variable)
+                except NotImplementedError:
+                    old_value = None
+                    keys = (variable, variable)
+                    service = self.service_ids[0]
 
             if old_value != value:
-                self._variables[attrib_names] = value
-                Notify(
-                    self,
-                    'Device.{0}.{1}.Changed'.format(
-                        self.id,
-                        variable.replace('.', '')
+                self._variables[service][keys] = value
+                if full:
+                    Notify(
+                        self,
+                        'Device.{0}.{1}.{2}.Changed'.format(
+                            self.id,
+                            service.split(':')[-1],
+                            variable.replace('.', '')
+                        )
                     )
-                )
 
         if node is not None:
+            if 'tooltip' in node:
+                del node['tooltip']
+
             for state in node.pop('states', []):
-                check_value(state['variable'], state['value'])
+                check_value(
+                    state['variable'],
+                    state['value'],
+                    state['service']
+                )
 
             for node_key, node_value in node.items():
                 check_value(node_key, node_value)
 
-    def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+    def _get_variable(self, variable, service=None):
+        raise NotImplementedError
 
-        for key, value in self._variables.items():
-            if item in key:
-                if value is None:
-                    raise AttributeError(
-                        'Attribute {0} is not used '
-                        'for this device.'.format(item)
-                    )
-                return value
+    def _get_services(self, command):
+        raise NotImplementedError
 
-        raise AttributeError('Attribute {0} is not found.'.format(item))
+

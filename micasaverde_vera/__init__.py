@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import print_function
 import threading
 import vera_build
 import sys
@@ -190,25 +190,6 @@ class Vera(object):
         if not ip_address:
             ip_address = vera_build.discover()
 
-        if not BUILD_COMPLETE:
-            print 'MicasaVerde Vera: Building files please wait....'
-            event = threading.Event()
-
-            def build():
-                build_files(ip_address)
-                event.set()
-
-            t = threading.Thread(target=build)
-            t.daemon = True
-            t.start()
-
-            while not event.isSet():
-                event.wait(1)
-                sys.stdout.write('.')
-                sys.stdout.flush()
-            print
-            print 'MicasaVerde Vera: Build complete.'
-
         package_name = __package__
 
         if package_name != __name__:
@@ -218,23 +199,41 @@ class Vera(object):
         # if vera_build.BUILD_PATH not in __path__:
         #    __path__.append(vera_build.BUILD_PATH)
 
-        if module_name not in sys.modules:
-            import imp
-            core = imp.load_source(
-                'micasaverde_vera.core',
-                os.path.join(vera_build.BUILD_PATH, '__init__.py')
-            )
-            core.__name__ = module_name
-            core.__path__ = [vera_build.BUILD_PATH]
-            core.__package__ = package_name
+        def start_vera():
+            if module_name not in sys.modules:
+                import imp
+                core = imp.load_source(
+                    'micasaverde_vera.core',
+                    os.path.join(vera_build.BUILD_PATH, '__init__.py')
+                )
+                core.__name__ = module_name
+                core.__path__ = [vera_build.BUILD_PATH]
+                core.__package__ = package_name
 
-        # noinspection PyUnresolvedReferences
-        from micasaverde_vera.core.devices import home_automation_gateway_1
+        try:
+            start_vera()
+            # noinspection PyUnresolvedReferences
+            from micasaverde_vera.core.devices import home_automation_gateway_1
+        except (ImportError, IOError):
+            print('MicasaVerde Vera: Building files please wait....')
+            build_files(ip_address)
+            print()
+            print('MicasaVerde Vera: Build complete.')
+            try:
+                start_vera()
+                # noinspection PyUnresolvedReferences
+                from micasaverde_vera.core.devices import (
+                    home_automation_gateway_1,
+                )
+            except:
+                print('Error loading generated files.')
+                raise
 
-        del home_automation_gateway_1.HomeAutomationGateway1.__setattr__
+        # del home_automation_gateway_1.HomeAutomationGateway1.__setattr__
 
         class NewVera(_Vera, home_automation_gateway_1.HomeAutomationGateway1):
             def __init__(self, ip):
+                self.__name__ = 'Vera'
                 _Vera.__init__(self, ip)
                 home_automation_gateway_1.HomeAutomationGateway1.__init__(
                     self,
@@ -243,18 +242,18 @@ class Vera(object):
                 )
                 del self.init_data
 
-                plugin_dir = os.path.join(
-                    os.path.dirname(__file__),
-                    'external_plugins'
-                )
-
-                plugins = list(
-                    os.path.splitext(f)[0] for f in os.listdir(plugin_dir)
-                    if f.endswith('.py') and not f.startswith('_')
-                )
-
-                for plugin in plugins:
-                    self.external_plugins.register(__import__(plugin))
+                # plugin_dir = os.path.join(
+                #     os.path.dirname(__file__),
+                #     'external_plugins'
+                # )
+                #
+                # plugins = list(
+                #     os.path.splitext(f)[0] for f in os.listdir(plugin_dir)
+                #     if f.endswith('.py') and not f.startswith('_')
+                # )
+                #
+                # for plugin in plugins:
+                #     self.external_plugins.register(__import__(plugin))
 
             def __dir__(self):
                 """
@@ -371,10 +370,9 @@ class _Vera(object):
         self.get_device = self.devices.get_device
         self.get_plugin = self.installed_plugins.get_plugin
 
-        # if self.scenes is None:
-        #    self.scenes = Scenes(self, dict(id='SceneController'))
+        if self.scenes is not None:
+            self.__update(self.scenes, 'scenes', data)
 
-        self.__update(self.scenes, 'scenes', data)
         self.get_scene = self.scenes.get_scene
 
         self.bind = NotificationHandler.bind

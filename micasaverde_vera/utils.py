@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 
 def parse_string(word):
     next_to_last_char = ''
@@ -50,4 +52,30 @@ def create_service_name(service_type):
         return ''.join(service_type[-2:]).replace('-', '_')
     else:
         return service_type[-1].replace('-', '')
+
+
+def print_list(l, indent):
+    for item in l:
+        if isinstance(item, list):
+            if len(item) > 2:
+                print(indent + '[')
+                print_list(item, indent + '    ')
+                print(indent + ']')
+            else:
+                print(indent + repr(item))
+        else:
+            print(indent + repr(item))
+
+
+def print_dict(d, indent=''):
+    for key in sorted(d.keys()):
+        value = d[key]
+        if isinstance(value, dict):
+            print(indent + key + ':')
+            print_dict(value, indent + '    ')
+        elif isinstance(value, list):
+            print(indent + key + ':')
+            print_list(value, indent + '    ')
+        else:
+            print(indent + key + ':', value)
 

@@ -34,7 +34,7 @@ class _NotificationHandler(object):
         return event_handler
 
     def unbind(self, event_handler):
-        event = event_handler.event
+        event = event_handler.event_name
         if event in self._callbacks:
             if event_handler in self._callbacks[event]:
                 self._callbacks[event].remove(event_handler)
@@ -59,19 +59,19 @@ Notify = NotificationHandler.notify
 
 class EventHandler(object):
 
-    def __init__(self, event, callback):
-        self.__event = event
-        self.__event_name = None
+    def __init__(self, event_name, callback):
+        self.__event = None
+        self.event_name = event_name
         self.__callback = callback
         self.__event_object = None
 
     @property
     def event(self):
-        return self.__event if self.__event_name is None else self.__event_name
+        return self.event_name if self.__event is None else self.__event
 
     @event.setter
     def event(self, event):
-        self.__event_name = event
+        self.__event = event
 
     def event_object(self, event_object):
         self.__event_object = event_object

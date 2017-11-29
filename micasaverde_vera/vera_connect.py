@@ -92,6 +92,7 @@ class VeraConnect(object):
         return not self._event.isSet()
 
     def send(self, **params):
+        print params
         if 'output_format' not in params:
             params['output_format'] = 'json'
 
