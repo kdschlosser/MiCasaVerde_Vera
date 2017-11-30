@@ -151,8 +151,45 @@ class Device(object):
 
     def __init__(self):
         self._variables = getattr(self, '_variables', dict())
+        self.argument_mapping = getattr(self, 'argument_mapping', dict())
         self.service_ids = getattr(self, 'service_ids', [])
+        self.service_types = getattr(self, 'service_types', [])
         self.id = getattr(self, 'id', None)
+
+    def get_device_functions(self):
+        import inspect
+        res = []
+
+        for cls in self.__class__.__mro__[:-1]:
+            for attribute in inspect.classify_class_attrs(cls):
+                if attribute.kind == 'method':
+                    res += [attribute.name]
+
+        return sorted(
+            list(item for item in set(res) if not item.startswith('_'))
+        )
+
+    def get_device_variables(self):
+        import inspect
+        res = []
+
+        for cls in self.__class__.__mro__[:-1]:
+            for attribute in inspect.classify_class_attrs(cls):
+                if attribute.kind in ('property', 'data'):
+                    res += [attribute.name]
+
+        res = set(res)
+
+        for service_id in self.service_ids:
+            for keys, value in self._variables[service_id].items():
+                if value is None and keys[0] in res:
+                    res.remove(keys[0])
+                if value is not None:
+                    res.add(keys[0])
+
+        return sorted(
+            list(item for item in res if not item.startswith('_'))
+        )
 
     def __dir__(self):
         """
@@ -163,13 +200,7 @@ class Device(object):
         component of this class.
         """
 
-        dir_list = dir(self.__class__)
-        keys = list(
-            key[1] for (key, value) in self._variables.items()
-            if value is not None
-        )
-
-        return sorted(list(set(keys + dir_list)))
+        return self.get_device_functions() + self.get_device_variables()
 
     def update_node(self, node, full=False):
         """

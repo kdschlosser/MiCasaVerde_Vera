@@ -255,24 +255,6 @@ class Vera(object):
                 # for plugin in plugins:
                 #     self.external_plugins.register(__import__(plugin))
 
-            def __dir__(self):
-                """
-                Modifies the output when using dir()
-
-                This modifies the output when dir() is used on an instance of
-                this device. The purpose for this is not all devices will use
-                every component of this class.
-                """
-
-                dir_list = dir(self.__class__)
-                dir_list += self.__dict__.keys()
-                dir_list += list(
-                    key for (key, value) in self._variables.items()
-                    if value is not None
-                )
-
-                return sorted(set(dir_list))
-
         instance = super(Vera, cls).__new__(cls)
         instance.__init__()
 
