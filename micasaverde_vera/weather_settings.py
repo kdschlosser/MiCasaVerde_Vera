@@ -43,7 +43,12 @@ class WeatherSettings(object):
 
     @tempFormat.setter
     def tempFormat(self, temp_format):
-        pass
+        self._parent.send(
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            Value=temp_format,
+            Variable='tempFormat',
+            id='variableset',
+        )
 
     @property
     def weatherCity(self):
@@ -51,7 +56,12 @@ class WeatherSettings(object):
 
     @weatherCity.setter
     def weatherCity(self, weather_city):
-        pass
+        self._parent.send(
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            Value=weather_city,
+            Variable='weatherCity',
+            id='variableset',
+        )
 
     @property
     def weatherCountry(self):
@@ -59,7 +69,12 @@ class WeatherSettings(object):
 
     @weatherCountry.setter
     def weatherCountry(self, weather_country):
-        pass
+        self._parent.send(
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            Value=weather_country,
+            Variable='weatherCountry',
+            id='variableset',
+        )
 
     def update_node(self, node, _):
         if node is not None:
