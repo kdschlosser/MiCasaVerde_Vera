@@ -22,7 +22,7 @@ import requests
 import json
 import random
 import time
-from vera_exception import VeraNotImplimentedError
+from vera_exception import VeraNotImplementedError
 from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
 
 
@@ -113,6 +113,6 @@ class VeraConnect(object):
 
             if 'ERROR' in response:
                 if 'No implementation' in response:
-                    raise VeraNotImplimentedError
+                    raise VeraNotImplementedError
 
             return response

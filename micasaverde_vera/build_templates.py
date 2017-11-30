@@ -45,16 +45,26 @@ CONTROLLER_INFO_TEMPLATE = (
 )
 
 DEVICE_SUBCLASS_IMPORT = (
-    '''from ..services.{module_name} import {class_name} as _{class_name}\n'''
+    '''# noinspection PyUnresolvedReferences
+from micasaverde_vera.core.services.{module_name} import (
+    {class_name} as _{class_name},
+    )
+'''
 )
 
 DEVICE_SUBCLASS_INIT_TEMPLATE = (
-    '''        _{class_name}.__init__(self, parent)\n'''
+    '''        _{class_name}.__init__(self, parent)
+'''
 )
 
+
 DEVICE_CLASS_TEMPLATE = '''
+# noinspection PyUnresolvedReferences
 from micasaverde_vera.event import Notify
+# noinspection PyUnresolvedReferences
 from micasaverde_vera.devices import Device
+# noinspection PyUnresolvedReferences
+from micasaverde_vera.vera_exception import VeraNotImplementedError
 
 {imports}
 
@@ -111,7 +121,7 @@ class {class_name}(Device, {subclasses}):
 
         prop = property(fget=var_getter, fset=var_setter)
 
-        object.__setattr__(self, variable, prop)
+        setattr(self, variable, prop)
 
         return self._parent.send(
             DeviceNum=self.id,
@@ -124,11 +134,11 @@ class {class_name}(Device, {subclasses}):
     def set_name(self, new_name):
         try:
             self._get_variable('name')
-        except NotImplementedError:
+        except VeraNotImplementedError:
             try:
                 self._get_variable('Name')
-            except NotImplementedError:
-                raise NotImplementedError(
+            except VeraNotImplementedError:
+                raise VeraNotImplementedError(
                     'Function set_name is not supported.'
                 )
 
@@ -143,11 +153,11 @@ class {class_name}(Device, {subclasses}):
     def get_name(self):
         try:
             self._get_variable('name')
-        except NotImplementedError:
+        except VeraNotImplementedError:
             try:
                 self._get_variable('Name')
-            except NotImplementedError:
-                raise NotImplementedError(
+            except VeraNotImplementedError:
+                raise VeraNotImplementedError(
                     'Function get_name is not supported.'
                 )
 
@@ -162,14 +172,14 @@ class {class_name}(Device, {subclasses}):
     def name(self):
         try:
             return self._get_variable('Name')[0]
-        except NotImplementedError:
+        except VeraNotImplementedError:
             return self._get_variable('name')[0]
 
     @name.setter
     def name(self, value):
         try:
             self._get_variable('Name')
-        except NotImplementedError:
+        except VeraNotImplementedError:
             self._get_variable('name')
 
         self._parent.send(
@@ -183,7 +193,7 @@ class {class_name}(Device, {subclasses}):
     def room(self):
         try:
             value, service, keys = self._get_variable('Room')
-        except NotImplementedError:
+        except VeraNotImplementedError:
             value, service, keys = self._get_variable('room')
 
         return self._parent.get_room(value)
@@ -192,7 +202,7 @@ class {class_name}(Device, {subclasses}):
     def room(self, room):
         try:
             self._get_variable('Room')
-        except NotImplementedError:
+        except VeraNotImplementedError:
             self._get_variable('room')
 
         if not isinstance(room, (int, str)):
@@ -234,12 +244,12 @@ class {class_name}(Device, {subclasses}):
 
         try:
             value, service, keys = self._get_variable(item)
-        except NotImplementedError:
-            raise AttributeError(
+        except VeraNotImplementedError:
+            raise VeraNotImplementedError(
                 'Attribute {{0}} is not supported.'.format(item)
             )
         if value is None:
-            raise AttributeError(
+            raise VeraNotImplementedError(
                 'Attribute {{0}} is not supported.'.format(item)
             )
         return value
@@ -273,12 +283,114 @@ class {class_name}(Device, {subclasses}):
                     if variable in keys:
                         return value, service, keys
 
-        raise NotImplementedError(
+        raise VeraNotImplementedError(
             'Attribute {{0}} is not supported.'.format(variable)
         )
+        
+    def get_device_functions(self):
+        import inspect
+        res = []
+
+        for cls in self.__class__.__mro__[:-1]:
+            for attribute in inspect.classify_class_attrs(cls):
+                if attribute.kind == 'method':
+                    res += [attribute.name]
+
+        return sorted(
+            list(item for item in set(res) if not item.startswith('_'))
+        )
+
+    def get_device_variables(self):
+        import inspect
+        res = []
+
+        for cls in self.__class__.__mro__[:-1]:
+            for attribute in inspect.classify_class_attrs(cls):
+                if attribute.kind in ('property', 'data'):
+                    res += [attribute.name]
+
+        res = set(res)
+
+        for service_id in self.service_ids:
+            for keys, value in self._variables[service_id].items():
+                if value is None and keys[0] in res:
+                    res.remove(keys[0])
+                if value is not None:
+                    res.add(keys[0])
+
+        return sorted(
+            list(item for item in res if not item.startswith('_'))
+        )
+
+    def __dir__(self):
+        """
+        Modifies the output when using dir()
+
+        This modifies the output when dir() is used on an instance of this 
+        device. The purpose for this is not all devices will use every 
+        component of this class.
+        """
+
+        return self.get_device_functions() + self.get_device_variables()
+        
+    def update_node(self, node, full=False):
+        """
+        Updates the device with data retrieved from the Vera
+
+        This is internally used.
+        """
+
+        def check_value(variable, value, service=None):
+            if service is not None:
+                if service not in self._variables:
+                    self._variables[service] = dict()
+                try:
+                    old_value, service, keys = self._get_variable(
+                        variable,
+                        service
+                    )
+                except VeraNotImplementedError:
+                    old_value = None
+                    keys = (variable, variable)
+            else:
+                try:
+                    old_value, service, keys = self._get_variable(variable)
+                except VeraNotImplementedError:
+                    old_value = None
+                    keys = (variable, variable)
+                    service = self.service_ids[0]
+
+            if old_value != value:
+                self._variables[service][keys] = value
+                if full:
+                    Notify(
+                        self,
+                        'Device.{{0}}.{{1}}.{{2}}.Changed'.format(
+                            self.id,
+                            service.split(':')[-1],
+                            variable.replace('.', '')
+                        )
+                    )
+
+        if node is not None:
+            if 'tooltip' in node:
+                del node['tooltip']
+
+            for state in node.pop('states', []):
+                check_value(
+                    state['variable'],
+                    state['value'],
+                    state['service']
+                )
+
+            for node_key, node_value in node.items():
+                check_value(node_key, node_value)
 '''
 
 CLASS_TEMPLATE = '''
+from micasaverde_vera.vera_exception import VeraNotImplementedError
+
+
 _default_variables = {{
     '{service_id}': {{{attributes}
     }}
@@ -315,8 +427,12 @@ class {class_name}(object):
         self.service_ids = getattr(self, 'service_ids', [])
         self.service_types = getattr(self, 'service_types', [])
 
-        self.service_ids.append('{service_id}')
-        self.service_types.append('{service_type}')
+        self.service_ids.append(
+            '{service_id}'
+        )
+        self.service_types.append(
+            '{service_type}'
+        )
 
     def _get_variable(self, variable, service=None):
         raise NotImplementedError
@@ -356,7 +472,7 @@ SERVICE_SEND_TEMPLATE = '''
                 )
 
         else:
-            raise NotImplementedError(
+            raise VeraNotImplementedError(
                 'Attribute {second_name} is not supported.'
             )
 '''

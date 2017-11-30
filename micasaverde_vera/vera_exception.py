@@ -29,6 +29,10 @@ class VeraBuildError(VeraError):
     pass
 
 
-class VeraNotImplimentedError(VeraError):
+class VeraNotImplementedError(VeraError):
+    pass
+
+
+class VeraImportError(VeraError):
     pass
 

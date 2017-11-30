@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from devices import Device
-from scenes import Scene
-from installed_plugins import InstalledPlugin
+
 from event import Notify
 
 
@@ -140,6 +138,10 @@ class Room(object):
         self.add(self._parent.devices.get_device(device))
 
     def _locate_item(self, item):
+        from scenes import Scene
+        from devices import Device
+        from installed_plugins import InstalledPlugin
+
         if not isinstance(item, (Device, Scene, InstalledPlugin)):
             found_item = self._parent.devices.get_device(item)
             if found_item is None:

@@ -21,12 +21,13 @@ import vera_build
 import sys
 import os
 from copy import deepcopy
-
+from import_override import ImportOverride
 from vera_exception import (
     VeraError,
     VeraNotFoundError,
     VeraBuildError,
-    VeraNotImplimentedError
+    VeraNotImplementedError,
+    VeraImportError
 )
 
 _UNWANTED_ITEMS = (
@@ -181,6 +182,11 @@ class Vera(object):
     BUILD_PATH = BUILD_PATH
     BUILD_COMPLETE = BUILD_COMPLETE
     discover = vera_build.discover
+    VeraError = VeraError
+    VeraNotFoundError = VeraNotFoundError
+    VeraBuildError = VeraBuildError
+    VeraNotImplementedError = VeraNotImplementedError
+    VeraImportError = VeraImportError
 
     def __init__(self):
         pass
@@ -209,7 +215,6 @@ class Vera(object):
                 core.__name__ = module_name
                 core.__path__ = [vera_build.BUILD_PATH]
                 core.__package__ = package_name
-
         try:
             start_vera()
             # noinspection PyUnresolvedReferences
@@ -226,14 +231,21 @@ class Vera(object):
                     home_automation_gateway_1,
                 )
             except:
-                print('Error loading generated files.')
-                raise
+                import traceback
+                raise VeraImportError(
+                    'Error Importing generated file.\n' +
+                    traceback.format_exc()
+                )
 
         # del home_automation_gateway_1.HomeAutomationGateway1.__setattr__
 
         class NewVera(_Vera, home_automation_gateway_1.HomeAutomationGateway1):
+
             def __init__(self, ip):
                 self.__name__ = 'Vera'
+                self._import_override = ImportOverride(self)
+                self._import_override.start()
+
                 _Vera.__init__(self, ip)
                 home_automation_gateway_1.HomeAutomationGateway1.__init__(
                     self,
@@ -272,20 +284,20 @@ class _Vera(object):
 
     BUILD_PATH = BUILD_PATH
     BUILD_COMPLETE = BUILD_COMPLETE
-    build_files = build_files
     VeraError = VeraError
     VeraNotFoundError = VeraNotFoundError
     VeraBuildError = VeraBuildError
-    VeraNotImplimentedError = VeraNotImplimentedError
+    VeraNotImplementedError = VeraNotImplementedError
+    VeraImportError = VeraImportError
 
     _lock = threading.Lock()
     _queue = []
+    _import_override = None
     id = 0
 
     # noinspection PyUnresolvedReferences
     def __init__(self, ip_address):
         from event import NotificationHandler
-        from scenes import Scenes
         from sections import Sections
         from ip_requests import IPRequests
         from weather_settings import WeatherSettings
@@ -355,8 +367,6 @@ class _Vera(object):
         if self.scenes is not None:
             self.__update(self.scenes, 'scenes', data)
 
-        self.get_scene = self.scenes.get_scene
-
         self.bind = NotificationHandler.bind
         self.unbind = NotificationHandler.unbind
 
@@ -365,16 +375,20 @@ class _Vera(object):
     def rebuild_files(self, log=False):
         import shutil
         shutil.rmtree(BUILD_PATH, ignore_errors=True)
-        self.build_files(self._ip_address, log=log)
+        vera_build.build_files(self._ip_address, log=log)
 
     def update_files(self, log=False):
-        self.build_files(self._ip_address, update=True, log=log)
+        vera_build.build_files(self._ip_address, log, True)
 
     def __build(self, obj, key, data):
         return obj(
             self,
             data.pop(key, None)
         )
+
+    def disconnect(self):
+        self.stop_polling()
+        self._import_override.stop()
 
     # noinspection PyMethodMayBeStatic
     def __update(self, obj, key, data):
@@ -428,7 +442,6 @@ class _Vera(object):
                 self.__update(self.sections, 'sections', data)
                 self.__update(self.users, 'users', data)
                 self.__update(self.rooms, 'rooms', data)
-                self.__update(self.scenes, 'scenes', data)
                 self.__update(self.devices, 'devices', data)
                 self.__update(self.ip_requests, 'ip_requests', data)
                 self.__update(self.upnp_devices, 'upnp_devices', data)
@@ -441,6 +454,8 @@ class _Vera(object):
                     'InstalledPlugins2',
                     data
                 )
+                if self.scenes is not None:
+                    self.__update(self.scenes, 'scenes', data)
 
             self._lock.release()
             self._data_wait.wait()
