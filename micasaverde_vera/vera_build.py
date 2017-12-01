@@ -41,7 +41,8 @@ from constants import (
     SYS_INFO,
     CATEGORIES,
     CATEGORY_LANG,
-    VERA_INFO
+    VERA_INFO,
+    VERSION
 )
 from build_templates import (
     SSDP_REQUEST,
@@ -260,6 +261,7 @@ def make_templates(devices, services):
 
     create_build_folder(
         BUILD_PATH,
+        'VERSION = {0}\n'.format(VERSION) +
         '__import__(\'pkg_resources\').declare_namespace(\'core\')\n'
     )
     create_build_folder(DEVICES_PATH, '')

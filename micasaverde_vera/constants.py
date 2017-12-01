@@ -18,7 +18,7 @@
 
 import os
 
-
+VERSION = (0, 5, 0)
 
 if os.name == 'nt':
     BUILD_PATH = os.path.join(
@@ -36,8 +36,6 @@ SSDP_ADDR = "239.255.255.250"
 SSDP_PORT = 1900
 SSDP_MX = 10
 SSDP_ST = "upnp:rootdevice"
-
-
 
 DATA_TYPES = dict(
     string='(str)',

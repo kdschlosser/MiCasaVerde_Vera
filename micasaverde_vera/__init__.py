@@ -15,20 +15,29 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+
+
 from __future__ import print_function
-import threading
-import vera_build
 import sys
+import threading
 import os
 from copy import deepcopy
-from import_override import ImportOverride
+
+if 'micasaverde_vera' not in sys.modules:
+    sys.modules['micasaverde_vera'] = sys.modules[__name__]
+
+from constants import VERSION # NOQA
+import vera_build # NOQA
+from import_override import ImportOverride # NOQA
 from vera_exception import (
     VeraError,
     VeraNotFoundError,
     VeraBuildError,
     VeraNotImplementedError,
     VeraImportError
-)
+) # NOQA
+
+__version__ = VERSION
 
 _UNWANTED_ITEMS = (
     'static_data',
@@ -111,8 +120,8 @@ class Vera(object):
     refreshing the Z-Wave network, polling a specific device, upgrading a 
     plugin. Since this is a dynamic system I am unable to give you a list of 
     what you can and cannot do. So your best bet is to all dir() in a specific
-    part of the API. I have modifiec the output of dir() so it will return what
-    is available for that specific component. Typiclally functions will be 
+    part of the API. I have modified the output of dir() so it will return what
+    is available for that specific component. Typically functions will be 
     lowercase and any attributes/properties will be camel case. If an attribute
     cannot be set you will get an AttributeError.
     
@@ -215,15 +224,23 @@ class Vera(object):
                 core.__name__ = module_name
                 core.__path__ = [vera_build.BUILD_PATH]
                 core.__package__ = package_name
-        try:
-            start_vera()
-            # noinspection PyUnresolvedReferences
-            from micasaverde_vera.core.devices import home_automation_gateway_1
-        except (ImportError, IOError):
+
+        def build():
             print('MicasaVerde Vera: Building files please wait....')
             build_files(ip_address)
             print()
             print('MicasaVerde Vera: Build complete.')
+
+        try:
+            start_vera()
+            # noinspection PyUnresolvedReferences
+            from micasaverde_vera import core
+            if not hasattr(core, 'VERSION') or core.VERSION != __version__:
+                build()
+            # noinspection PyUnresolvedReferences
+            from micasaverde_vera.core.devices import home_automation_gateway_1
+        except (ImportError, IOError):
+            build()
             try:
                 start_vera()
                 # noinspection PyUnresolvedReferences
@@ -372,10 +389,15 @@ class _Vera(object):
 
         self.init_data = data
 
-    def rebuild_files(self, log=False):
-        import shutil
-        shutil.rmtree(BUILD_PATH, ignore_errors=True)
-        vera_build.build_files(self._ip_address, log=log)
+    @staticmethod
+    def rebuild_files(ip_address='', log=False):
+        if not ip_address:
+            ip_address = vera_build.discover()
+
+        if ip_address:
+            import shutil
+            shutil.rmtree(BUILD_PATH, ignore_errors=True)
+            vera_build.build_files(ip_address, log=log)
 
     def update_files(self, log=False):
         vera_build.build_files(self._ip_address, log, True)
