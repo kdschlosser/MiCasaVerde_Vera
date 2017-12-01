@@ -236,7 +236,7 @@ class Vera(object):
             # noinspection PyUnresolvedReferences
             from micasaverde_vera import core
             if not hasattr(core, 'VERSION') or core.VERSION != __version__:
-                build()
+                _Vera.rebuild_files(ip_address)
             # noinspection PyUnresolvedReferences
             from micasaverde_vera.core.devices import home_automation_gateway_1
         except (ImportError, IOError):
