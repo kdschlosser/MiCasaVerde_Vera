@@ -66,7 +66,7 @@ NUMBER_MAPPING = {
 
 URL = 'http://{ip_address}/cgi-bin/cmh/'
 GET_UPNP_FILES = URL + 'get_upnp_files.sh'
-VIEW_UPNP_FILE = URL + 'view_upnp_file.sh?file={file}'
+VIEW_UPNP_FILE = URL + 'view_upnp_file.sh'
 SYS_INFO = URL + 'sysinfo.sh'
 CATEGORIES = 'http://{ip_address}/cmh/js/config/constants.js'
 CATEGORY_LANG = 'http://{ip_address}/cmh/js/config/lang.js'

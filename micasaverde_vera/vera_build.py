@@ -94,12 +94,13 @@ def write_file(file_path, template):
         f.write(template)
 
 
-def get_data(url):
+def get_data(template, ip_address, **params):
+    url = template.format(ip_address=ip_address)
     try:
-        response = requests.get(url, timeout=1)
+        response = requests.get(url, params=params, timeout=1)
     except (requests.ConnectionError, requests.Timeout):
         time.sleep(random.randrange(1, 3) / 10)
-        return get_data(url)
+        return get_data(template, ip_address, **params)
 
     response = response.content
 
@@ -272,10 +273,6 @@ def make_templates(devices, services):
     )
     create_build_folder(DEVICES_PATH, '')
     create_build_folder(SERVICES_PATH, '')
-    crc = dict(
-        services=dict(),
-        devices=dict()
-    )
 
     for params in devices.values():
         device_type = params['device_type']
@@ -322,10 +319,6 @@ def make_templates(devices, services):
 
         write_file(file_path, template)
 
-        crc_data = CRC32_from_file(file_path)
-        module_name = os.path.split(file_path)[1][:-3]
-        crc['devices'][module_name] = '\'{0}\''.format(crc_data)
-
     for service_name, params in services.items():
         class_name = params.pop('service_class_name')
         file_path = params.pop('service_gen_file')
@@ -340,20 +333,37 @@ def make_templates(devices, services):
         )
 
         write_file(file_path, template)
-        crc_data = CRC32_from_file(file_path)
-        module_name = os.path.split(file_path)[1][:-3]
-        crc['services'][module_name] = '\'{0}\''.format(crc_data)
 
     with open(os.path.join(CORE_PATH, '__init__.py'), 'a') as f:
-        f.write('\n\nclass Services(object):\n')
-        for items in crc['services'].items():
-            f.write('    ' + ' = '.join(items) + '\n')
         f.write('\n\nclass Devices(object):\n')
-        for items in crc['devices'].items():
-            f.write('    ' + ' = '.join(items) + '\n')
-        # f.write(
-        #     '\n\n__import__(\'pkg_resources\').declare_namespace(\'core\')\n'
-        # )
+        for module_file in os.listdir(DEVICES_PATH):
+            if module_file.endswith('.pyc'):
+                continue
+            if module_file == '__init__.py':
+                continue
+            file_path = os.path.join(DEVICES_PATH, module_file)
+            crc_data = CRC32_from_file(file_path)
+            f.write(
+                '    {0} = \'{1}\'\n'.format(
+                    module_file.replace('.py', ''),
+                    crc_data
+                )
+            )
+
+        f.write('\n\nclass Services(object):\n')
+        for module_file in os.listdir(SERVICES_PATH):
+            if module_file.endswith('.pyc'):
+                continue
+            if module_file == '__init__.py':
+                continue
+            file_path = os.path.join(SERVICES_PATH, module_file)
+            crc_data = CRC32_from_file(file_path)
+            f.write(
+                '    {0} = \'{1}\'\n'.format(
+                    module_file.replace('.py', ''),
+                    crc_data
+                )
+            )
 
 
 def create_class_methods(
@@ -632,10 +642,10 @@ def get_categories(ip_address):
 def get_vera_info(ip_address):
     import json
 
-    response, _ = get_data(SYS_INFO.format(ip_address=ip_address))
+    response, _ = get_data(SYS_INFO, ip_address)
     data = json.loads(response)
 
-    response, xmlns = get_data(VERA_INFO.format(ip_address=ip_address))
+    response, xmlns = get_data(VERA_INFO, ip_address)
     xml = ElementTree.fromstring(response)
 
     def find(tag):
@@ -656,27 +666,6 @@ def get_vera_info(ip_address):
 
 
 def get_files(ip_address):
-    def get_data_file(data_file_name):
-        if __name__ == '__main__':
-            print('-Retreiving File', data_file_name)
-        return get_data(
-            VIEW_UPNP_FILE.format(
-                ip_address=ip_address,
-                file=data_file_name
-            )
-        )
-
-    def get_file_list(err=0):
-        try:
-            return requests.get(
-                GET_UPNP_FILES.format(ip_address=ip_address),
-                timeout=1
-            )
-        except requests.ConnectTimeout:
-            if err == 9:
-                raise
-            get_file_list(err + 1)
-
     device_files = {}
     service_files = {}
     downloaded_files = {}
@@ -684,13 +673,17 @@ def get_files(ip_address):
     threads = []
     lock = threading.Lock()
 
-    def get_thread(url):
-        if url.startswith('I_'):
+    def get_thread(xml_file_name):
+        if xml_file_name.startswith('I_'):
             threads.remove(threading.currentThread())
             return
-        response, xmlns = get_data_file(url)
+
+        if __name__ == '__main__':
+            print('-Retreiving File', xml_file_name)
+
+        response, xmlns = get_data(VIEW_UPNP_FILE, ip_address, file=xml_file_name)
         if response is None:
-            downloaded_files[url] = None
+            downloaded_files[xml_file_name] = None
         else:
             xml = ElementTree.fromstring(response)
 
@@ -701,13 +694,13 @@ def get_files(ip_address):
             lock.acquire()
 
             if dev_type is not None:
-                device_files[url] = dict(
+                device_files[xml_file_name] = dict(
                     device_type=dev_type.text,
                     device_xml=xml,
                     device_xmlns=xmlns
                 )
             else:
-                service_files[url] = dict(
+                service_files[xml_file_name] = dict(
                     service_xml=xml,
                     service_xmlns=xmlns
                 )
@@ -715,7 +708,7 @@ def get_files(ip_address):
 
         threads.remove(threading.currentThread())
 
-    for f in get_file_list().content.split('\n'):
+    for f in get_data(GET_UPNP_FILES, ip_address)[0].split('\n'):
         if f.endswith('.xml.lzo'):
             while len(threads) > 9:
                 pass

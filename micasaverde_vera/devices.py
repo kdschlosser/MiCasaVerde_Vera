@@ -56,9 +56,11 @@ class Devices(object):
             device_mod = importlib.import_module(
                 'micasaverde_vera.core.devices.' + mod_name
             )
+            device_cls_name = cls_name[:1].upper() + cls_name[1:]
             device_cls = getattr(
                 device_mod,
-                cls_name[:1].upper() + cls_name[1:]
+                device_cls_name.replace('_', '')
+
             )
 
             return device_cls(self, device)
