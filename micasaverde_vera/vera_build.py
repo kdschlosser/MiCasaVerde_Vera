@@ -356,6 +356,7 @@ def create_class_methods(
         if gateway:
             send_arguments = [
                 ['id', "'action'"],
+                ['serviceId', '%r' % service_id],
                 ['action', '%r' % orig_method_name],
             ]
 
@@ -401,6 +402,11 @@ def create_class_methods(
 
                         if not gateway and orig_variable_name == 'DeviceNum':
                             continue
+
+                        if orig_variable_name == 'serviceId' and gateway:
+                            send_arguments.remove(
+                                ['serviceId', '%r' % service_id]
+                            )
 
                         variable_name = parse_string(orig_variable_name)
                         if variable_name == 'reload':

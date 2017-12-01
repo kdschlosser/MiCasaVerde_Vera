@@ -69,8 +69,12 @@ from micasaverde_vera.vera_exception import VeraNotImplementedError
 {imports}
 
 class {class_name}(Device, {subclasses}):
-    service_ids = ['{device_id}']
-    service_types = ['{device_type}']
+    service_ids = [
+        '{device_id}'
+    ]
+    service_types = [
+        '{device_type}'
+    ]
 
     def __init__(self, parent, node):
         self._parent = parent
@@ -218,9 +222,10 @@ class {class_name}(Device, {subclasses}):
 
     def delete(self):
         self._parent.send(
-            id='device',
-            action='delete',
-            device=self.id
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            id='action',
+            action='DeleteDevice',
+            DeviceNum=self.id,
         )
 
     @property
@@ -388,6 +393,7 @@ class {class_name}(Device, {subclasses}):
 '''
 
 CLASS_TEMPLATE = '''
+# noinspection PyUnresolvedReferences
 from micasaverde_vera.vera_exception import VeraNotImplementedError
 
 

@@ -37,6 +37,10 @@ class Devices(object):
 
     def __build(self, device):
         device_type = device.get('device_type')
+
+        if not device_type:
+            return Device(self, device)
+
         try:
             if 'SceneController:1' in device_type:
                 from scenes import Scenes
@@ -135,7 +139,52 @@ class Device(object):
     """
     This is imported by the generated device files.
     
-    This gets used as a subclass for identification purposes only.
+    This gets used as a parent class for identification purposes.
+    There is also a device that can get created that has no device type. This
+    device is a upnp device that does absolutely nothing and is also invisible
+    so the user does not know of it's existence. Because this device has no
+    device type we are not able to attach it to a generated class. So tis is
+    basically a do nothing for the device.
     
     isinstance(instance, devices.Device)
     """
+
+    def __init__(self, parent, node):
+        self._parent = parent
+
+        def get(variable):
+            return node.pop(variable, None)
+
+        if node is not None:
+            self.id = get('id')
+            self.name = get('name')
+            self.pnp = get('pnp')
+            self.device_type = get('device_type')
+            self.id_parent = get('id_parent')
+            self.disabled = get('disabled')
+            self.device_file = get('device_file')
+            self.device_json = get('device_json')
+            self.impl_file = get('impl_file')
+            self.manufacturer = get('manufacturer')
+            self.model = get('model')
+            self.altid = get('altid')
+            self.ip = get('ip')
+            self.mac = get('mac')
+            self.time_created = get('time_created')
+            self.embedded = get('embedded')
+            self.invisible = get('invisible')
+            self.room = get('room')
+
+            for key, value in node.items():
+                self.__dict__[key] = value
+
+    def update_node(self, node, full=False):
+        pass
+
+    def delete(self):
+        self._parent.send(
+            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
+            id='action',
+            action='DeleteDevice',
+            DeviceNum=self.id,
+        )
