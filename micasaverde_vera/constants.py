@@ -29,8 +29,9 @@ if os.name == 'nt':
 else:
     BUILD_PATH = os.path.join(os.path.expanduser('~'), '.MiCasaVerde_Vera')
 
-DEVICES_PATH = os.path.join(BUILD_PATH, 'devices')
-SERVICES_PATH = os.path.join(BUILD_PATH, 'services')
+CORE_PATH = os.path.join(BUILD_PATH, 'core')
+DEVICES_PATH = os.path.join(CORE_PATH, 'devices')
+SERVICES_PATH = os.path.join(CORE_PATH, 'services')
 
 SSDP_ADDR = "239.255.255.250"
 SSDP_PORT = 1900

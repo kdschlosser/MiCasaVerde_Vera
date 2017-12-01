@@ -28,6 +28,7 @@ if 'micasaverde_vera' not in sys.modules:
 
 from constants import VERSION # NOQA
 import vera_build # NOQA
+from utils import init_core
 from import_override import ImportOverride # NOQA
 from vera_exception import (
     VeraError,
@@ -57,7 +58,7 @@ build_files = vera_build.build_files
 
 class Vera(object):
     """
-    MicasaVerde Vera control entry point.
+    MiCasaVerde Vera control entry point.
     
     This is the class you will use to make the connection to your Vera unit.
     I have designed this system to be dynamic. It builds the code necessary to 
@@ -200,30 +201,26 @@ class Vera(object):
     def __init__(self):
         pass
 
+    @staticmethod
+    def rebuild_files(ip_address='', log=False):
+        if not ip_address:
+            ip_address = vera_build.discover()
+
+        if ip_address:
+            import shutil
+            shutil.rmtree(BUILD_PATH, ignore_errors=True)
+            vera_build.build_files(ip_address, log=log)
+
     def __new__(cls, ip_address=''):
 
         if not ip_address:
             ip_address = vera_build.discover()
 
-        package_name = __package__
-
-        if package_name != __name__:
-            package_name += '.' + __name__
-
-        module_name = package_name + '.core'
-        # if vera_build.BUILD_PATH not in __path__:
-        #    __path__.append(vera_build.BUILD_PATH)
-
         def start_vera():
-            if module_name not in sys.modules:
-                import imp
-                core = imp.load_source(
-                    'micasaverde_vera.core',
-                    os.path.join(vera_build.BUILD_PATH, '__init__.py')
-                )
-                core.__name__ = module_name
-                core.__path__ = [vera_build.BUILD_PATH]
-                core.__package__ = package_name
+            if 'micasaverde_vera.core' in sys.modules:
+                return sys.modules['micasaverde_vera.core']
+            __path__.append(BUILD_PATH)
+            return init_core()
 
         def build():
             print('MicasaVerde Vera: Building files please wait....')
@@ -232,13 +229,20 @@ class Vera(object):
             print('MicasaVerde Vera: Build complete.')
 
         try:
-            start_vera()
-            # noinspection PyUnresolvedReferences
-            from micasaverde_vera import core
-            if not hasattr(core, 'VERSION') or core.VERSION != __version__:
-                _Vera.rebuild_files(ip_address)
+            core = start_vera()
+
+            if (
+                not hasattr(core, 'VERSION') or
+                core.VERSION != __version__
+            ):
+                print('MiCasaVerde Vera: Generated files version mismatch.')
+                print('                  Rebuilding files please wait....')
+                cls.rebuild_files(ip_address)
+                print('MiCasaVerde Vera: Build complete.')
+
             # noinspection PyUnresolvedReferences
             from micasaverde_vera.core.devices import home_automation_gateway_1
+
         except (ImportError, IOError):
             build()
             try:
@@ -253,8 +257,6 @@ class Vera(object):
                     'Error Importing generated file.\n' +
                     traceback.format_exc()
                 )
-
-        # del home_automation_gateway_1.HomeAutomationGateway1.__setattr__
 
         class NewVera(_Vera, home_automation_gateway_1.HomeAutomationGateway1):
 
@@ -389,16 +391,6 @@ class _Vera(object):
 
         self.init_data = data
 
-    @staticmethod
-    def rebuild_files(ip_address='', log=False):
-        if not ip_address:
-            ip_address = vera_build.discover()
-
-        if ip_address:
-            import shutil
-            shutil.rmtree(BUILD_PATH, ignore_errors=True)
-            vera_build.build_files(ip_address, log=log)
-
     def update_files(self, log=False):
         vera_build.build_files(self._ip_address, log, True)
 
@@ -407,6 +399,9 @@ class _Vera(object):
             self,
             data.pop(key, None)
         )
+
+    def rebuild_files(self):
+        Vera.rebuild_files(self._ip_address)
 
     def disconnect(self):
         self.stop_polling()

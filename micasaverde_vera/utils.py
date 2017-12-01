@@ -17,6 +17,11 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
+import imp
+import os
+import sys
+import binascii
+from constants import CORE_PATH
 
 
 def parse_string(word):
@@ -79,3 +84,19 @@ def print_dict(d, indent=''):
         else:
             print(indent + key + ':', value)
 
+
+def CRC32_from_file(file_path):
+    with open(file_path, 'rb') as f:
+        crc = (binascii.crc32(f.read()) & 0xFFFFFFFF)
+    return "%08X" % crc
+
+
+def init_core():
+    core = imp.load_source(
+        'micasaverde_vera.core',
+        os.path.join(CORE_PATH, '__init__.py')
+    )
+    core.__name__ = 'micasaverde_vera.core'
+    core.__path__ = [CORE_PATH]
+    core.__package__ = 'micasaverde_vera'
+    return core

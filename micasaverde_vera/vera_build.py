@@ -25,13 +25,14 @@ import threading
 import random
 import xml.etree.cElementTree as ElementTree
 import time
-from utils import parse_string, create_service_name
+from utils import parse_string, create_service_name, CRC32_from_file
 from constants import (
     SSDP_MX,
     SSDP_ST,
     SSDP_ADDR,
     SSDP_PORT,
     BUILD_PATH,
+    CORE_PATH,
     DEVICES_PATH,
     SERVICES_PATH,
     DATA_TYPES,
@@ -81,6 +82,12 @@ def create_build_folder(path, file_data):
 def write_file(file_path, template):
     if __name__ == "__main__":
         print('Writing File {0} ....'.format(file_path))
+
+    if os.path.exists(file_path):
+        try:
+            os.rename(file_path, file_path)
+        except OSError:
+            return
 
     with open(file_path, 'w') as f:
         f.write(HEADER_TEMPLATE)
@@ -260,12 +267,15 @@ def make_templates(devices, services):
         print('Building Templates....')
 
     create_build_folder(
-        BUILD_PATH,
-        'VERSION = {0}\n'.format(VERSION) +
-        '__import__(\'pkg_resources\').declare_namespace(\'core\')\n'
+        CORE_PATH,
+        'VERSION = {0}\n'.format(VERSION)
     )
     create_build_folder(DEVICES_PATH, '')
     create_build_folder(SERVICES_PATH, '')
+    crc = dict(
+        services=dict(),
+        devices=dict()
+    )
 
     for params in devices.values():
         device_type = params['device_type']
@@ -312,6 +322,10 @@ def make_templates(devices, services):
 
         write_file(file_path, template)
 
+        crc_data = CRC32_from_file(file_path)
+        module_name = os.path.split(file_path)[1][:-3]
+        crc['devices'][module_name] = '\'{0}\''.format(crc_data)
+
     for service_name, params in services.items():
         class_name = params.pop('service_class_name')
         file_path = params.pop('service_gen_file')
@@ -326,6 +340,20 @@ def make_templates(devices, services):
         )
 
         write_file(file_path, template)
+        crc_data = CRC32_from_file(file_path)
+        module_name = os.path.split(file_path)[1][:-3]
+        crc['services'][module_name] = '\'{0}\''.format(crc_data)
+
+    with open(os.path.join(CORE_PATH, '__init__.py'), 'a') as f:
+        f.write('\n\nclass Services(object):\n')
+        for items in crc['services'].items():
+            f.write('    ' + ' = '.join(items) + '\n')
+        f.write('\n\nclass Devices(object):\n')
+        for items in crc['devices'].items():
+            f.write('    ' + ' = '.join(items) + '\n')
+        # f.write(
+        #     '\n\n__import__(\'pkg_resources\').declare_namespace(\'core\')\n'
+        # )
 
 
 def create_class_methods(
