@@ -92,7 +92,10 @@ class {class_name}(Device, {subclasses}):
         if node is not None:
             self.update_node(node, False)
 
-        Notify(self, 'Device.{{0}}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
+        
+    def build_event(self):
+        return 'devices.{{0}}'.format(self.id)
 
     def create_variable(self, variable, value):
         """
@@ -171,6 +174,38 @@ class {class_name}(Device, {subclasses}):
             action='GetName',
             DeviceNum=self.id
         )
+        
+    @property
+    def category(self):
+        try:
+            category = getattr(self, 'category_num')
+        except VeraNotImplementedError as err:
+            try:
+                return getattr(self, 'plugin').Title
+            except VeraNotImplementedError:
+                raise err
+                
+        return self._parent.ha_gateway.categories[category]
+        
+    @property
+    def sub_category(self):
+        try:
+            sub_category = getattr(self, 'subcategory_num')
+        except VeraNotImplementedError as err:
+            try:
+                return getattr(self, 'plugin').Title
+            except VeraNotImplementedError:
+                raise err
+        else:
+            category = getattr(self, 'category_num')
+            
+        subcategory = '{{0}}.{{1}}'.format(category, sub_category)
+        return self._parent.ha_gateway.categories[subcategory]
+        
+    @property
+    def plugin(self):
+        plugin = self._get_variable('plugin')[0]
+        return self._parent.ha_gateway.installed_plugins[plugin]
 
     @property
     def name(self):
@@ -200,7 +235,7 @@ class {class_name}(Device, {subclasses}):
         except VeraNotImplementedError:
             value, service, keys = self._get_variable('room')
 
-        return self._parent.get_room(value)
+        return self._parent.ha_gateway.rooms[value]
 
     @room.setter
     def room(self, room):
@@ -250,10 +285,17 @@ class {class_name}(Device, {subclasses}):
         try:
             value, service, keys = self._get_variable(item)
         except VeraNotImplementedError:
-            raise VeraNotImplementedError(
-                'Attribute {{0}} is not supported.'.format(item)
-            )
+            value = None
+            
         if value is None:
+            for cls in self.__class__.__mro__[:-1]:
+                if item in cls.__dict__:
+                    attr = cls.__dict__[item]
+                    
+                    if isinstance(attr, property):
+                        return attr.fget(self)
+                        
+                    return attr
             raise VeraNotImplementedError(
                 'Attribute {{0}} is not supported.'.format(item)
             )
@@ -276,23 +318,22 @@ class {class_name}(Device, {subclasses}):
         return services
 
     def _get_variable(self, variable, service=None):
-
         if service is not None:
             if service in self._variables:
                 for keys, value in self._variables[service].items():
-                    if variable in keys:
+                    if variable in keys and value is not None:
                         return value, service, keys
         else:
             for service, variables in self._variables.items():
                 for keys, value in variables.items():
-                    if variable in keys:
+                    if variable in keys and value is not None:
                         return value, service, keys
 
         raise VeraNotImplementedError(
             'Attribute {{0}} is not supported.'.format(variable)
         )
         
-    def get_device_functions(self):
+    def get_functions(self):
         import inspect
         res = []
 
@@ -305,7 +346,7 @@ class {class_name}(Device, {subclasses}):
             list(item for item in set(res) if not item.startswith('_'))
         )
 
-    def get_device_variables(self):
+    def get_variables(self):
         import inspect
         res = []
 
@@ -336,7 +377,7 @@ class {class_name}(Device, {subclasses}):
         component of this class.
         """
 
-        return self.get_device_functions() + self.get_device_variables()
+        return self.get_functions() + self.get_variables()
         
     def update_node(self, node, full=False):
         """
@@ -370,8 +411,7 @@ class {class_name}(Device, {subclasses}):
                 if full:
                     Notify(
                         self,
-                        'Device.{{0}}.{{1}}.{{2}}.Changed'.format(
-                            self.id,
+                        self.build_event() + '.{{0}}.{{1}}.changed'.format(
                             service.split(':')[-1],
                             variable.replace('.', '')
                         )
@@ -410,12 +450,13 @@ _argument_mapping = {{
 
 class {class_name}(object):
     """
-    Attributes:
+    Properties:
 {class_doc}
     """
 
     def __init__(self, parent):
         self._parent = parent
+        self.id = None
         self._variables = getattr(self, '_variables', dict())
         self.argument_mapping = getattr(self, 'argument_mapping', dict())
 
@@ -498,8 +539,7 @@ PROPERTY_TEMPLATE = '''
         return self._get_variable('{second_name}')[0]
 
     @{method}.setter
-    def {method}(self, value):
-'''
+    def {method}(self, value):'''
 
 METHOD_TEMPLATE = '''
     def {method}(self, {keywords}):

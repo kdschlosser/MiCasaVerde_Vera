@@ -98,4 +98,4 @@ class WeatherSettings(object):
                         self._tempFormat = value
                     else:
                         setattr(self, key, value)
-                    Notify(self, 'WeatherSetting.{0}.Changed'.format(key))
+                    Notify(self, 'weather_setting.{0}.changed'.format(key))

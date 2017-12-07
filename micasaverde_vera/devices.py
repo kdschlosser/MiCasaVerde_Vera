@@ -24,9 +24,9 @@ from vera_exception import VeraImportError
 
 class Devices(object):
 
-    def __init__(self, parent, node):
-        self._parent = parent
-        self.send = parent.send
+    def __init__(self, ha_gateway, node):
+        self.ha_gateway = ha_gateway
+        self.send = ha_gateway.send
         self._devices = []
 
         if node is not None:
@@ -36,19 +36,16 @@ class Devices(object):
                     self._devices.remove(None)
 
     def __build(self, device):
-        device_type = device.get('device_type')
+        device_type = device.get('device_type', '')
 
         if not device_type:
-            return Device(self, device)
+            return UnknownDevice(self, device)
 
         try:
             if 'SceneController:1' in device_type:
                 from scenes import Scenes
-
-                self._parent.scenes = Scenes(self._parent, device)
-                self._parent.get_scene = self._parent.scenes.get_scene
-
-                return self._parent.scenes
+                self.ha_gateway.scenes = Scenes(self.ha_gateway, device)
+                return self.ha_gateway.scenes
 
             cls_name = create_service_name(device_type)
             mod_name = parse_string(cls_name)
@@ -67,36 +64,32 @@ class Devices(object):
         except VeraImportError:
             return None
 
-    def get_room(self, number):
-        return self._parent.get_room(number)
-
-    def get_category(self, number):
-        return self._parent.get_category(number)
-
-    def get_geofence(self, number):
-        return self._parent.get_geofence(number)
-
-    def get_section(self, number):
-        return self._parent.get_section(number)
-
-    def get_user(self, number):
-        return self._parent.get_user(number)
-
-    def get_plugin(self, number):
-        return self._parent.get_plugin(number)
-
-    def get_device(self, number):
-        number = str(number)
-        if number.isdigit():
-            number = int(number)
-
-        for device in self._devices:
-            if number in (device.name, device.id):
-                return device
-
     def __iter__(self):
         for device in self._devices:
             yield device
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for device in self._devices:
+            if item in (device.id, device.name):
+                return device
+
+        if isinstance(item, int):
+            raise IndexError
+
+        raise KeyError
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -127,10 +120,7 @@ class Devices(object):
 
             if full:
                 for device in self._devices:
-                    Notify(
-                        device,
-                        'Device.{0}.Removed'.format(device.id)
-                    )
+                    Notify(device, device.build_event() + '.removed')
                 del self._devices[:]
 
             self._devices += devices[:]
@@ -150,6 +140,9 @@ class Device(object):
     
     isinstance(instance, devices.Device)
     """
+
+
+class UnknownDevice(Device):
 
     def __init__(self, parent, node):
         self._parent = parent

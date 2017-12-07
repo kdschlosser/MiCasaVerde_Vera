@@ -21,25 +21,13 @@ from event import Notify
 
 class InstalledPlugins(object):
 
-    def __init__(self, parent, node):
+    def __init__(self, ha_gateway, node):
         self._plugins = []
-        self.parent = parent
+        self.ha_gateway = ha_gateway
+        self.send = ha_gateway.send
 
         if node is not None:
-            for plugin in node:
-                self._plugins += [InstalledPlugin(self, plugin)]
-
-    def get_category(self, number):
-        return self.parent.get_category(number)
-
-    def get_plugin(self, number):
-        number = str(number)
-        if number.isdigit():
-            number = int(number)
-
-        for plugin in self._plugins:
-            if number in (plugin.Title, plugin.id):
-                return plugin
+            self._plugins = [InstalledPlugin(self, plugin) for plugin in node]
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -59,13 +47,35 @@ class InstalledPlugins(object):
 
             if full:
                 for plugin in self._plugins:
-                    Notify(
-                        plugin,
-                        'InstalledPlugin.{0}.Removed'.format(plugin.id)
-                    )
+                    Notify(plugin, plugin.build_event() + '.removed')
                 del self._plugins[:]
 
             self._plugins += plugins[:]
+
+    def __iter__(self):
+        for plugin in self._plugins:
+            yield plugin
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for plugin in self._plugins:
+            if item in (plugin.Title, plugin.id):
+                return plugin
+        if isinstance(item, int):
+            raise IndexError
+        raise KeyError
 
 
 class File(object):
@@ -85,13 +95,13 @@ class Lua(object):
 
     @property
     def category(self):
-        return self._parent.get_category(self.CategoryNum)
+        return self._parent.parent.ha_gateway.categories[self.CategoryNum]
 
 
 class InstalledPlugin(object):
 
     def __init__(self, parent, node):
-        self._parent = parent
+        self.parent = parent
 
         self.files = []
         self.lua = []
@@ -105,7 +115,7 @@ class InstalledPlugin(object):
 
         for plugin_device in node.pop('Devices', []):
             device_type = plugin_device['DeviceType']
-            for device in parent.parent.devices:
+            for device in parent.ha_gateway.devices:
                 if device.device_type == device_type:
                     self.devices += [device]
 
@@ -114,19 +124,19 @@ class InstalledPlugin(object):
         for k, v in node.items():
             self.__dict__[k] = v
 
-        Notify(self, 'InstalledPlugin.{0}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created'.format(self.id))
 
-    def get_category(self, number):
-        return self._parent.get_category(number)
+    def build_event(self):
+        return 'installed_plugins.{0}'.format(self.id)
 
     def delete(self):
-        self._parent.send(
+        self.parent.send(
             id='delete_plugin',
             Plugin_ID=self.id
         )
 
     def update(self):
-        self._parent.send(
+        self.parent.send(
             id='update_plugin',
             Plugin_ID=self.id
         )
@@ -144,11 +154,11 @@ class InstalledPlugin(object):
                     self.devices.remove(device)
 
             for device in self._parent.parent.devices:
-                if device.device_type == device_type and device not in devices:
+                plugin = getattr(device, 'plugin', None)
+                if plugin == self and device not in devices:
                     Notify(
                         device,
-                        'InstalledPlugin.{0}.Device.{1}.Created'.format(
-                            self.id,
+                        self.build_event() + '.devices.{0}.created'.format(
                             device.id
                         )
                     )
@@ -158,8 +168,7 @@ class InstalledPlugin(object):
             for device in self.devices:
                 Notify(
                     device,
-                    'InstalledPlugin.{0}.Device.{1}.Removed'.format(
-                        self.id,
+                    self.build_event() + '.devices.{0}.removed'.format(
                         device.id
                     )
                 )

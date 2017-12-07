@@ -29,7 +29,7 @@ class VeraBuildError(VeraError):
     pass
 
 
-class VeraNotImplementedError(VeraError):
+class VeraNotImplementedError(AttributeError):
     pass
 
 

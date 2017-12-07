@@ -21,24 +21,38 @@ from event import Notify
 
 class Alerts(object):
 
-    def __init__(self, parent, node):
-        self._parent = parent
+    def __init__(self, ha_gateway, node):
+        self.ha_gateway = ha_gateway
         self._alerts = []
 
         if node is not None:
             for alert in node:
                 self._alerts += [Alert(self, alert)]
 
-    def get_room(self, room):
-        return self._parent.get_room(room)
-
-    def get_device(self, device):
-        return self._parent.get_device(device)
-
     def __iter__(self):
         alerts = sorted(self._alerts, key=lambda x: x.LocalTimestamp)
         for alert in alerts:
             yield alert
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except IndexError:
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+            for alert in self._alerts:
+                if item == alert.LocalTimestamp:
+                    return alert
+            raise IndexError
+        raise KeyError
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -61,72 +75,26 @@ class Alerts(object):
 
 
 class Alert(object):
-    """
-        Attributes:
-            PK_Alert (str):
-            DeviceName (str):
-            Code (str):
-            Room (int):
-            Server_Storage (str):
-            EventType (int):
-            Users (str):
-            Severity (int):
-            PK_Device (int):
-            Argument (int):
-            PK_Store (str):
-            DeviceType (str):
-            Filesize (int):
-            Key (str):
-            LocalTimestamp (int):
-            Description (str):
-            Icon (str):
-            LocalDate (str):
-            NewValue (str):
-            SourceType (int):
-        """
 
     def __init__(self, parent, node):
         self._parent = parent
-
-        def get(key):
-            return node.pop(key, None)
-
-        self.PK_Alert = get('PK_Alert')
-        self.DeviceName = get('DeviceName')
-        self.Code = get('Code')
-        self.Room = get('Room')
-        self.Server_Storage = get('Server_Storage')
-        self.EventType = get('EventType')
-        self.Users = get('Users')
-        self.Severity = get('Severity')
-        self.PK_Device = get('PK_Device')
-        self.Argument = get('Argument')
-        self.PK_Store = get('PK_Store')
-        self.DeviceType = get('DeviceType')
-        self.Filesize = get('Filesize')
-        self.Key = get('Key')
-        self.LocalTimestamp = get('LocalTimestamp')
-        self.Description = get('Description')
-        self.Icon = get('Icon')
-        self.LocalDate = get('LocalDate')
-        self.NewValue = get('NewValue')
-        self.SourceType = get('SourceType')
+        self.PK_Alert = node.pop('PK_Alert', None)
+        self.Room = node.pop('Room', None)
+        self.PK_Device = node.pop('PK_Device', None)
+        self.LocalTimestamp = node.pop('LocalTimestamp', None)
 
         for k, v in node.items():
             self.__dict__[k] = v
 
-        Notify(self, 'Alert.{0}.Created'.format(self.PK_Alert))
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return 'alerts.{0}'.format(self.PK_Alert)
 
     @property
     def device(self):
-        return self._parent.get_device(self.PK_Device)
+        return self._parent.ha_gateway.devices[self.PK_Device]
 
     @property
     def room(self):
-        return self._parent.get_room(self.Room)
-
-    def __setattr__(self, key, value):
-        if key.startswith('_'):
-            object.__setattr__(self, key, value)
-
-        raise AttributeError('The attribute {0} cannot be set.'.format(key))
+        return self._parent.ha_gateway.rooms[self.Room]

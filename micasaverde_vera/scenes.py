@@ -20,57 +20,92 @@
 import base64
 
 # noinspection PyUnresolvedReferences
-from micasaverde_vera.core.services.scene_1 import Scene1
+from micasaverde_vera.core.devices.scene_1 import Scene1
 # noinspection PyUnresolvedReferences
-from micasaverde_vera.core.services.scene_controller_1 import SceneController1
-# noinspection PyUnresolvedReferences
-from micasaverde_vera.core.services.ha_device_1 import HaDevice1
+from micasaverde_vera.core.devices.scene_controller_1 import SceneController1
 from event import Notify
+from vera_exception import VeraNotImplementedError
 
 
-class Scenes(SceneController1, HaDevice1):
-    _service_id = 'urn:schemas-micasaverde-com:deviceId:SceneController1'
-    _service_type = 'urn:schemas-micasaverde-com:device:SceneController:1'
+class Scenes(SceneController1):
 
-    def __init__(self, parent, node):
+    def __init__(self, ha_gateway, node):
+        self.category_num = 14
+        self.subcategory_num = 0
         self._scenes = []
-        self.parent = parent
-        self.send = parent.send
-        SceneController1.__init__(self, parent)
-        HaDevice1.__init__(self, parent)
+        self.ha_gateway = ha_gateway
+        self.send = ha_gateway.send
+
+        SceneController1.__init__(self, self, {})
+
+        for state in node.pop('states', []):
+            for keys in self._variables[state['service']].keys():
+                if state['variable'] in keys:
+                    break
+            else:
+                keys = (state['variable'], state['variable'])
+            self._variables[state['service']][keys] = state['value']
 
         for key, value in node.items():
-            setattr(self, key, value)
+            for variables in self._variables.values():
+                for keys in variables.keys():
+                    if key in keys:
+                        variables[keys] = value
+                        break
+                else:
+                    continue
+                break
+            else:
+                service_id = 'urn:micasaverde-com:serviceId:SceneController1'
+                self._variables[service_id][(key, key)] = value
 
         Notify(
             self,
-            'Device.{0}.Created'.format(self.id)
+            'devices.{0}.created'.format(self.id)
         )
 
-    def get_devices(self):
-        return self.parent.devices
+        print self.category
 
     def __iter__(self):
-        return iter(self._scenes)
+        for scene in self._scenes:
+            yield scene
+
+    def get_devices(self):
+        return self.ha_gateway.devices
 
     def get_device(self, device):
-        return self.parent.get_device(device)
+        return self.ha_gateway.devices[device]
 
     def get_room(self, room):
-        return self.parent.get_room(room)
+        return self.ha_gateway.rooms[room]
 
     def get_user(self, user):
-        return self.parent.get_user(user)
+        return self.parent.users[user]
 
-    def get_scene(self, scene):
-        if isinstance(scene, Scene):
-            return scene
-        scene = str(scene)
-        if scene.isdigit():
-            scene = int(scene)
-        for s in self._scenes:
-            if scene in (s.id, s.name):
-                return s
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            try:
+                return self._get_variable(item)[0]
+            except VeraNotImplementedError:
+                raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for scene in self._scenes:
+            if item in (scene.name, scene.id):
+                return scene
+
+        if isinstance(item, int):
+            raise IndexError
+        raise KeyError
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -92,10 +127,11 @@ class Scenes(SceneController1, HaDevice1):
 
                 if full:
                     for scene in self._scenes:
-                        Notify(scene, 'Scene.{0}.Removed'.format(scene.id))
+                        Notify(scene, 'scenes.{0}.removed'.format(scene.id))
                     del self._scenes[:]
 
                 self._scenes += scenes
+
             elif isinstance(node, dict):
                 for key, value in node.items():
                     old_value = getattr(self, key, None)
@@ -104,13 +140,11 @@ class Scenes(SceneController1, HaDevice1):
                         setattr(self, key, value)
                         Notify(
                             self,
-                            'Device.{0}.{1}.Changed'.format(self.id, key)
+                            'devices.{0}.{1}.changed'.format(self.id, key)
                         )
 
 
 class Scene(Scene1):
-    _service_id = 'urn:schemas-micasaverde-com:deviceId:Scene1'
-    _service_type = 'urn:schemas-micasaverde-com:device:Scene:1'
 
     # noinspection PyShadowingBuiltins,PyPep8Naming
     def __init__(
@@ -149,12 +183,16 @@ class Scene(Scene1):
         self._encoded_lua = encoded_lua
         self._lua = lua
 
-        Notify(self, 'Scene.{0}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
         self.groups = Groups(self, groups)
         self.triggers = Triggers(self, triggers)
         self.timers = Timers(self, timers)
+        self.category_num = 9999
+        self.subcategory_num = 0
+        Scene1.__init__(self, parent, {})
 
-        Scene1.__init__(self, parent)
+    def build_event(self):
+        return 'scenes.{0}'.format(self.id)
 
     @property
     def name(self):
@@ -167,24 +205,26 @@ class Scene(Scene1):
             action='rename',
             scene=self.id,
             name=name,
-            room=self.room.name
+            room=self.room.id
         )
 
     @property
     def room(self):
-        return self.parent.get_room(self._room)
+        return self.parent.ha_gateway.rooms[self._room]
 
     @room.setter
     def room(self, room):
-        if isinstance(room, (int, unicode, str)):
-            room = self.parent.get_room(str(room))
+        from rooms import Room
+
+        if not isinstance(room, Room):
+            room = self.parent.ha_gateway.rooms[room]
 
         self._parent.send(
             id='scene',
             action='rename',
             scene=self.id,
             name=self.name,
-            room=room.name
+            room=room.id
         )
 
     @property
@@ -324,7 +364,7 @@ class Scene(Scene1):
                 else:
                     setattr(self, key, value)
 
-                Notify(self, 'Scene.{0}.{1}.Changed'.format(self.id, key))
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
         self.triggers.update_node(_triggers, full=full)
         self.groups.update_node(_groups, full=full)
@@ -332,12 +372,16 @@ class Scene(Scene1):
 
 
 class Actions(object):
-    def __init__(self, scene, actions=[]):
+    def __init__(self, parent, scene, actions=[]):
+        self.parent = parent
         self.scene = scene
         self.actions = list(
             Action(self, scene, **action) for action in actions
         )
         self.available_devices = AvailableDevices(self, scene)
+
+    def build_event(self):
+        return self.parent.build_event()
 
     def __iter__(self):
         return iter(self.actions)
@@ -354,25 +398,21 @@ class Actions(object):
         if item in self.__dict__:
             return self.__dict__[item]
 
-        for action in self.actions:
-            if item == action.action:
-                return action
-
-        raise AttributeError(
-            'Action {0} is not added.'.format(item)
-        )
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
 
     def __getitem__(self, item):
-        if isinstance(item, int):
-            return self.actions[item]
+        item = str(item)
+        if item.isdigit():
+            return self.actions[int(item)]
 
         for action in self.actions:
             if item == action.action:
                 return action
 
-        raise KeyError(
-            'Action {0} is not added.'.format(item)
-        )
+        raise KeyError
 
     def update_node(self, node, full):
         actions = []
@@ -388,13 +428,7 @@ class Actions(object):
 
         if full:
             for action in self.actions:
-                Notify(
-                    action,
-                    'Scene.{0}.Action.{1}.Removed'.format(
-                        self.scene.id,
-                        action.action
-                    )
-                )
+                Notify(action, action.build_event() + '.removed')
             del self.actions[:]
 
         self.actions += actions
@@ -415,10 +449,11 @@ class Action(object):
         self.device = device
         self.service = service
         self._action = action
-        Notify(self, 'Scene.{0}.Action.{1}.Created'.format(scene.id, action))
-        self.arguments = list(
-            Argument(self, **argument) for argument in arguments
-        )
+        Notify(self, self.build_event() + '.created')
+        self.arguments = Arguments(self, arguments)
+
+    def build_event(self):
+        return self.parent.build_event() + 'actions.{0}'.format(self._action)
 
     @property
     def action(self):
@@ -427,79 +462,20 @@ class Action(object):
         return self._action
 
     def new_argument(self):
-        self.arguments += [Argument(self, name='', value=None)]
-        return self.arguments[-1]
-
-    def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
-
-        for argument in self.arguments:
-            if item == argument.name:
-                return argument
-
-        raise AttributeError(
-            'No argument named {0} for action {1}'.format(item, self.action)
-        )
+        return self.arguments.new()
 
     def delete(self):
-        Notify(
-            self,
-            'Scene.{0}.Action.{1}.Removed'.format(self.scene.id, self.action)
-        )
+        Notify(self, self.build_event() + '.removed')
         self.parent.remove(self)
 
     def update_node(self, node, full):
-        arguments = []
-
-        for argument in node.pop('arguments', []):
-            name = argument['name']
-
-            for found_argument in self.arguments[:]:
-                if found_argument.name == name:
-                    self.arguments.remove(found_argument)
-                    break
-            else:
-                found_argument = Argument(self, **argument)
-
-            arguments += [found_argument]
-
-            if argument['value'] != found_argument.value:
-                found_argument.value = argument['value']
-                Notify(
-                    found_argument,
-                    'Scene.{0}.Action.{1}.Argument.{2}.Value.Changed'.format(
-                        self.scene.id,
-                        self.action,
-                        found_argument.name
-                    )
-                )
-        if full:
-            for argument in self.arguments:
-                Notify(
-                    argument,
-                    'Scene.{0}.Action.{1}.Argument.{2}.Removed'.format(
-                        self.scene.id,
-                        self.action,
-                        argument.name
-                    )
-                )
-            del self.arguments[:]
-
-        self.arguments += arguments
+        self.arguments.update_node(node.pop('arguments', []), full)
 
         for key, value in node.items():
             old_value = getattr(self, key, None)
             if old_value != value:
                 setattr(self, key, value)
-                Notify(
-                    self,
-                    'Scene.{0}.Action.{1}.{2}.Changed'.format(
-                        self.scene.id,
-                        self.action,
-                        key
-                    )
-                )
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
 
 class AvailableDevices(object):
@@ -586,15 +562,19 @@ class AvailableDevice(object):
 class Groups(object):
     def __init__(self, scene, groups):
         self.scene = scene
-        self.groups = list(
-            Group(scene, **group) for group in groups
-        )
+        self.groups = []
+
+        for group in groups:
+            self.groups += [Group(self, scene, len(self.groups) + 1, **group)]
+
+    def build_event(self):
+        return self.scene.build_event()
 
     def __iter__(self):
         return iter(self.groups)
 
     def new_group(self):
-        self.groups += [Group(self.scene)]
+        self.groups += [Group(self, self.scene, len(self.groups) + 1)]
         return self.groups[-1]
 
     def update_node(self, node, full):
@@ -611,7 +591,10 @@ class Groups(object):
 
         if full:
             for group in self.groups:
-                Notify(group, 'Scene.{0}.Group.Removed'.format(self.scene.id))
+                Notify(
+                    group,
+                    self.build_event() + '.groups.{0}.removed'.format(group.id)
+                )
             del self.groups[:]
 
         self.groups += groups
@@ -626,11 +609,16 @@ class Groups(object):
 
 class Group(object):
 
-    def __init__(self, scene, delay=0, actions=[]):
+    def __init__(self, parent, scene, id, delay=0, actions=[]):
+        self.parent = parent
         self.scene = scene
+        self.id = id
         self._delay = delay
-        Notify(self, 'Scene.{0}.Group.Created'.format(scene.id))
-        self.actions = Actions(scene, actions)
+        Notify(self, self.build_event() + '.created')
+        self.actions = Actions(self, scene, actions)
+
+    def build_event(self):
+        return self.parent.build_event() + 'groups.{0}'.format(self.id)
 
     @property
     def delay(self):
@@ -641,31 +629,16 @@ class Group(object):
         self._delay = delay
 
     def delete(self):
-        Notify(self, 'Scene.{0}.Group.Removed'.format(self.scene.id))
-        self.scene.groups.remove(self)
-
-    def __getitem__(self, item):
-        if isinstance(item, int):
-            return self.actions[item]
-
-        return self.actions[item]
-
-    def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
-
-        for action in self.actions:
-            if action.action == item:
-                return action
-
-        raise AttributeError(
-            'Scene {0} does not have action {1}'.format(self.scene.id, item)
+        Notify(
+            self,
+            self.build_event() + '.removed'
         )
+        self.scene.groups.remove(self)
 
     def update_node(self, node, full):
         if self._delay != node['delay']:
             self._delay = node['delay']
-            Notify(self, 'Scene.{0}.Group.Delay.Changed'.format(self.scene.id))
+            Notify(self, self.build_event() + '.delay.changed')
         self.actions.update_node(node['actions'], full)
 
 
@@ -674,14 +647,17 @@ class Triggers(object):
     def __init__(self, scene, triggers):
         self.scene = scene
         self.triggers = list(
-            Trigger(scene, **trigger) for trigger in triggers
+            Trigger(self, scene, **trigger) for trigger in triggers
         )
+
+    def build_event(self):
+        return self.scene.build_event()
 
     def __iter__(self):
         return iter(self.triggers)
 
     def new_trigger(self):
-        self.triggers += [Trigger(self.scene, '')]
+        self.triggers += [Trigger(self, self.scene, '')]
         return self.triggers[-1]
 
     def remove(self, trigger):
@@ -692,11 +668,21 @@ class Triggers(object):
         if item in self.__dict__:
             return self.__dict__[item]
 
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            return self.triggers[int(item)]
+
         for trigger in self.triggers:
-            if trigger.name == item:
+            if item == trigger.name:
                 return trigger
 
-        raise AttributeError
+        raise KeyError
 
     def update_node(self, node, full):
         triggers = []
@@ -713,13 +699,7 @@ class Triggers(object):
 
         if full:
             for trigger in self.triggers:
-                Notify(
-                    trigger,
-                    'Scene.{0}.Trigger.{1}.Removed'.format(
-                        self.scene.id,
-                        trigger.name
-                    )
-                )
+                Notify(trigger, trigger.build_event() + '.removed')
             del self.triggers[:]
 
         self.triggers += triggers
@@ -728,6 +708,7 @@ class Triggers(object):
 class Trigger(object):
     def __init__(
         self,
+        parent,
         scene,
         name,
         device=None,
@@ -739,6 +720,7 @@ class Trigger(object):
         last_run=0,
         last_eval=0
     ):
+        self.parent = parent
         self.scene = scene
         self._name = name
         self._device = device
@@ -748,13 +730,11 @@ class Trigger(object):
         self._encoded_lua = encoded_lua
         self.last_run = last_run
         self.last_eval = last_eval
-        Notify(
-            self,
-            'Scene.{0}.Trigger.{1}.Created'.format(scene.id, self.name)
-        )
-        self.arguments = list(
-            Argument(self, **argument) for argument in arguments
-        )
+        Notify(self, self.build_event() + '.created')
+        self.arguments = Arguments(self, arguments)
+
+    def build_event(self):
+        return self.parent.build_event() + 'triggers.{0}'.format(self.name)
 
     @property
     def name(self):
@@ -821,57 +801,14 @@ class Trigger(object):
             self._lua = lua
 
     def new_argument(self):
-        self.arguments += [
-            Argument(self, id=len(self.arguments), value=None)
-        ]
-        return self.arguments[-1]
+        return self.arguments.new()
 
     def delete(self):
-        Notify(
-            self,
-            'Scene.{0}.Trigger.{1}.Removed'.format(self.scene.id, self.name)
-        )
+        Notify(self, self.build_event() + '.removed')
         self.scene.triggers.remove(self)
 
     def update_node(self, node, full=False):
-
-        arguments = []
-        for argument in node.pop('arguments', []):
-            # noinspection PyShadowingBuiltins
-            id = argument['id']
-            for found_argument in self.arguments[:]:
-                if found_argument.id == id:
-                    self.arguments.remove(found_argument)
-                    break
-            else:
-                found_argument = Argument(self, **argument)
-
-            if found_argument.value != argument['value']:
-                found_argument.value = argument['value']
-                Notify(
-                    found_argument,
-                    'Scene.{0}.Trigger.{1}.Argument.{2}.Value.Changed'.format(
-                        self.scene.id,
-                        self.name,
-                        found_argument.id
-                    )
-                )
-
-            arguments += [found_argument]
-
-        if full:
-            for argument in self.arguments:
-                Notify(
-                    argument,
-                    'Scene.{0}.Trigger.{1}.Argument.{2}.Removed'.format(
-                        self.scene.id,
-                        self.name,
-                        argument.id
-                    )
-                )
-            del self.arguments[:]
-
-        self.arguments += arguments
+        self.arguments.update_node(node.pop('arguments', []), full)
 
         for key, value in node.items():
             if key == 'device':
@@ -905,25 +842,21 @@ class Trigger(object):
                 else:
                     setattr(self, key, value)
 
-                Notify(
-                    self,
-                    'Scene.{0}.Trigger.{1}.{2}.Changed'.format(
-                        self.scene.id,
-                        self.name,
-                        key
-                    )
-                )
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
 
 class Timers(object):
 
     def __init__(self, scene, timers):
         self.scene = scene
-        self.timers = list(Timer(scene, **timer) for timer in timers)
+        self.timers = list(Timer(self, scene, **timer) for timer in timers)
 
     def new_timer(self, name):
-        self.timers += [Timer(self.scene, len(self.timers), name)]
+        self.timers += [Timer(self, self.scene, len(self.timers), name)]
         return self.timers[-1]
+
+    def build_event(self):
+        return self.scene.build_event()
 
     def __iter__(self):
         return iter(self.timers)
@@ -932,15 +865,16 @@ class Timers(object):
         if item in self.__dict__:
             return self.__dict__[item]
 
-        for timer in self.timers:
-            if timer.name == item:
-                return timer
-
-        raise AttributeError
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
 
     def __getitem__(self, item):
-        if isinstance(item, int):
-            return self.timers[item - 1]
+        item = str(item)
+
+        if item.isdigit():
+            return self.timers[int(item)]
 
         for timer in self.timers:
             if timer.name == item:
@@ -971,13 +905,7 @@ class Timers(object):
 
         if full:
             for timer in self.timers:
-                Notify(
-                    timer,
-                    'Scene.{0}.Timer.{1}.Removed'.format(
-                        self.scene.id,
-                        timer.name
-                    )
-                )
+                Notify(timer, timer.build_event() + '.removed')
             del self.timers[:]
 
         self.timers += timers
@@ -988,6 +916,7 @@ class Timer(object):
 
     def __init__(
         self,
+        parent,
         scene,
         id,
         name='',
@@ -1001,6 +930,7 @@ class Timer(object):
 
         if not name:
             name = 'NO NAME ASSIGNED'
+        self.parent = parent
         self.scene = scene
         self.id = id
         self._name = name
@@ -1011,7 +941,10 @@ class Timer(object):
         self.next_run = next_run
         self.last_run = last_run
 
-        Notify(self, 'Scene.{0}.Timer.{1}.Created'.format(scene.id, self.id))
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return self.parent.build_event() + 'timers.{0}'.format(self.id)
 
     @property
     def name(self):
@@ -1054,10 +987,7 @@ class Timer(object):
         self._time = time
 
     def delete(self):
-        Notify(
-            self,
-            'Scene.{0}.Timer.{1}.Removed'.format(self.scene.id, self.name)
-        )
+        Notify(self, self.build_event() + '.removed')
         self.scene.timers.remove(self)
 
     def update_node(self, node, _):
@@ -1086,14 +1016,84 @@ class Timer(object):
                 else:
                     setattr(self, key, value)
 
-                Notify(
-                    self,
-                    'Scene.{0}.Timer.{1}.{2}.Changed'.format(
-                        self.scene.id,
-                        self.name,
-                        key
-                    )
-                )
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+
+
+class Arguments(object):
+    def __init__(self, parent, arguments):
+        self.parent = parent
+        self.arguments = list(
+            Argument(self, **argument) for argument in arguments
+        )
+
+    def build_event(self):
+        return self.parent.build_event()
+
+    def new(self):
+        if isinstance(self.parent, Action):
+            self.arguments += [
+                Argument(self, name='', value=None)
+            ]
+        else:
+            self.arguments += [
+                Argument(self, id=0, value=None)
+            ]
+        return self.arguments[-1]
+
+    def update_node(self, node, full):
+        arguments = []
+        for argument in node:
+            for found_argument in self.arguments[:]:
+                if isinstance(self.parent, Action):
+                    if found_argument.name == argument['name']:
+                        found_argument.update_node(argument, full)
+                        self.arguments.remove(argument)
+                        break
+
+                elif found_argument.id == argument['id']:
+                    found_argument.update_node(argument, full)
+                    self.arguments.remove(argument)
+                    break
+            else:
+                found_argument = Argument(self, **argument)
+            arguments += [found_argument]
+
+        for argument in self.arguments:
+            Notify(argument, argument.build_event() + '.removed')
+
+        del self.arguments[:]
+
+        self.arguments += arguments
+
+    def __instancecheck__(self, instance):
+        return isinstance(self.parent, instance)
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            for argument in self.arguments:
+                if argument.id == int(item):
+                    return argument
+            raise IndexError
+
+        for argument in self.arguments:
+            if argument.name == item:
+                return argument
+
+        raise KeyError
+
+    def remove(self, argument):
+        if argument in self.arguments:
+            self.arguments.remove(argument)
 
 
 # noinspection PyShadowingBuiltins, PyUnresolvedReferences
@@ -1109,19 +1109,29 @@ class Argument(object):
             self.id = id
 
         self._value = value
+        Notify(self, self.build_event() + '.created')
 
-        if isinstance(parent, Action):
-            event = 'Action.{0}.Argument.{1}'.format(parent.action, name)
-        elif isinstance(parent, Trigger):
-            event = 'Trigger.{0}.Argument.{1}'.format(parent.name, id)
+    def build_event(self):
+        if isinstance(self.parent, Action):
+            event = self.name
         else:
-            event = ''
+            event = self.id
+        return self.parent.build_event() + '.arguments.{0}'.format(event)
 
-        if event:
-            Notify(
-                self,
-                'Scene.{0}.{1}.Created'.format(parent.scene.id, event)
-            )
+    def update_node(self, node, _):
+        for key, value in node:
+            if key == 'value':
+                old_value = self._value
+            else:
+                old_value = getattr(self, key, None)
+
+            if old_value != value:
+                Notify(self, self.build_event() + '{0}.changed'.format(key))
+
+            if key == 'value':
+                self._value = value
+            else:
+                setattr(self, key, value)
 
     @property
     def value(self):
@@ -1132,23 +1142,5 @@ class Argument(object):
         self._value = value
 
     def delete(self):
-        if isinstance(self.parent, Action):
-            event = 'Action.{0}.Argument.{1}'.format(
-                self.parent.action,
-                self.name
-            )
-        elif isinstance(self.parent, Trigger):
-            event = 'Trigger.{0}.Argument.{1}'.format(
-                self.parent.name,
-                self.id
-            )
-        else:
-            event = ''
-
-        if event:
-            Notify(
-                self,
-                'Scene.{0}.{1}.Removed'.format(self.parent.scene.id, event)
-            )
-        if self in self.parent.arguments:
-            self.parent.arguments.remove(self)
+        Notify(self, self.build_event() + '.removed')
+        self.parent.remove(self)

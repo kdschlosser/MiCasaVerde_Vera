@@ -37,6 +37,26 @@ class UPNPDevices(object):
         for device in self._devices:
             yield device
 
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            return self._dveices[int(item)]
+
+        for device in self._devices:
+            if item == device.udn:
+                return device
+
+        raise KeyError
+
     def update_node(self, node, full=False):
         if node is not None:
             devices = []
@@ -44,17 +64,13 @@ class UPNPDevices(object):
             for device in node:
                 for found_device in self._devices[:]:
                     for attr in ATTRIBUTES:
-                        if found_device[attr] != device.get(attr, None):
+                        if found_device[attr] != getattr(device, attr, None):
                             break
                     else:
                         self._devices.remove(found_device)
                         break
                 else:
                     found_device = UPNPDevice(self, device)
-                    Notify(
-                        self,
-                        'UPNPDevice.{0}.Created'.format(device['udn'])
-                    )
 
                 devices += [found_device]
 
@@ -72,11 +88,17 @@ class UPNPDevice(object):
         node
     ):
         self._parent = parent
+        self.udn = node.pop('udn', None)
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-    def __getitem__(self, item):
-        return self.__dict__.get(item, None)
+        Notify(
+            self,
+            self.build_event() + '.created'
+        )
+
+    def build_event(self):
+        return 'upnp_devices.{0}'.format(self.udn)
 
 

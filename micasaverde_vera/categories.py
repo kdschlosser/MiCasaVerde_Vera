@@ -19,15 +19,23 @@
 
 class Categories(object):
 
-    def __init__(self, parent, node):
-        self._parent = parent
+    def __init__(self, ha_gateway, node):
+        self.ha_gateway = ha_gateway
         self._categories = node
 
-    def get_category(self, number):
-        number = str(number)
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
 
-        number = number.split('.')
-        if len(number) == 1:
-            number += ['0']
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError
 
-        return self._categories[number[0]][number[1]]
+    def __getitem__(self, item):
+        item = str(item)
+        item = item.split('.')
+        if len(item) == 1:
+            item += ['0']
+
+        return self._categories[item[0]][item[1]]

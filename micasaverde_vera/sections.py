@@ -31,15 +31,32 @@ class Sections(object):
             for section in node:
                 self._sections += [Section(self, section)]
 
-    def get_section(self, number):
-        number = str(number)
+    def __iter__(self):
+        for section in self._sections:
+            yield section
 
-        if number.isdigit():
-            number = int(number)
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
 
         for section in self._sections:
-            if number in (section.name, section.id):
+            if item in (section.id, section.name):
                 return section
+
+        if isinstance(item, int):
+            raise IndexError
+
+        raise KeyError
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -59,7 +76,7 @@ class Sections(object):
 
             if full:
                 for section in self._sections:
-                    Notify(section, 'Section.{0}.Removed'.format(section.id))
+                    Notify(section, section.build_event() + '.removed')
                 del self._sections[:]
 
             self._sections += sections
@@ -71,8 +88,12 @@ class Section(object):
         self._parent = parent
 
         self.id = node.pop('id', None)
+        self.name = node.pop('name', None)
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-        Notify(self, 'Section.{0}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return 'sections.{0}'.format(self.id)

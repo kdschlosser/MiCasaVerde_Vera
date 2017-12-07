@@ -31,16 +31,31 @@ class UserGeofences(object):
             for geofence in node:
                 self._geofences += [UserGeoFence(self, geofence)]
 
-    def get_geofences(self, number):
-
-        res = []
+    def __iter__(self):
         for geofence in self._geofences:
-            if number in (geofence.iduser, geofence.name):
-                res += [geofence]
-        return res
+            yield geofence
 
-    def get_user(self, number):
-        return self._parent.get_user(number)
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for geofence in self._geofences:
+            if item == geofence.iduser:
+                return geofence
+
+        if isinstance(item, int):
+            raise IndexError
+
+        raise KeyError
 
     def update_node(self, node, full=False):
         if node is not None:
@@ -59,10 +74,7 @@ class UserGeofences(object):
                 geofences += [found_geofence]
             if full:
                 for geofence in self._geofences:
-                    Notify(
-                        geofence,
-                        'UserGeoFence.{0}.Removed'.format(geofence.iduser)
-                    )
+                    Notify(geofence, geofence.build_event() + '.removed')
                 del self._geofences[:]
 
             self._geofences += geofences
@@ -71,86 +83,66 @@ class UserGeofences(object):
 class GeoTag(object):
     def __init__(self, parent, node):
         self._parent = parent
-
-        def get(attr):
-            return node.pop(attr, None)
-
-        self._PK_User = get('PK_User')
-        self.id = get('id')
-        self.accuracy = get('accuracy')
-        self.ishome = get('ishome')
-        self.notify = get('notify')
-        self.radius = get('radius')
-        self.address = get('address')
-        self.color = get('color')
-        self.latitude = get('latitude')
-        self.longitude = get('longitude')
-        self.name = get('name')
-        self.status = get('status')
+        self.id = node.pop('id', None)
+        self.name = node.pop('name', None)
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-        Notify(
-            self,
-            'UserGeoFence.{0}.GeoTag.{1}.Created'.format(
-                parent.iduser,
-                self.id
-            )
-        )
+        Notify(self, self.build_event() + '.created')
 
     @property
-    def PK_User(self):
-        return self._parent.get_user(self._PK_User)
+    def user(self):
+        return self._parent.user
 
     def update_node(self, node):
 
         for key, value in node.items():
-
-            if key == 'PK_User':
-                old_value = self._PK_User
-            else:
-                old_value = getattr(self, key, None)
+            old_value = getattr(self, key, None)
 
             if old_value != value:
-                if key == 'PK_User':
-                    self._PK_User = value
-                else:
-                    setattr(self, key, value)
+                setattr(self, key, value)
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
-                Notify(
-                    self,
-                    'UserGeoFence.{0}.GeoTag.{1}.{2}'.format(
-                        self._parent.iduser,
-                        self.id,
-                        key
-                    )
-                )
+    def build_event(self):
+        return self._parent.build_event() + '.geotags.{0}'.format(self.id)
 
 
-class UserGeoFence(object):
+class GeoTags(object):
 
     def __init__(self, parent, node):
-        self._parent = parent
 
-        self._geotags = []
-        self.iduser = node.pop('iduser', None)
+        self.geotags = []
 
         for geotag in node.pop('geotags', []):
-            self._geotags += [GeoTag(self, geotag)]
-
-        Notify(self, 'UserGeoFence.{0}.Created'.format(self.iduser))
+            self.geotags += [GeoTag(parent, geotag)]
 
     def __iter__(self):
-        for geotag in self._geotags:
+        for geotag in self.geotags:
             yield geotag
 
-    @property
-    def user(self):
-        return self.get_user(self.iduser)
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
 
-    def get_user(self, number):
-        return self._parent.get_user(number)
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for geotag in self.geotags:
+            if item in (geotag.name, geotag.id):
+                return geotag
+
+        if isinstance(item, int):
+            raise IndexError
+
+        raise KeyError
 
     def update_node(self, node, full):
         geotags = []
@@ -159,24 +151,46 @@ class UserGeoFence(object):
             # noinspection PyShadowingBuiltins
             id = geotag['id']
 
-            for found_geotag in self._geotags[:]:
+            for found_geotag in self.geotags[:]:
                 if found_geotag.id == id:
                     found_geotag.update_node(geotag)
-                    self._geotags.remove(found_geotag)
+                    self.geotags.remove(found_geotag)
                     break
             else:
                 found_geotag = GeoTag(self, geotag)
             geotags += [found_geotag]
 
         if full:
-            for geotag in self._geotags:
-                Notify(
-                    geotag,
-                    'UserGeoFence.{0}.GeoTag.{1}.Removed'.format(
-                        self.iduser,
-                        geotag.id
-                    )
-                )
-            del self._geotags[:]
+            for geotag in self.geotags:
+                Notify(geotag, geotag.build_event() + '.removed')
+            del self.geotags[:]
 
-        self._geotags += geotags
+        self.geotags += geotags
+
+
+class UserGeoFence(object):
+
+    def __init__(self, parent, node):
+        self._parent = parent
+        self.iduser = node.pop('iduser', None)
+        self.geotags = GeoTags(self, node.pop('geotags', []))
+
+        for key, value in node.items:
+            self.__dict__[key] = value
+
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return 'user_geofence.{0}'.format(self.iduser)
+
+    def update_node(self, node, full):
+        self.geotags.update_node(node.pop('geotags', []), full)
+        for key, value in node.items():
+            old_value = getattr(self, key, None)
+            if old_value != value:
+                setattr(self, key, value)
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+
+    @property
+    def user(self):
+        return self._parent.users[self.iduser]

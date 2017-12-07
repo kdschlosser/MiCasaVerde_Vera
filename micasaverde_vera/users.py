@@ -30,21 +30,32 @@ class Users(object):
             for user in node:
                 self._users += [User(self, user)]
 
-    def get_user(self, number):
+    def __iter__(self):
+        for user in self._users:
+            yield user
 
-        number = str(number)
-        if number.isdigit():
-            number = int(number)
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except(KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
 
         for user in self._users:
-            if number in (user.name, user.id):
+            if item in (user.id, user.name):
                 return user
 
-    def ishome(self, number):
-        return self._parent.ishome(number)
+        if isinstance(item, int):
+            raise IndexError
 
-    def get_geofences(self, number):
-        return self._parent.get_geofences(number)
+        raise KeyError
 
     def update_node(self, node, full=False):
 
@@ -66,7 +77,7 @@ class Users(object):
 
             if full:
                 for user in self._users:
-                    Notify(user, 'User.{0}.Removed'.format(user.id))
+                    Notify(user, user.build_event() + '.removed')
                 del self._users[:]
 
             self._users += users
@@ -75,20 +86,20 @@ class Users(object):
 class User(object):
     def __init__(self, parent, node):
         self._parent = parent
-        self._bindings = []
 
         def get(attr):
             return node.pop(attr, None)
 
         self.id = get('id')
-        self.Level = get('Level')
-        self.IsGuest = get('IsGuest')
         self._name = get('Name')
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-        Notify(self, 'User.{0}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return 'users.{0}'.format(self.id)
 
     @property
     def name(self):
@@ -105,23 +116,23 @@ class User(object):
 
     @property
     def ishome(self):
-        return self._parent.ishome(self.id)
+        return self._parent.user_settings[self.id].ishome
 
     @property
     def geofences(self):
-        return self._parent.get_geofences(self.id)
+        return self._parent.user_geofences[self.id]
 
     def update_node(self, node):
 
         for key, value in node.items():
-            if key == 'Name':
+            if key in ('Name', 'name'):
                 old_value = self._name
             else:
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                if key == 'Name':
+                if key in ('Name', 'name'):
                     self._name = value
                 else:
                     setattr(self, key, value)
-                Notify(self, 'User.{0}.{1}.Changed'.format(self.id, key))
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))

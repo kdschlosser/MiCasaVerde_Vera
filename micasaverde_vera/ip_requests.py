@@ -22,8 +22,8 @@ from event import Notify
 
 class IPRequests(object):
 
-    def __init__(self, parent, node):
-        self._parent = parent
+    def __init__(self, ha_gateway, node):
+        self.ha_gateway = ha_gateway
         self._ip_requests = dict()
 
         if node is not None:
@@ -37,27 +37,31 @@ class IPRequests(object):
         for request in self._ip_requests.values():
             yield request
 
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError
+
+    def __getitem__(self, item):
+        return self._ip_requests[item]
+
     def update_node(self, node, full=False):
         if node is not None:
             requests = dict()
             for request in node:
                 ip = request['ip']
                 date = request['date']
-                found_request = self._ip_requests.get(ip, None)
-                if found_request is None:
-                    found_request = IPRequest(self, request)
-                    Notify(
-                        self,
-                        'IPRequest.{0}.Created'.format(ip.replace('.', '-'))
-                    )
+                found_request = self._ip_requests.get(ip, [])
+                found_date = date
+                for sub_request in found_request:
+                    found_date = max([found_date, sub_request.date])
 
-                else:
-                    found_date = date
-                    for sub_request in found_request:
-                        found_date = max([found_date, sub_request.date])
-
-                    if found_date == date:
-                        found_request += [IPRequest(self, request)]
+                if found_date == date:
+                    found_request += [IPRequest(self, request)]
 
                 requests[ip] = found_request
 
@@ -76,3 +80,8 @@ class IPRequest(object):
 
         for key, value in node.items():
             self.__dict__[key] = value
+
+        Notify(self, self.build_event() + '.created')
+
+    def build_event(self):
+        return 'ip_requests.{0}'.format(self.ip.replace('.', '-'))

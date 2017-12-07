@@ -31,15 +31,39 @@ class UserSettings(object):
             for setting in node:
                 self._settings += [UserSetting(self, setting)]
 
+    def __iter__(self):
+        for setting in self._settings:
+            yield setting
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except(KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+            for setting in self._settings:
+                if setting.id == item:
+                    return setting
+            raise IndexError
+
+        raise KeyError
+
     def ishome(self, number):
         number = str(number)
 
         if number.isdigit():
             number = int(number)
 
-        for setting in self._settings:
-            if number in (setting.id, setting.name):
-                return setting.ishome
+            for setting in self._settings:
+                if number == setting.id:
+                    return setting.ishome
 
     def get_user(self, number):
         return self._parent.get_user(number)
@@ -51,24 +75,13 @@ class UserSettings(object):
             for setting in node:
                 # noinspection PyShadowingBuiltins
                 id = setting['id']
-
                 for found_setting in self._settings[:]:
                     if found_setting.id == id:
+                        found_setting.update_node(setting, full)
                         self._settings.remove(found_setting)
                         break
                 else:
                     found_setting = UserSetting(self, setting)
-
-                ishome = setting.get('ishome', None)
-
-                if ishome is not None and ishome != found_setting.ishome:
-                    found_setting.ishome = ishome
-                    Notify(
-                        self,
-                        'UserSetting.{0}.ishome.Changed'.format(
-                            found_setting.id
-                        )
-                    )
 
                 settings += [found_setting]
 
@@ -76,7 +89,7 @@ class UserSettings(object):
                 for setting in self._settings:
                     Notify(
                         setting,
-                        'UserSetting.{0}.Removed'.format(setting.id)
+                        setting.build_event() + '.removed'
                     )
                 del self._settings[:]
 
@@ -92,8 +105,18 @@ class UserSetting(object):
         for key, value in node.items():
             self.__dict__[key] = value
 
-        Notify(self, 'UserSetting.{0}.Created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
 
     @property
     def user(self):
         return self._parent.get_user(self.id)
+
+    def build_event(self):
+        return 'user_settings.{0}'.format(self.id)
+
+    def update_node(self, node, _):
+        for key, value in node.items():
+            old_value = getattr(self, key, None)
+            if old_value != value:
+                setattr(self, key, value)
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
