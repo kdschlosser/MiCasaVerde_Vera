@@ -239,13 +239,19 @@ class {class_name}(Device, {subclasses}):
 
     @room.setter
     def room(self, room):
+        
         try:
             self._get_variable('Room')
         except VeraNotImplementedError:
             self._get_variable('room')
+            
+        # noinspection PyUnresolvedReferences
+        from micasaverde_vera.rooms import Room 
 
-        if not isinstance(room, (int, str)):
+        if isinstance(room, Room):
             room = room.id
+        
+        room = int(str(room))
 
         self._parent.send(
             id='device',
@@ -456,7 +462,6 @@ class {class_name}(object):
 
     def __init__(self, parent):
         self._parent = parent
-        self.id = None
         self._variables = getattr(self, '_variables', dict())
         self.argument_mapping = getattr(self, 'argument_mapping', dict())
 

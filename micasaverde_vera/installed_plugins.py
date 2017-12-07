@@ -35,14 +35,13 @@ class InstalledPlugins(object):
             for plugin in node:
                 # noinspection PyShadowingBuiltins
                 id = plugin['id']
-                for found_plugin in self._plugins:
-                    if found_plugin.id == id:
-                        found_plugin.update_node(plugin, full)
-                        self._plugins.remove(found_plugin)
-                        break
-                else:
-                    found_plugin = InstalledPlugin(self, plugin)
 
+                try:
+                    found_plugin = self[id]
+                    found_plugin.update_node(plugin, full)
+                    self._plugins.remove(found_plugin)
+                except IndexError:
+                    found_plugin = InstalledPlugin(self, plugin)
                 plugins += [found_plugin]
 
             if full:
@@ -79,52 +78,166 @@ class InstalledPlugins(object):
 
 
 class File(object):
-    def __init__(self, parent, node):
+    def __init__(self, parent, id, node):
         self._parent = parent
-        for key, value in node.items():
-            self.__dict__[key] = value
-
-
-class Lua(object):
-    def __init__(self, parent, node):
-        self._parent = parent
-        self.CategoryNum = node.pop('CategoryNum', None)
+        self.id = id
 
         for key, value in node.items():
             self.__dict__[key] = value
 
-    @property
-    def category(self):
-        return self._parent.parent.ha_gateway.categories[self.CategoryNum]
+        Notify(
+            self,
+            self.build_event() + '.created'
+        )
+
+    def build_event(self):
+        return self._parent.build_event() + '.File.{0}'.format(self.id)
+
+    def update_node(self, node):
+        for key, value in node.items():
+            old_value = getattr(self, key, None)
+            if old_value != value:
+                setattr(self, key, value)
+                Notify(
+                    self,
+                    self.build_event() + '.{0}.changed'.format(key)
+                )
+
+
+class Files(object):
+    def __init__(self, parent, node):
+        self.parent = parent
+        self.files = node
+
+    def __iter__(self):
+        for f in self.files:
+            yield f
+
+    def update_node(self, node):
+        files = []
+        for f in node:
+            if f in self.files:
+                self.files.remove(f)
+                files += [f]
+            else:
+                files += [f]
+                Notify(self, self.parent.build_event() + '.Files.changed')
+
+        if self.files:
+            Notify(self, self.parent.build_event() + '.Files.changed')
+
+        del self.files[:]
+        self.files += files[:]
+
+
+class Luas(object):
+    def __init__(self, parent, node):
+        self.parent = parent
+        self.luas = node
+
+    def __iter__(self):
+        for lua in self.luas:
+            yield lua
+
+    def update_node(self, node):
+        luas = []
+        for lua in node:
+            if lua in self.luas:
+                self.luas.remove(lua)
+                luas += [lua]
+            else:
+                luas += [lua]
+                Notify(self, self.parent.build_event() + '.Lua.changed')
+
+        if self.luas:
+            Notify(self, self.parent.build_event() + '.Lua.changed')
+
+        del self.luas[:]
+        self.luas += luas[:]
+
+class Devices(object):
+
+    def __init__(self, parent, node):
+        self.parent = parent
+        self.devices = []
+
+        for plugin_device in node:
+            device_type = plugin_device['DeviceType']
+            for device in parent.parent.ha_gateway.devices:
+                if device.device_type == device_type:
+                    self.devices += [device]
+
+    def __iter__(self):
+        for device in self.devices:
+            yield device
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        try:
+            return self[item]
+        except (KeyError, IndexError):
+            raise AttributeError
+
+    def __getitem__(self, item):
+        item = str(item)
+        if item.isdigit():
+            item = int(item)
+
+        for device in self.devices:
+            name = getattr(device, 'name', None)
+
+            if item in (name, device.id):
+                return device
+        if isinstance(item, int):
+            raise IndexError
+        raise KeyError
+
+    def update_node(self, node):
+        devices = []
+
+        for plugin_device in node:
+            plugin_device_type = plugin_device['DeviceType']
+
+            for device in self.parent.parent.ha_gateway.devices:
+                if device.device_type == plugin_device_type:
+                    if device in self.devices:
+                        devices += [device]
+                        self.devices.remove(device)
+                    elif device not in devices:
+                        devices += [device]
+                        Notify(
+                            device,
+                            self.parent.build_event() +
+                            '.devices.{0}.created'.format(device.id)
+                        )
+
+        for device in self.devices:
+            Notify(
+                device,
+                self.parent.build_event() + '.devices.{0}.removed'.format(
+                    device.id
+                )
+            )
+
+        del self.devices[:]
+        self.devices += devices[:]
 
 
 class InstalledPlugin(object):
 
     def __init__(self, parent, node):
         self.parent = parent
-
-        self.files = []
-        self.lua = []
-        self.devices = []
-
-        for f in node.pop('Files', []):
-            self.files += [File(self, f)]
-
-        for lua in node.pop('Lua', []):
-            self.lua += [Lua(self, lua)]
-
-        for plugin_device in node.pop('Devices', []):
-            device_type = plugin_device['DeviceType']
-            for device in parent.ha_gateway.devices:
-                if device.device_type == device_type:
-                    self.devices += [device]
-
         self.id = node.pop('id', None)
+        self.files = Files(self, node.pop('Files', []))
+        self.lua = Luas(self, node.pop('Lua', []))
+        self.devices = Devices(self, node.pop('Devices', []))
 
         for k, v in node.items():
             self.__dict__[k] = v
 
-        Notify(self, self.build_event() + '.created'.format(self.id))
+        Notify(self, self.build_event() + '.created')
 
     def build_event(self):
         return 'installed_plugins.{0}'.format(self.id)
@@ -142,36 +255,15 @@ class InstalledPlugin(object):
         )
 
     def update_node(self, node, full=False):
+        self.devices.update_node(node.pop('Devices', []))
+        self.lua.update_node(node.pop('Lua', []))
+        self.files.update_node(node.pop('Files', []))
 
-        devices = []
-
-        for plugin_device in node.pop('Devices', []):
-            device_type = plugin_device['DeviceType']
-
-            for device in self.devices[:]:
-                if device.device_type == device_type:
-                    devices += [device]
-                    self.devices.remove(device)
-
-            for device in self._parent.parent.devices:
-                plugin = getattr(device, 'plugin', None)
-                if plugin == self and device not in devices:
-                    Notify(
-                        device,
-                        self.build_event() + '.devices.{0}.created'.format(
-                            device.id
-                        )
-                    )
-                    devices += [device]
-
-        if full:
-            for device in self.devices:
+        for key, value in node.items():
+            old_value = getattr(self, key, None)
+            if old_value != value:
+                setattr(self, key, value)
                 Notify(
-                    device,
-                    self.build_event() + '.devices.{0}.removed'.format(
-                        device.id
-                    )
+                    self,
+                    self.build_event() + '{0}.changed'.format(key)
                 )
-
-            del self.devices[:]
-        self.devices += devices[:]

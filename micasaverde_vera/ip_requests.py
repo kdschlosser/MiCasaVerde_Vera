@@ -30,8 +30,8 @@ class IPRequests(object):
             for request in node:
                 request = IPRequest(self, request)
                 if request.ip not in self._ip_requests:
-                    self._ip_requests[request.ip] = []
-                self._ip_requests[request.ip] += [request]
+                    self._ip_requests[request.ip.replace('.', '-')] = []
+                self._ip_requests[request.ip.replace('.', '-')] += [request]
 
     def __iter__(self):
         for request in self._ip_requests.values():
@@ -42,7 +42,7 @@ class IPRequests(object):
             return self.__dict__[item]
 
         try:
-            return self[item]
+            return self[item.replace('.', '-')]
         except KeyError:
             raise AttributeError
 
@@ -53,23 +53,26 @@ class IPRequests(object):
         if node is not None:
             requests = dict()
             for request in node:
-                ip = request['ip']
+                ip = request['ip'].replace('.', '-')
+                if ip not in requests:
+                    requests[ip] = []
+
                 date = request['date']
-                found_request = self._ip_requests.get(ip, [])
-                found_date = date
-                for sub_request in found_request:
-                    found_date = max([found_date, sub_request.date])
 
-                if found_date == date:
-                    found_request += [IPRequest(self, request)]
+                sub_requests = self._ip_requests.get(ip, [])
+                for found_request in sub_requests:
+                    if found_request.date == date:
+                        sub_requests.remove(found_request)
+                        break
+                else:
+                    found_request = IPRequest(self, request)
 
-                requests[ip] = found_request
+                requests[ip] += [found_request]
 
-            if full:
-                self._ip_requests.clear()
+            self._ip_requests.clear()
 
-            for ip, request in requests.items():
-                self._ip_requests[ip] = request
+            for ip, requests in requests.items():
+                self._ip_requests[ip] = list(request for request in requests)
 
 
 class IPRequest(object):

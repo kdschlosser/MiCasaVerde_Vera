@@ -476,7 +476,7 @@ class Vera:
         )
 
     def rebuild_files(self):
-        Vera.rebuild_files(self._ip_address)
+        _rebuild_files(self._ip_address)
 
     def disconnect(self):
         self.stop_polling()

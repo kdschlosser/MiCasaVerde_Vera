@@ -35,8 +35,9 @@ class Scenes(SceneController1):
         self._scenes = []
         self.ha_gateway = ha_gateway
         self.send = ha_gateway.send
+        self.id = node.pop('id', None)
 
-        SceneController1.__init__(self, self, {})
+        SceneController1.__init__(self, self, dict(id=self.id))
 
         for state in node.pop('states', []):
             for keys in self._variables[state['service']].keys():
@@ -89,10 +90,7 @@ class Scenes(SceneController1):
         try:
             return self[item]
         except (KeyError, IndexError):
-            try:
-                return self._get_variable(item)[0]
-            except VeraNotImplementedError:
-                raise AttributeError
+            return self._get_variable(item)[0]
 
     def __getitem__(self, item):
         item = str(item)
@@ -127,21 +125,13 @@ class Scenes(SceneController1):
 
                 if full:
                     for scene in self._scenes:
-                        Notify(scene, 'scenes.{0}.removed'.format(scene.id))
+                        Notify(scene, scene.build_event() + '.removed')
                     del self._scenes[:]
 
                 self._scenes += scenes
 
             elif isinstance(node, dict):
-                for key, value in node.items():
-                    old_value = getattr(self, key, None)
-
-                    if old_value != value:
-                        setattr(self, key, value)
-                        Notify(
-                            self,
-                            'devices.{0}.{1}.changed'.format(self.id, key)
-                        )
+                SceneController1.update_node(self, node, full)
 
 
 class Scene(Scene1):
@@ -453,7 +443,7 @@ class Action(object):
         self.arguments = Arguments(self, arguments)
 
     def build_event(self):
-        return self.parent.build_event() + 'actions.{0}'.format(self._action)
+        return self.parent.build_event() + '.actions.{0}'.format(self._action)
 
     @property
     def action(self):
@@ -591,10 +581,7 @@ class Groups(object):
 
         if full:
             for group in self.groups:
-                Notify(
-                    group,
-                    self.build_event() + '.groups.{0}.removed'.format(group.id)
-                )
+                Notify(group, group.build_event() + '.removed')
             del self.groups[:]
 
         self.groups += groups
@@ -618,7 +605,7 @@ class Group(object):
         self.actions = Actions(self, scene, actions)
 
     def build_event(self):
-        return self.parent.build_event() + 'groups.{0}'.format(self.id)
+        return self.parent.build_event() + '.groups.{0}'.format(self.id)
 
     @property
     def delay(self):
@@ -734,7 +721,7 @@ class Trigger(object):
         self.arguments = Arguments(self, arguments)
 
     def build_event(self):
-        return self.parent.build_event() + 'triggers.{0}'.format(self.name)
+        return self.parent.build_event() + '.triggers.{0}'.format(self.name)
 
     @property
     def name(self):
@@ -944,7 +931,7 @@ class Timer(object):
         Notify(self, self.build_event() + '.created')
 
     def build_event(self):
-        return self.parent.build_event() + 'timers.{0}'.format(self.id)
+        return self.parent.build_event() + '.timers.{0}'.format(self.id)
 
     @property
     def name(self):
@@ -1047,12 +1034,12 @@ class Arguments(object):
                 if isinstance(self.parent, Action):
                     if found_argument.name == argument['name']:
                         found_argument.update_node(argument, full)
-                        self.arguments.remove(argument)
+                        self.arguments.remove(found_argument)
                         break
 
                 elif found_argument.id == argument['id']:
                     found_argument.update_node(argument, full)
-                    self.arguments.remove(argument)
+                    self.arguments.remove(found_argument)
                     break
             else:
                 found_argument = Argument(self, **argument)
@@ -1119,14 +1106,14 @@ class Argument(object):
         return self.parent.build_event() + '.arguments.{0}'.format(event)
 
     def update_node(self, node, _):
-        for key, value in node:
+        for key, value in node.items():
             if key == 'value':
                 old_value = self._value
             else:
                 old_value = getattr(self, key, None)
 
             if old_value != value:
-                Notify(self, self.build_event() + '{0}.changed'.format(key))
+                Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
             if key == 'value':
                 self._value = value

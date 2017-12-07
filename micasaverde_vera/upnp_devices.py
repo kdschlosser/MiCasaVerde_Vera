@@ -64,7 +64,9 @@ class UPNPDevices(object):
             for device in node:
                 for found_device in self._devices[:]:
                     for attr in ATTRIBUTES:
-                        if found_device[attr] != getattr(device, attr, None):
+                        found_value = getattr(found_device, attr, None)
+                        device_value = device.get(attr, None)
+                        if found_value != device_value:
                             break
                     else:
                         self._devices.remove(found_device)
@@ -74,9 +76,7 @@ class UPNPDevices(object):
 
                 devices += [found_device]
 
-            if full:
-                del self._devices[:]
-
+            del self._devices[:]
             self._devices += devices
 
 
@@ -100,5 +100,4 @@ class UPNPDevice(object):
 
     def build_event(self):
         return 'upnp_devices.{0}'.format(self.udn)
-
 

@@ -99,21 +99,14 @@ class Devices(object):
             for device in node:
                 # noinspection PyShadowingBuiltins
                 id = device['id']
+
                 for found_device in self._devices[:]:
                     if found_device.id == id:
                         found_device.update_node(device, full)
                         self._devices.remove(found_device)
                         break
                 else:
-                    if (
-                        'device_type' in device and
-                        'SceneController:1' in device['device_type'] and
-                        self._parent.scenes is not None
-                    ):
-                        self._parent.scenes.update_node(device, full)
-                        found_device = self._parent.scenes
-                    else:
-                        found_device = self.__build(device)
+                    found_device = self.__build(device)
 
                 if found_device is not None:
                     devices += [found_device]

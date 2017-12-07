@@ -18,7 +18,7 @@
 
 import os
 
-VERSION = (0, 5, 0)
+VERSION = (0, 5, 4)
 
 if os.name == 'nt':
     BUILD_PATH = os.path.join(
