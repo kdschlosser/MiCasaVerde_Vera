@@ -29,10 +29,13 @@ class VeraBuildError(VeraError):
     pass
 
 
-class VeraNotImplementedError(AttributeError):
+class VeraNotImplementedError(AttributeError, VeraError):
     pass
 
 
 class VeraImportError(VeraError):
+    pass
+
+class VeraUnsupportedByDevice(NotImplementedError, VeraError):
     pass
 

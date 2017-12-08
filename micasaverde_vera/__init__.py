@@ -181,36 +181,27 @@ from copy import deepcopy
 if 'micasaverde_vera' not in sys.modules:
     sys.modules['micasaverde_vera'] = sys.modules[__name__]
 
-from constants import VERSION # NOQA
 import vera_build # NOQA
-from utils import init_core
+from utils import init_core  # NOQA
 from import_override import ImportOverride # NOQA
+from constants import (
+    VERSION as _VERSION,
+    UNWANTED_ITEMS as _UNWANTED_ITEMS,
+    BUILD_PATH as _BUILD_PATH
+) # NOQA
 from vera_exception import (
     VeraError,
     VeraNotFoundError,
     VeraBuildError,
     VeraNotImplementedError,
-    VeraImportError
+    VeraImportError,
+    VeraUnsupportedByDevice
 ) # NOQA
 
-__version__ = VERSION
+__version__ = _VERSION
 
-_UNWANTED_ITEMS = (
-    'static_data',
-    'InstalledPlugins',
-    'SetupDevices',
-    'SetupDevices',
-    'category_filter',
-    'categories',
-    'startup'
-)
-
-
-BUILD_PATH = vera_build.BUILD_PATH
-BUILD_COMPLETE = os.path.exists(BUILD_PATH)
 build_files = vera_build.build_files
 discover = vera_build.discover
-
 
 def rebuild_files(ip_address='', log=False):
     if not ip_address:
@@ -218,9 +209,8 @@ def rebuild_files(ip_address='', log=False):
 
     if ip_address:
         import shutil
-        shutil.rmtree(BUILD_PATH, ignore_errors=True)
+        shutil.rmtree(_BUILD_PATH, ignore_errors=True)
         vera_build.build_files(ip_address, log=log)
-
 
 def update_files(ip_address, log=False):
     """
@@ -237,14 +227,14 @@ def update_files(ip_address, log=False):
     """
     vera_build.build_files(ip_address, log, True)
 
+build_files = vera_build.build_files
 
 def connect(ip_address=''):
 
     """
     MiCasaVerde Vera control entry point.
     
-    :param ip_address: optional
-    :type ip_address: str
+    :param ip_address (str): optional 
     :return: micasaverde_vera.Vera
     """
 
@@ -254,12 +244,12 @@ def connect(ip_address=''):
     def start_vera():
         if 'micasaverde_vera.core' in sys.modules:
             return sys.modules['micasaverde_vera.core']
-        __path__.append(BUILD_PATH)
+        __path__.append(_BUILD_PATH)
         return init_core()
 
     def build():
         print('MicasaVerde Vera: Building files please wait....')
-        build_files(ip_address)
+        build_files(ip_address, log=False)
         print()
         print('MicasaVerde Vera: Build complete.')
 
@@ -351,25 +341,22 @@ class _VeraBase:
     technically speaking doesn't exist.
     """
 
-    build_files = build_files
-    BUILD_PATH = BUILD_PATH
-    BUILD_COMPLETE = BUILD_COMPLETE
-    discover = vera_build.discover
     VeraError = VeraError
     VeraNotFoundError = VeraNotFoundError
     VeraBuildError = VeraBuildError
     VeraNotImplementedError = VeraNotImplementedError
     VeraImportError = VeraImportError
+    VeraUnsupportedByDevice = VeraUnsupportedByDevice
 
-    _lock = threading.Lock()
-    _queue = []
     _import_override = None
     id = 0
 
     # noinspection PyUnresolvedReferences
     def __init__(self, ip_address):
-        self._import_override = ImportOverride(self)
-        self._import_override.start()
+        if self._import_override is None:
+            self._import_override = ImportOverride(self)
+            self._import_override.start()
+
         # noinspection PyUnresolvedReferences
         from micasaverde_vera.core.devices import home_automation_gateway_1
         from event import NotificationHandler
@@ -387,11 +374,12 @@ class _VeraBase:
         from alerts import Alerts
         from vera_connect import VeraConnect
 
-        self._ip_address = ip_address
+        self.ip_address = ip_address
         self._data_event = None
         self._data_wait = None
         self._data_thread = None
         self._lock = threading.Lock()
+        self._queue = []
 
         self.vera_connection = VeraConnect(self, ip_address)
         data = self.vera_connection.send(id='user_data')
@@ -449,7 +437,7 @@ class _VeraBase:
         :return: None
         :rtype: None
         """
-        update_files(self._ip_address, log)
+        update_files(self.ip_address, log)
 
     def __build(self, obj, key, data):
         return obj(
@@ -461,13 +449,12 @@ class _VeraBase:
         """
         Rebuilds the gen files.
         
-        :param log: log output to sys.stdout.
+        :param log: Output build status to sys.stdout
         :type log: bool
-        
         :return: None
         :rtype: None
         """
-        rebuild_files(self._ip_address, log)
+        rebuild_files(self.ip_address, log)
 
     def disconnect(self):
         self.stop_polling()

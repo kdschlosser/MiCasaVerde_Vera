@@ -40,6 +40,9 @@ class Scenes(SceneController1):
         SceneController1.__init__(self, self, dict(id=self.id))
 
         for state in node.pop('states', []):
+            if state['service'] not in self._variables:
+                self._variables[state['service']] = dict()
+
             for keys in self._variables[state['service']].keys():
                 if state['variable'] in keys:
                     break

@@ -64,6 +64,16 @@ NUMBER_MAPPING = {
     '0': 'zero_'
 }
 
+UNWANTED_ITEMS = (
+    'static_data',
+    'InstalledPlugins',
+    'SetupDevices',
+    'SetupDevices',
+    'category_filter',
+    'categories',
+    'startup'
+)
+
 URL = 'http://{ip_address}/cgi-bin/cmh/'
 GET_UPNP_FILES = URL + 'get_upnp_files.sh'
 VIEW_UPNP_FILE = URL + 'view_upnp_file.sh'
