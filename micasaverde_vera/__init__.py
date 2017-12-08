@@ -211,6 +211,7 @@ BUILD_COMPLETE = os.path.exists(BUILD_PATH)
 build_files = vera_build.build_files
 discover = vera_build.discover
 
+
 def rebuild_files(ip_address='', log=False):
     if not ip_address:
         ip_address = vera_build.discover()
@@ -219,6 +220,7 @@ def rebuild_files(ip_address='', log=False):
         import shutil
         shutil.rmtree(BUILD_PATH, ignore_errors=True)
         vera_build.build_files(ip_address, log=log)
+
 
 def update_files(ip_address, log=False):
     """
@@ -235,14 +237,14 @@ def update_files(ip_address, log=False):
     """
     vera_build.build_files(ip_address, log, True)
 
-build_files = vera_build.build_files
 
 def connect(ip_address=''):
 
     """
     MiCasaVerde Vera control entry point.
     
-    :param ip_address (str): optional 
+    :param ip_address: optional
+    :type ip_address: str
     :return: micasaverde_vera.Vera
     """
 
@@ -257,7 +259,7 @@ def connect(ip_address=''):
 
     def build():
         print('MicasaVerde Vera: Building files please wait....')
-        build_files(ip_address, log=True)
+        build_files(ip_address)
         print()
         print('MicasaVerde Vera: Build complete.')
 
@@ -465,7 +467,7 @@ class _VeraBase:
         :return: None
         :rtype: None
         """
-        rebuild_files(self._ip_address)
+        rebuild_files(self._ip_address, log)
 
     def disconnect(self):
         self.stop_polling()
