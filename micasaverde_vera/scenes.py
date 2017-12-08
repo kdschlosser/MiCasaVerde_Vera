@@ -65,8 +65,6 @@ class Scenes(SceneController1):
             'devices.{0}.created'.format(self.id)
         )
 
-        print self.category
-
     def __iter__(self):
         for scene in self._scenes:
             yield scene
