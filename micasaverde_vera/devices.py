@@ -83,6 +83,9 @@ class Devices(object):
             item = int(item)
 
         for device in self._devices:
+            name = getattr(device, 'name', None)
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return device
             if item in (device.id, device.name):
                 return device
 

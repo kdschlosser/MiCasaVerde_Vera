@@ -49,6 +49,9 @@ class Users(object):
             item = int(item)
 
         for user in self._users:
+            name = getattr(user, 'name', None)
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return user
             if item in (user.id, user.name):
                 return user
 

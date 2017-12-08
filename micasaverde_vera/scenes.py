@@ -98,6 +98,9 @@ class Scenes(SceneController1):
             item = int(item)
 
         for scene in self._scenes:
+            name = getattr(scene, 'name', None)
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return scene
             if item in (scene.name, scene.id):
                 return scene
 

@@ -26,6 +26,7 @@ class _NotificationHandler(object):
         self._callbacks = {}
 
     def bind(self, event, callback):
+        event = event.lower()
         if event not in self._callbacks:
             self._callbacks[event] = []
 

@@ -50,6 +50,9 @@ class Sections(object):
             item = int(item)
 
         for section in self._sections:
+            name = getattr(section, 'name', None)
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return section
             if item in (section.id, section.name):
                 return section
 

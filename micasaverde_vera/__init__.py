@@ -17,6 +17,161 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
+"""
+MiCasaVerde Vera.
+
+This is the module you will use to make the connection to your Vera unit.
+I have designed this system to be dynamic. It builds the code necessary to
+control any device/plugin that you can attach/add to the Vera. It builds
+the code based on information gotten from your Vera. This package is
+roughly 3000 lines of code but will generate thousands more. The amount
+generated is based on what is installed on your Vera.
+
+When the connection to your vera is first established it will automatically
+generate all code form all available information gotten from your Vera.
+Some of the code files will not necessarily be used but will be available
+in the event you install a device that needs them. As far as plugins are
+concerned if the code necessary to interact with that plugin has not been
+generated it will be upon discovery of the plugin.
+
+This library uses upnp to attempt discovery of your Vera in the event it is
+unable to you will need to pass the IP address of the unit to this class.
+The upnp process does take a while to acquire the IP address. The Vera does
+not respond very quickly to a upnp discovery packet. My suggestion is to
+pass the constructor the IP address.
+
+When the code files are built they are stored in the following locations.
+Microsoft Windows: %APPDATA%\Micasaverde_Vera
+Linux:             ~/.MicasaVerde_Vera
+
+In the event you have some kind of an issue. I am going to need a copy of
+the files located in the coorsponding folder above. Do not worry there is
+no sensitive data stored in these files. I am also going to need a copy of
+the traceback.
+
+OK so now onto the good stuff.
+
+from micasaverde_vera import Vera
+
+auto discover ip address:
+    instance = micasaverde_vera.connect()
+provide the ip address:
+    instance = micasaverde_vera.connect('192.168.0.0')
+
+
+to discover the Vera and return it's ip address (This is only available
+before you construct the instance):
+    ip_address = micasaverde_vera.discover()
+
+
+to refresh the generated code files:
+    micasaverde_vera.build_files('192.168.0.0')
+    
+and if you wanted to complete delete the old files and generate new ones
+    micasaverde_vera.rebuild_files('192.168.0.0')
+    
+and to update the existing files in the event there are new ones.
+    micasaverde_vera.update_files('192.168.0.0')
+ 
+The file system is designed in a way that if newer version of this library are
+installed it will automatically remove all of the old files and build new ones.
+It is also designed to check for file corruption/tampering. so if the files
+are not originals it will rebuild them.
+
+You do not have to build the files directly. When you call connect the
+files are automatically built if the files do not exist. Or updated if needed.
+If you install say a new plugin and additional information has been added to 
+the Vera. The system will automatically build the files that are needed for 
+this new plugin.
+The files will only be built once (as long as they still exist) so the first 
+time of running this library it will take a while to first load. On a clean 
+Vera with no devices or plugins. around 15 seconds. This all depends on your 
+computer speed as well.
+
+The whole system is designed to give you access to everything you can do
+from the UI and more. It exposes all of the variables for all of the
+different devices/plugins as well as the Vera unit it's self. The variables
+you are allowed to change you can change. I have also exposed any functions
+that are available for devices/plugins. Things like toggling state
+refreshing the Z-Wave network, polling a specific device, upgrading a
+plugin. Since this is a dynamic system I am unable to give you a list of
+what you can and cannot do. So your best bet is to all dir() in a specific
+part of the API. I have modified the output of dir() so it will return what
+is available for that specific component. Typically functions will be
+lowercase and any attributes/properties will be camel case. If an attribute
+cannot be set you will get an AttributeError.
+
+to get a device you can use one of the following:
+    device = vera.devices[10]
+    device = vera.devices['10']
+    device = vera.devices['Some Device Name']
+
+you are also able to directly request a device by it's name as if it is an 
+attribute. No special characters can be in the name and any spaces have to be 
+replaced with an _ and the name has to be all lowercase. This is not the name
+of the device on the Vera only the name when keyed in to access it.
+    device = vera.devices.outside_light
+    
+the above holds true for these containers
+
+vera.scenes
+vera.installed_plugins
+vera.devices
+vera.rooms
+vera.sections
+vera.users
+
+    
+I have also added a nifty feature that will allow you to access a device by its
+room. this can only be done at the vera instance level with the room name.
+
+same deal as above for keying in the room name
+    device = vera.outside.patio_light
+    
+if you are developing using this library you are able to use getattr and will 
+not have to modify the name.
+  
+if you want to list off all of the device names and device numbers that
+are attached to the Vera:
+    for device in vera.devices:
+        print '#{0}   {1}'.format(device.id, device.name)
+
+if you want to change the device name:
+    device = vera.devices['Some Device']
+    device.name = 'New Device Name'
+
+There are cases when an attribute will have an illegal character and cannot
+be called directly. One use case is with the Weather Underground plugin.
+It uses variable names like Forecast.0.HighTemperature. In this example you
+would use:
+    device.Forecast0HighTemperature
+
+I know of only '.'being used thus far but just in case I made the system
+in such a way that in the event there are other characters used you can
+still gain access to the variable by use of getattr():
+    getattr(device, 'Forecast.0.HighTemperature')
+
+The following containers are special use containers:
+    vera.ip_requests
+    vera.upnp_devices
+    vera.alerts
+    vera.user_settings
+    vera.weather_settings
+
+**Sections are used when multiple vera units are joined together.
+This is where the id and name of the controller are stored
+
+
+I have created 2 methods for discovering what a vera object can do.
+
+    get_functions() - this is able to be globally used on any vera continer 
+    object. It will list all of the functions that are available for that 
+    object.
+    
+    get_variables() - Globally available. Lists off all of the available 
+    variables for that object.
+"""
+
 from __future__ import print_function
 import sys
 import threading
@@ -56,244 +211,7 @@ BUILD_COMPLETE = os.path.exists(BUILD_PATH)
 build_files = vera_build.build_files
 discover = vera_build.discover
 
-
-# class Vera(object):
-#     """
-#     MiCasaVerde Vera control entry point.
-#
-#     This is the class you will use to make the connection to your Vera unit.
-#     I have designed this system to be dynamic. It builds the code necessary to
-#     control any device/plugin that you can attach/add to the Vera. It builds
-#     the code based on information gotten from your Vera. This package is
-#     roughly 3000 lines of code but will generate thousands more. The amount
-#     generated is based on what is installed on your Vera.
-#
-#     When the connection to your vera is first established it will automatically
-#     generate all code form all available information gotten from your Vera.
-#     Some of the code files will not necessarily be used but will be available
-#     in the event you install a device that needs them. As far as plugins are
-#     concerned if the code necessary to interact with that plugin has not been
-#     generated it will be upon discovery of the plugin.
-#
-#     This library uses upnp to attempt discovery of your Vera in the event it is
-#     unable to you will need to pass the IP address of the unit to this class.
-#     The upnp process does take a while to acquire the IP address. The Vera does
-#     not respond very quickly to a upnp discovery packet. My suggestion is to
-#     pass the constructor the IP address.
-#
-#     When the code files are built they are stored in the following locations.
-#     Microsoft Windows: %APPDATA%\Micasaverde_Vera
-#     Linux:             ~/.MicasaVerde_Vera
-#
-#     In the event you have some kind of an issue. I am going to need a copy of
-#     the files located in the coorsponding folder above. Do not worry there is
-#     no sensitive data stored in these files. I am also going to need a copy of
-#     the traceback.
-#
-#     OK so now onto the good stuff.
-#
-#     from micasaverde_vera import Vera
-#
-#     auto discover ip address:
-#         instance = Vera()
-#     provide the ip address:
-#         instance = Vera('192.168.0.0')
-#
-#
-#     to discover the Vera and return it's ip address (This is only available
-#     before you construct the instance):
-#         ip_address = Vera.discover()
-#
-#
-#     to refresh the generated code files:
-#         Vera.build_files('192.168.0.0')
-#
-#     You do not have to build the files directly. When you construct the
-#     instance it is automatically done if the files do not exist. The files
-#     will only be built once (as long as they still exist) so the first time of
-#     running this library it will take a while to first load. Upwards of 45
-#     seconds on a vera that only has a handful of devices and a plugin or 2.
-#
-#     The whole system is designed to give you access to everything you can do
-#     from the UI and more. It exposes all of the variables for all of the
-#     different devices/plugins as well as the Vera unit it's self. The variables
-#     you are allowed to change you can change. I have also exposed any functions
-#     that are available for devices/plugins. Things like toggling state
-#     refreshing the Z-Wave network, polling a specific device, upgrading a
-#     plugin. Since this is a dynamic system I am unable to give you a list of
-#     what you can and cannot do. So your best bet is to all dir() in a specific
-#     part of the API. I have modified the output of dir() so it will return what
-#     is available for that specific component. Typically functions will be
-#     lowercase and any attributes/properties will be camel case. If an attribute
-#     cannot be set you will get an AttributeError.
-#
-#     to get a device you can use one of the following:
-#         device = vera.get_device(10)
-#         device = vera.get_device('10')
-#         device = vera.get_device('Some Device Name')
-#
-#     if you want to list off all of the device names and device numbers that
-#     are attached to the Vera:
-#         for device in vera.devices:
-#             print '#{0}   {1}'.format(device.id, device.name)
-#
-#     if you want to change the device name:
-#         device = vera.get_device('Some Device')
-#         device.name = 'New Device Name'
-#
-#     There are cases when an attribute will have an illegal character and cannot
-#     be called directly. One use case is with the Weather Underground plugin.
-#     It uses variable names like Forecast.0.HighTemperature. In this example you
-#     would use:
-#         device.Forecast0HighTemperature
-#
-#     I know of only '.'being used thus far but just in case I made the system
-#     in such a way that in the event there are other characters used you can
-#     still gain access to the variable by use of getattr():
-#         getattr(device, 'Forecast.0.HighTemperature')
-#
-#     The same mechanism used for the devices works for the following:
-#         vera.categories:
-#             vera.get_category(category name or category number)
-#         vera.sections**:
-#             vera.get_section(section name or section number)
-#         vera.users:
-#             vera.get_user(user name or user number)
-#         vera.rooms:
-#             vera.get_room(room name or room number)
-#         vera.scenes:
-#             vera.get_scene(scene name or scene number)
-#         vera.installed_plugins:
-#             vera.get_plugin(plugin name or plugin number)
-#         vera.user_geofences:
-#             vera.get_geofences(user name or user number)
-#
-#     The following containers are special use containers:
-#         vera.ip_requests
-#         vera.upnp_devices
-#         vera.alerts
-#         vera.user_settings
-#         vera.weather_settings
-#
-#     **Sections are used when multiple vera units are joined together.
-#     This is where the id and name of the controller are stored
-#
-#     Remember dir() is your friend for showing you what is available. Reading
-#     the generated code files will be of little help because not everything that
-#     is in those files will be available for your specific device.
-#
-#     Things that have yet to be finished up:
-#         Automatic updating
-#         Events for changes
-#         Creating/Altering Scenes (testing)
-#
-#     """
-#
-#     build_files = build_files
-#     BUILD_PATH = BUILD_PATH
-#     BUILD_COMPLETE = BUILD_COMPLETE
-#     discover = vera_build.discover
-#     VeraError = VeraError
-#     VeraNotFoundError = VeraNotFoundError
-#     VeraBuildError = VeraBuildError
-#     VeraNotImplementedError = VeraNotImplementedError
-#     VeraImportError = VeraImportError
-#
-#     def __init__(self, _=''):
-#         pass
-#
-#     @staticmethod
-#     def rebuild_files(ip_address='', log=False):
-#         if not ip_address:
-#             ip_address = vera_build.discover()
-#
-#         if ip_address:
-#             import shutil
-#             shutil.rmtree(BUILD_PATH, ignore_errors=True)
-#             vera_build.build_files(ip_address, log=log)
-#
-#     def __new__(cls, ip_address=''):
-#
-#         if not ip_address:
-#             ip_address = vera_build.discover()
-#
-#         def start_vera():
-#             if 'micasaverde_vera.core' in sys.modules:
-#                 return sys.modules['micasaverde_vera.core']
-#             __path__.append(BUILD_PATH)
-#             return init_core()
-#
-#         def build():
-#             print('MicasaVerde Vera: Building files please wait....')
-#             build_files(ip_address, log=True)
-#             print()
-#             print('MicasaVerde Vera: Build complete.')
-#
-#         try:
-#             core = start_vera()
-#
-#             if (
-#                 not hasattr(core, 'VERSION') or
-#                 core.VERSION != __version__
-#             ):
-#                 print('MiCasaVerde Vera: Generated files version mismatch.')
-#                 print('                  Rebuilding files please wait....')
-#                 cls.rebuild_files(ip_address)
-#                 print('MiCasaVerde Vera: Build complete.')
-#
-#             # noinspection PyUnresolvedReferences
-#             from micasaverde_vera.core.devices import home_automation_gateway_1
-#
-#         except (ImportError, IOError):
-#             build()
-#             try:
-#                 start_vera()
-#                 # noinspection PyUnresolvedReferences
-#                 from micasaverde_vera.core.devices import (
-#                     home_automation_gateway_1,
-#                 )
-#             except:
-#                 import traceback
-#                 raise VeraImportError(
-#                     'Error Importing generated file.\n' +
-#                     traceback.format_exc()
-#                 )
-#
-#         class NewVera(_Vera, home_automation_gateway_1.HomeAutomationGateway1):
-#
-#             def __init__(self, ip):
-#                 self.__name__ = 'Vera'
-#                 self._import_override = ImportOverride(self)
-#                 self._import_override.start()
-#
-#                 _Vera.__init__(self, ip)
-#                 home_automation_gateway_1.HomeAutomationGateway1.__init__(
-#                     self,
-#                     self,
-#                     self.init_data
-#                 )
-#                 del self.init_data
-#
-#                 # plugin_dir = os.path.join(
-#                 #     os.path.dirname(__file__),
-#                 #     'external_plugins'
-#                 # )
-#                 #
-#                 # plugins = list(
-#                 #     os.path.splitext(f)[0] for f in os.listdir(plugin_dir)
-#                 #     if f.endswith('.py') and not f.startswith('_')
-#                 # )
-#                 #
-#                 # for plugin in plugins:
-#                 #     self.external_plugins.register(__import__(plugin))
-#
-#         instance = super(Vera, cls).__new__(cls)
-#         instance.__init__()
-#
-#         return NewVera(ip_address)
-
-
-def _rebuild_files(ip_address='', log=False):
+def rebuild_files(ip_address='', log=False):
     if not ip_address:
         ip_address = vera_build.discover()
 
@@ -302,8 +220,31 @@ def _rebuild_files(ip_address='', log=False):
         shutil.rmtree(BUILD_PATH, ignore_errors=True)
         vera_build.build_files(ip_address, log=log)
 
+def update_files(ip_address, log=False):
+    """
+    Updates the vera gen files.
+
+    It builds any missing files.
+
+    :param ip_address: IP of the Vera
+    :type ip_address: str
+    :param log: Output build status to sys.stdout
+    :type log: bool
+    :return: None
+    :rtype: None
+    """
+    vera_build.build_files(ip_address, log, True)
+
+build_files = vera_build.build_files
 
 def connect(ip_address=''):
+
+    """
+    MiCasaVerde Vera control entry point.
+    
+    :param ip_address (str): optional 
+    :return: micasaverde_vera.Vera
+    """
 
     if not ip_address:
         ip_address = vera_build.discover()
@@ -324,8 +265,8 @@ def connect(ip_address=''):
         core = start_vera()
 
         if (
-                not hasattr(core, 'VERSION') or
-                    core.VERSION != __version__
+            not hasattr(core, 'VERSION') or
+            core.VERSION != __version__
         ):
             print('MiCasaVerde Vera: Generated files version mismatch.')
             print('                  Rebuilding files please wait....')
@@ -353,14 +294,11 @@ def connect(ip_address=''):
                 traceback.format_exc()
             )
 
-    import types
-
-
-    class _Vera(Vera, HomeAutomationGateway1):
+    class __Vera(_VeraBase, HomeAutomationGateway1):
 
         def __init__(self, ip_address):
-            self.__name__ = Vera.__name__
-            Vera.__init__(self, ip_address)
+            self.__name__ = 'Vera'
+            _VeraBase.__init__(self, ip_address)
             HomeAutomationGateway1.__init__(
                 self,
                 self,
@@ -368,16 +306,47 @@ def connect(ip_address=''):
             )
             del self.init_data
 
-    return _Vera(ip_address)
+        def __getattr__(self, item):
+            if item in self.__dict__:
+                return self.__dict__[item]
+
+            if item in self._variables:
+                return self._variables[item]
+
+            try:
+                value, service, keys = self._get_variable(item)
+            except VeraNotImplementedError:
+                value = None
+
+            if value is None:
+                for cls in self.__class__.__mro__[:-1]:
+                    if item in cls.__dict__:
+                        attr = cls.__dict__[item]
+
+                        if isinstance(attr, property):
+                            return attr.fget(self)
+
+                        return attr
+
+                for room in self.rooms:
+                    if room.name.replace(' ', '_').lower() == item:
+                        return room
+
+                raise VeraNotImplementedError(
+                    'Attribute {0} is not supported.'.format(item)
+                )
+            return value
+
+    return __Vera(ip_address)
 
 
-class Vera:
+class _VeraBase:
     """
-    This is the actual instance of Vera that gets returned.
+    This is one of the 2 base classes that make up the main Vera object.
     
-    The reason this is set up this way is because there is a generated code 
-    file for the Vera. and we have to generate the files before we can 
-    construct the instance. 
+    The second class is dynamically created hence the reason why the 
+    voodoo magic code. I had to be crafty to be able to subclass a class that 
+    technically speaking doesn't exist.
     """
 
     build_files = build_files
@@ -467,7 +436,18 @@ class Vera:
         self.init_data = data
 
     def update_files(self, log=False):
-        vera_build.build_files(self._ip_address, log, True)
+        """
+        Updates the vera gen files.
+        
+        This is used internally but can also be used by the user. It builds 
+        any missing files.
+        
+        :param log: Output build status to sys.stdout
+        :type log: bool
+        :return: None
+        :rtype: None
+        """
+        update_files(self._ip_address, log)
 
     def __build(self, obj, key, data):
         return obj(
@@ -475,8 +455,17 @@ class Vera:
             data.pop(key, None)
         )
 
-    def rebuild_files(self):
-        _rebuild_files(self._ip_address)
+    def rebuild_files(self, log=False):
+        """
+        Rebuilds the gen files.
+        
+        :param log: log output to sys.stdout.
+        :type log: bool
+        
+        :return: None
+        :rtype: None
+        """
+        rebuild_files(self._ip_address)
 
     def disconnect(self):
         self.stop_polling()
@@ -487,15 +476,46 @@ class Vera:
         obj.update_node(data.pop(key, None), True)
 
     def send(self, **kwargs):
+        """
+        Sends a command or query to the Vera.
+        
+        This method will send a data_request to the Vera. you simply have to
+        pass the parameters that you want to send.
+        
+        example to set the dimming level of a light:
+            vera.send(
+                serviceId='urn:upnp-org:serviceId:Dimming1',
+                id='action',
+                action='SetLoadLevelTarget',
+                DeviceNum=10,
+                newLoadlevelTarget=25
+            )
+        
+        :param **kwargs: parameters to be sent
+        :return: response from the Vera
+        :rtype: str, json
+        """
+
         return self.vera_connection.send(**kwargs)
 
     def queue_data(self, data):
+        """
+        Internal use.
+        
+        :param data: 
+        :return: 
+        """
         self._lock.acquire()
         self._queue += [data]
         self._lock.release()
         self._data_wait.set()
 
     def stop_polling(self):
+        """
+        Stops polling the vera for updates.
+        
+        :return: 
+        """
         if self._data_thread is not None:
             self._data_event.set()
             self._data_wait.set()
@@ -505,6 +525,15 @@ class Vera:
             self.vera_connection.stop_poll()
 
     def start_polling(self, interval=0.1):
+        """
+        Starts polling the vera for updates.
+        
+        :param interval: time between polling cycles in seconds.
+        :type interval: float
+        :return: None
+        :rtype: None
+        """
+
         if not self.vera_connection.is_running:
             del self._queue[:]
             self._data_event = threading.Event()
@@ -522,9 +551,21 @@ class Vera:
 
     # noinspection PyMethodMayBeStatic
     def build_event(self):
+        """
+        Builds the event string
+        
+        Internal use.
+        
+        :return: 
+        """
         return 'vera'
 
     def _data_handler(self):
+        """
+        Internal use.
+        
+        :return: 
+        """
         last_data = dict()
         while not self._data_event.isSet():
             self._data_wait.clear()

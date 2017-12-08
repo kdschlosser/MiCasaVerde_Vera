@@ -66,9 +66,11 @@ class Rooms(object):
             item = int(item)
 
         for room in self._rooms:
+            name = getattr(room, 'name', None)
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return room
             if item in (room.id, room.name):
                 return room
-
         if isinstance(item, int):
             raise IndexError
 
@@ -197,6 +199,22 @@ class Room(object):
 
     def __iter__(self):
         return iter(self.devices + self.plugins + self.scenes)
+
+    def __getattr__(self, item):
+        from micasaverde_vera.installed_plugins import InstalledPlugin
+
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        for device in self:
+            if isinstance(device, InstalledPlugin):
+                name = getattr(device, 'Title', None)
+            else:
+                name = getattr(device, 'name', None)
+
+            if name is not None and name.replace(' ', '_').lower() == item:
+                return device
+        raise AttributeError
 
     @property
     def devices(self):
