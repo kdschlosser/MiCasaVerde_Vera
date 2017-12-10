@@ -11,165 +11,245 @@ Services
         Variables
         ------------------------------------------------------------------------
             Alert.1.Attribution
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Attribution&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Attribution&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Attribution&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.Description
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Description&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Description&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Description&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.EndDate
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.EndDate&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.EndDate&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.EndDate&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.Message
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Message&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Message&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Message&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.Phenomena
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Phenomena&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Phenomena&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Phenomena&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.Significance
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Significance&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Significance&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Significance&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.StartDate
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.StartDate&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.StartDate&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.StartDate&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alert.1.Type
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Type&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alert.1.Type&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alert.1.Type&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Alerts
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alerts&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Alerts&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Alerts&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Condition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Condition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             ConditionGroup
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ConditionGroup&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             DewPoint
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DewPoint&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DewPoint&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=DewPoint&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             FeelsLike
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FeelsLike&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FeelsLike&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=FeelsLike&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.Condition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.Condition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.ConditionGroup
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.ConditionGroup&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.HighTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.HighTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.LowTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.LowTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.MaxWindDegrees
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.MaxWindDegrees&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.MaxWindDirection
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.MaxWindDirection&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.MaxWindSpeed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.MaxWindSpeed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.POP
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.POP&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.QPFDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.QPFDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.QPFNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.QPFNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.SnowDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.SnowDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.0.SnowNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.0.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.0.SnowNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.Condition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.Condition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.ConditionGroup
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.ConditionGroup&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.HighTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.HighTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.LowTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.LowTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.MaxWindDegrees
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.MaxWindDegrees&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.MaxWindDirection
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.MaxWindDirection&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.MaxWindSpeed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.MaxWindSpeed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.POP
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.POP&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.QPFDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.QPFDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.QPFNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.QPFNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.SnowDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.SnowDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.1.SnowNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.1.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.1.SnowNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.Condition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.Condition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.ConditionGroup
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.ConditionGroup&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.HighTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.HighTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.LowTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.LowTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.MaxWindDegrees
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.MaxWindDegrees&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.MaxWindDirection
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.MaxWindDirection&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.MaxWindSpeed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.MaxWindSpeed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.POP
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.POP&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.QPFDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.QPFDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.QPFNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.QPFNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.SnowDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.SnowDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.2.SnowNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.2.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.2.SnowNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.Condition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.Condition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.Condition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.ConditionGroup
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.ConditionGroup&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.ConditionGroup&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.HighTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.HighTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.HighTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.LowTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.LowTemperature&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.LowTemperature&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.MaxWindDegrees
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.MaxWindDegrees&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.MaxWindDirection
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.MaxWindDirection&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.MaxWindSpeed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.MaxWindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.MaxWindSpeed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.POP
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.POP&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.POP&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.QPFDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.QPFDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.QPFDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.QPFNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.QPFNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.QPFNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.SnowDay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.SnowDay&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.SnowDay&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecast.3.SnowNight
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecast.3.SnowNight&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecast.3.SnowNight&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Forecasts
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecasts&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Forecasts&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Forecasts&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             HeatIndex
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=HeatIndex&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=HeatIndex&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=HeatIndex&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Location
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Location&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Location&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Location&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             LocationUsed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LocationUsed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LocationUsed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=LocationUsed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Metric
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Metric&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Metric&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Metric&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Period
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Period&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Period&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Period&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Pressure
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pressure&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pressure&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Pressure&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             PressureTrend
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PressureTrend&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PressureTrend&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PressureTrend&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             ProviderKey
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderKey&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderKey&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ProviderKey&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             ProviderName
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderName&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderName&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ProviderName&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             ProviderURL
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderURL&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProviderURL&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ProviderURL&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             Solar
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Solar&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Solar&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Solar&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             UV
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UV&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UV&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=UV&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindChill
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindChill&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindChill&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindChill&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindCondition
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindCondition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindCondition&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindCondition&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindDegrees
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindDegrees&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindDegrees&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindDirection
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindDirection&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindDirection&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindGust
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindGust&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindGust&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindGust&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
             WindSpeed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindSpeed&id=variableset&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindSpeed&id=variableget&serviceId=urn:upnp-micasaverde-com:serviceId:Weather1
 
         Functions
         ------------------------------------------------------------------------

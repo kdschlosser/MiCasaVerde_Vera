@@ -11,39 +11,56 @@ Services
         Variables
         ------------------------------------------------------------------------
             ActiveScenes
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActiveScenes&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActiveScenes&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ActiveScenes&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             Device
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Device&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Device&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Device&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             InclusionMode
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=InclusionMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=InclusionMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=InclusionMode&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             LastError
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastError&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastError&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=LastError&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             Multiple
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Multiple&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Multiple&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Multiple&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             NetStatusID
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NetStatusID&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             NetStatusText
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NetStatusText&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             Node
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Node&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             NodeType
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NodeType&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             PollDelayDeadTime
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayDeadTime&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayDeadTime&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollDelayDeadTime&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             PollDelayInitial
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayInitial&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayInitial&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollDelayInitial&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             PollFrequency
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollFrequency&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollFrequency&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollFrequency&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             PollMinDelay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollMinDelay&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             PollingEnabled
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollingEnabled&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             Reload
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Reload&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Reload&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Reload&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             ResetMode
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ResetMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ResetMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ResetMode&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
             Timeout
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Timeout&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
 
         Functions
         ------------------------------------------------------------------------

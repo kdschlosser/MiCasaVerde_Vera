@@ -11,7 +11,8 @@ Services
         Variables
         ------------------------------------------------------------------------
             Address
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Address&id=variableset&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Address&id=variableset&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Address&id=variableget&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
 
         Functions
         ------------------------------------------------------------------------

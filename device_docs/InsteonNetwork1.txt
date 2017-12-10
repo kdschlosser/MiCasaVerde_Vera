@@ -11,7 +11,8 @@ Services
         Variables
         ------------------------------------------------------------------------
             Node
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Node&id=variableget&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
 
         Functions
         ------------------------------------------------------------------------

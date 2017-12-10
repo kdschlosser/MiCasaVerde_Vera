@@ -11,11 +11,14 @@ Services
         Variables
         ------------------------------------------------------------------------
             NodeId
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeId&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeId&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NodeId&id=variableget&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
             NodeType
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NodeType&id=variableget&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
             Timeout
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Timeout&id=variableget&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
 
         Functions
         ------------------------------------------------------------------------

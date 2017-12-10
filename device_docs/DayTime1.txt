@@ -11,9 +11,11 @@ Services
         Variables
         ------------------------------------------------------------------------
             Status
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Status&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
             Target
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Target&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
 
         Functions
         ------------------------------------------------------------------------
