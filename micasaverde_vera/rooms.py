@@ -172,6 +172,12 @@ class Room(object):
         if getattr(device, 'room', None) is not None:
             device.room = room
 
+    def get_variables(self):
+        return list(
+            item for item in self.__dict__.keys()
+            if not callable(item) and not item.startswith('_')
+        )
+
     def __radd__(self, item):
         item = _check_item_type(item)
 

@@ -59,6 +59,7 @@ DEVICE_SUBCLASS_INIT_TEMPLATE = (
 
 
 DEVICE_CLASS_TEMPLATE = '''
+from __future__ import print_function
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.event import Notify
 # noinspection PyUnresolvedReferences
@@ -69,21 +70,25 @@ from micasaverde_vera.vera_exception import VeraNotImplementedError
 {imports}
 
 class {class_name}(Device, {subclasses}):
-    service_ids = [
-        '{device_id}'
-    ]
-    service_types = [
-        '{device_type}'
-    ]
 
     def __init__(self, parent, node):
         self._parent = parent
+        
+        self.service_ids = [
+            '{device_id}'
+        ]
+        self.service_types = [
+            '{device_type}'
+        ]
+        
         self._variables = {{
             '{device_id}': {{}}
         }}
+        
         self.argument_mapping = {{
             '{device_id}': {{}}
         }}
+       
         self._jobs = []
         self._pending_jobs = 0
         self._configured = 0
@@ -392,33 +397,81 @@ class {class_name}(Device, {subclasses}):
         This is internally used.
         """
 
-        def check_value(variable, value, service=None):
-            if service is not None:
-                if service not in self._variables:
-                    self._variables[service] = dict()
+        def check_value(variable, value, service_id=None):
+            if service_id is not None:
+                if service_id not in self._variables:
+                    if service_id.endswith('ZWaveDevice1'):
+                        # noinspection PyUnresolvedReferences
+                        from micasaverde_vera.utils import copy_dict
+                        # noinspection PyUnresolvedReferences
+                        from micasaverde_vera.z_wave_device_1 import (
+                            ZWaveDevice1 as service
+                        )
+                    
+                    else:
+                        # noinspection PyUnresolvedReferences
+                        from micasaverde_vera.utils import (
+                            import_service,
+                            copy_dict
+                        )
+                
+                        service = import_service(state['service'])
+                        
+                    if service is None:
+                        return
+                        
+                    if service is False:
+                        print(
+                            'MiCasaVerde Vera: Unknown service {{0}}'.format(
+                                service_id
+                            )
+                        )
+                        self._variables[service_id] = dict()
+                    else:                
+                        service_instance = service(self._parent)
+                    
+                        copy_dict(
+                            service_instance._variables,
+                            self._variables
+                        )
+                        copy_dict(
+                            service_instance.argument_mapping,
+                            self.argument_mapping
+                        )
+                    
+                        self.service_ids += [
+                            service_instance.service_ids[-1]
+                        ]
+                        self.service_types += [
+                            service_instance.service_types[-1]
+                        ]
+                        
+                        if not isinstance(self, service):
+                            self.__class__.__bases__ += (service,)
+                        
                 try:
-                    old_value, service, keys = self._get_variable(
+                    old_value, service_id, keys = self._get_variable(
                         variable,
-                        service
+                        service_id
                     )
                 except VeraNotImplementedError:
                     old_value = None
                     keys = (variable, variable)
             else:
                 try:
-                    old_value, service, keys = self._get_variable(variable)
+                    old_value, service_id, keys = self._get_variable(variable)
                 except VeraNotImplementedError:
                     old_value = None
                     keys = (variable, variable)
-                    service = self.service_ids[0]
+                    service_id = self.service_ids[0]
 
             if old_value != value:
-                self._variables[service][keys] = value
+                self._variables[service_id][keys] = value
                 if full:
                     Notify(
                         self,
                         self.build_event() + '.{{0}}.{{1}}.changed'.format(
-                            service.split(':')[-1],
+                            service_id.split(':')[-1],
                             variable.replace('.', '')
                         )
                     )
@@ -464,17 +517,12 @@ class {class_name}(object):
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         self.argument_mapping = getattr(self, 'argument_mapping', dict())
+        
+        # noinspection PyUnresolvedReferences
+        from micasaverde_vera.utils import copy_dict
 
-        def iter_mapping(mapping, storage):
-            for key, value in mapping.items():
-                if isinstance(value, dict):
-                    storage[key] = dict()
-                    iter_mapping(value, storage[key])
-                else:
-                    storage[key] = value
-
-        iter_mapping(_default_variables, self._variables)
-        iter_mapping(_argument_mapping, self.argument_mapping)
+        copy_dict(_default_variables, self._variables)
+        copy_dict(_argument_mapping, self.argument_mapping)
 
         self.service_ids = getattr(self, 'service_ids', [])
         self.service_types = getattr(self, 'service_types', [])

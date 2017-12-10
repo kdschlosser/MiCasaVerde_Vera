@@ -21,7 +21,9 @@ import imp
 import os
 import sys
 import binascii
+import importlib
 from constants import CORE_PATH
+from vera_exception import VeraImportError
 
 
 def parse_string(word):
@@ -48,6 +50,21 @@ def parse_string(word):
     if last_char.isupper():
         new_word = new_word[:-2] + last_char.lower()
     return new_word
+
+
+def service_id_to_service_type(service_id):
+    service = service_id.replace('serviceId', 'service')
+    service = service.replace('urn:', 'urn:schemas-')
+
+    char = service[-1]
+    service = service[:-1]
+    while char.isdigit():
+        char = service[-1] + char
+        service = service[:-1]
+
+    service += char[0]
+    char = char[1:]
+    return service + ':' + char
 
 
 def create_service_name(service_type):
@@ -100,3 +117,52 @@ def init_core():
     core.__path__ = [CORE_PATH]
     core.__package__ = 'micasaverde_vera'
     return core
+
+
+def import_device(device_type):
+    try:
+        cls_name = create_service_name(device_type)
+        mod_name = parse_string(cls_name)
+
+        device_mod = importlib.import_module(
+            'micasaverde_vera.core.devices.' + mod_name
+        )
+        device_cls_name = cls_name[:1].upper() + cls_name[1:]
+        device_cls = getattr(
+            device_mod,
+            device_cls_name.replace('_', '')
+
+        )
+
+        return device_cls
+    except VeraImportError:
+        return None
+
+
+def import_service(service_id):
+    service_type = service_id_to_service_type(service_id)
+    cls_name = create_service_name(service_type)
+    mod_name = parse_string(cls_name)
+
+    try:
+        service_mod = importlib.import_module(
+            'micasaverde_vera.core.services.' + mod_name
+        )
+        service_cls_name = cls_name[:1].upper() + cls_name[1:]
+        service_cls = getattr(
+            service_mod,
+            service_cls_name.replace('_', '')
+        )
+        return service_cls
+
+    except VeraImportError:
+        return None
+
+
+def copy_dict(mapping, storage):
+    for key, value in mapping.items():
+        if isinstance(value, dict):
+            storage[key] = dict()
+            copy_dict(value, storage[key])
+        else:
+            storage[key] = value

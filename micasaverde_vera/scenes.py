@@ -35,33 +35,9 @@ class Scenes(SceneController1):
         self._scenes = []
         self.ha_gateway = ha_gateway
         self.send = ha_gateway.send
-        self.id = node.pop('id', None)
 
-        SceneController1.__init__(self, self, dict(id=self.id))
-
-        for state in node.pop('states', []):
-            if state['service'] not in self._variables:
-                self._variables[state['service']] = dict()
-
-            for keys in self._variables[state['service']].keys():
-                if state['variable'] in keys:
-                    break
-            else:
-                keys = (state['variable'], state['variable'])
-            self._variables[state['service']][keys] = state['value']
-
-        for key, value in node.items():
-            for variables in self._variables.values():
-                for keys in variables.keys():
-                    if key in keys:
-                        variables[keys] = value
-                        break
-                else:
-                    continue
-                break
-            else:
-                service_id = 'urn:micasaverde-com:serviceId:SceneController1'
-                self._variables[service_id][(key, key)] = value
+        SceneController1.__init__(self, self, node)
+        SceneController1.update_node(self, node, False)
 
         Notify(
             self,

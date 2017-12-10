@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 import importlib
 from event import Notify
 from utils import create_service_name, parse_string
@@ -28,41 +29,51 @@ class Devices(object):
         self.ha_gateway = ha_gateway
         self.send = ha_gateway.send
         self._devices = []
+        self._device_error = []
 
         if node is not None:
             for device in node[:]:
-                self._devices += [self.__build(device)]
+                self._devices += [self.__get_device_class(device)]
                 if self._devices[-1] is None:
                     self._devices.remove(None)
 
-    def __build(self, device):
+    def get_variables(self):
+        res = []
+
+        for device in self._devices:
+            try:
+                res += [device.name]
+            except:
+                res += [str(device.id)]
+        return res
+
+    def __get_device_class(self, device):
         device_type = device.get('device_type', '')
 
         if not device_type:
             return UnknownDevice(self, device)
 
-        try:
-            if 'SceneController:1' in device_type:
-                from scenes import Scenes
-                self.ha_gateway.scenes = Scenes(self.ha_gateway, device)
-                return self.ha_gateway.scenes
-
-            cls_name = create_service_name(device_type)
-            mod_name = parse_string(cls_name)
-
-            device_mod = importlib.import_module(
-                'micasaverde_vera.core.devices.' + mod_name
-            )
-            device_cls_name = cls_name[:1].upper() + cls_name[1:]
-            device_cls = getattr(
-                device_mod,
-                device_cls_name.replace('_', '')
-
-            )
-
-            return device_cls(self, device)
-        except VeraImportError:
+        if device_type in self._device_error:
             return None
+
+        if 'SceneController:1' in device_type:
+            from scenes import Scenes
+            self.ha_gateway.scenes = Scenes(self.ha_gateway, device)
+            return self.ha_gateway.scenes
+
+        from utils import import_device
+
+        device_cls = import_device(device_type)
+
+        if device_cls is None:
+            return None
+
+        if device_cls is False:
+            self._device_error += [device_type]
+            print('MiCasaVerde_Vera: Unknown device {0}'.format(device_type))
+
+        else:
+            return device_cls(self, device)
 
     def __iter__(self):
         for device in self._devices:
@@ -109,7 +120,7 @@ class Devices(object):
                         self._devices.remove(found_device)
                         break
                 else:
-                    found_device = self.__build(device)
+                    found_device = self.__get_device_class(device)
 
                 if found_device is not None:
                     devices += [found_device]
@@ -178,4 +189,10 @@ class UnknownDevice(Device):
             id='action',
             action='DeleteDevice',
             DeviceNum=self.id,
+        )
+
+    def get_variables(self):
+        return list(
+            item for item in self.__dict__.keys()
+            if not callable(item) and not item.startswith('_')
         )

@@ -38,6 +38,7 @@ class ImportOverride(object):
         self._parent = parent
         self._rebuilding = threading.Event()
         self._rebuilding.set()
+        self._import_errors = []
 
     def start(self):
         builtins.__import__ = self
@@ -65,6 +66,10 @@ class ImportOverride(object):
 
                 if crc != CRC32_from_file(import_file):
                     if self._rebuilding.isSet():
+                        if name in self._import_errors:
+                            raise VeraImportError
+
+                        self._import_errors += [name]
                         self._rebuilding.clear()
 
                         def run():
@@ -81,10 +86,17 @@ class ImportOverride(object):
                         t.start()
                     raise VeraImportError
 
-                return self._import(name, globals, locals, fromlist, level)
+                mod = self._import(name, globals, locals, fromlist, level)
+
+                if name in self._import_errors:
+                    self._import_errors.remove(name)
+                return mod
 
             except ImportError:
                 if self._rebuilding.isSet():
+                    if name in self._import_errors:
+                        raise VeraImportError
+                    self._import_errors += [name]
                     self._rebuilding.clear()
 
                     def run():

@@ -76,6 +76,9 @@ class InstalledPlugins(object):
             raise IndexError
         raise KeyError
 
+    def get_variables(self):
+        return list(plugin.Title for plugin in self._plugins)
+
 
 class File(object):
     def __init__(self, parent, id, node):
@@ -88,6 +91,12 @@ class File(object):
         Notify(
             self,
             self.build_event() + '.created'
+        )
+
+    def get_variables(self):
+        return list(
+            item for item in self.__dict__.keys()
+            if not callable(item) and not item.startswith('_')
         )
 
     def build_event(self):
@@ -121,10 +130,10 @@ class Files(object):
                 files += [f]
             else:
                 files += [f]
-                Notify(self, self.parent.build_event() + '.Files.changed')
+                Notify(self, self.parent.build_event() + '.files.changed')
 
         if self.files:
-            Notify(self, self.parent.build_event() + '.Files.changed')
+            Notify(self, self.parent.build_event() + '.files.changed')
 
         del self.files[:]
         self.files += files[:]
@@ -147,10 +156,10 @@ class Luas(object):
                 luas += [lua]
             else:
                 luas += [lua]
-                Notify(self, self.parent.build_event() + '.Lua.changed')
+                Notify(self, self.parent.build_event() + '.lua.changed')
 
         if self.luas:
-            Notify(self, self.parent.build_event() + '.Lua.changed')
+            Notify(self, self.parent.build_event() + '.lua.changed')
 
         del self.luas[:]
         self.luas += luas[:]
@@ -238,6 +247,12 @@ class InstalledPlugin(object):
             self.__dict__[k] = v
 
         Notify(self, self.build_event() + '.created')
+
+    def get_variables(self):
+        return list(
+            item for item in self.__dict__.keys()
+            if not callable(item) and not item.startswith('_')
+        )
 
     def build_event(self):
         return 'installed_plugins.{0}'.format(self.id)
