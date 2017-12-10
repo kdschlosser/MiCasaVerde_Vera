@@ -1,0 +1,29 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:InsteonNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:InsteonNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Node
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            AddNodes()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AddNodes&id=action&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+            RemoveNodes()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RemoveNodes&id=action&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+            ResetNetwork()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ResetNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+            SendData(Data, Node)
+                URL  -  http://<VERA_IP>:3480/request_data?Data=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Node=<NEW_VALUE>&action=SendData&id=action&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+            StopAddRemoveNodes()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StopAddRemoveNodes&id=action&serviceId=urn:micasaverde-com:serviceId:InsteonNetwork1
+
+

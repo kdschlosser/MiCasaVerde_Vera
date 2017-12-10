@@ -1,0 +1,8 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:micasaverde-org:device:SerialPortRoot:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+

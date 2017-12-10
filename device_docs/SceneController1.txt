@@ -1,0 +1,69 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:SceneController:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:SceneController1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Scenes
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Scenes&id=variableset&serviceId=urn:micasaverde-com:serviceId:SceneController1
+            sl_CentralScene
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_CentralScene&id=variableset&serviceId=urn:micasaverde-com:serviceId:SceneController1
+            sl_SceneActivated
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_SceneActivated&id=variableset&serviceId=urn:micasaverde-com:serviceId:SceneController1
+            sl_SceneDeactivated
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_SceneDeactivated&id=variableset&serviceId=urn:micasaverde-com:serviceId:SceneController1
+
+        Functions
+        ------------------------------------------------------------------------
+
+
+    urn:micasaverde-com:serviceId:HaDevice1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            BatteryLevel
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=BatteryLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            CommFailure
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CommFailure&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Commands
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Commands&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Configured
+            ID
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ID&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            PollMinDelay
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            PollingEnabled
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_Alarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Alarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_BatteryAlarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_BatteryAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_Hail
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Hail&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_TamperAlarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_TamperAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+
+        Functions
+        ------------------------------------------------------------------------
+            AllowPairing(Seconds)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Seconds=<NEW_VALUE>&action=AllowPairing&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Poll()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Poll&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Reconfigure()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Reconfigure&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Remove()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Remove&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            SetPollFrequency(PollMinDelay, PollingEnabled)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&PollMinDelay=<NEW_VALUE>&PollingEnabled=<NEW_VALUE>&action=SetPollFrequency&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            StressTest()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StressTest&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            ToggleState()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ToggleState&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+
+

@@ -1,0 +1,21 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:Doorbell:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:Doorbell1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            LastPress
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastPress&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+            Pressed
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pressed&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+
+        Functions
+        ------------------------------------------------------------------------
+
+

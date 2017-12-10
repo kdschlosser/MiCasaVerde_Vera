@@ -1,0 +1,928 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:avmisc:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:DiscretePower1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Off()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Off&id=action&serviceId=urn:micasaverde-com:serviceId:DiscretePower1
+            On()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=On&id=action&serviceId=urn:micasaverde-com:serviceId:DiscretePower1
+
+
+    urn:micasaverde-com:serviceId:InputSelection1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            DiscreteinputCable()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputCable&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputCD1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputCD1&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputCD2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputCD2&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputCDR()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputCDR&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputDAT()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputDAT&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputDVD()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputDVD&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputDVI()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputDVI&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputHDTV()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputHDTV&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputLD()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputLD&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputMD()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputMD&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputPC()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputPC&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputPVR()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputPVR&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputTV/VCR()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputTV/VCR&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputTV()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputTV&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            DiscreteinputVCR()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiscreteinputVCR&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input1&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input10()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input10&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input2&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input3&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input4()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input4&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input5()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input5&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input6()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input6&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input7()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input7&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input8()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input8&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Input9()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input9&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            Source()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Source&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+            ToggleInput()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ToggleInput&id=action&serviceId=urn:micasaverde-com:serviceId:InputSelection1
+
+
+    urn:micasaverde-com:serviceId:MediaNavigation1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            ChapterDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChapterDown&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            ChapterUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChapterUp&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            DiskDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiskDown&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            DiskUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DiskUp&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            FastForward()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastForward&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            Pause()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Pause&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            Play()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Play&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            QuickSkip()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=QuickSkip&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            Rewind()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Rewind&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            SkipDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SkipDown&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            SkipUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SkipUp&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            Slow()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Slow&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+            Stop()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Stop&id=action&serviceId=urn:micasaverde-com:serviceId:MediaNavigation1
+
+
+    urn:micasaverde-com:serviceId:MenuNavigation1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Back()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Back&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Clear()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Clear&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Down()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Down&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Exit()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Exit&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Left()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Left&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Menu()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Menu&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            MenuAlt()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MenuAlt&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            PageDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PageDown&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            PageUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PageUp&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Right()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Right&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Select()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Select&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+            Up()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Up&id=action&serviceId=urn:micasaverde-com:serviceId:MenuNavigation1
+
+
+    urn:micasaverde-com:serviceId:Misc1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Continue()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Continue&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            A()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=A&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AC3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AC3&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Add()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Add&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AdjustDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AdjustDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AdjustUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AdjustUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Alarm()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Alarm&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AllOff()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AllOff&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AllOn()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AllOn&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AltAudio()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AltAudio&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AM()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AM&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Analog()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Analog&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Angle()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Angle&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Antenna()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Antenna&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AntennaEast()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AntennaEast&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AntennaWest()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AntennaWest&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Audio()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Audio&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Audio1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Audio1&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Audio2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Audio2&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Audio3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Audio3&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AudioDubbing()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AudioDubbing&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AudioLevelDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AudioLevelDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            AudioLevelUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=AudioLevelUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Auto/Manual()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Auto/Manual&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Aux1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Aux1&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Aux2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Aux2&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            B()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=B&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Background()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Background&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Balance()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Balance&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BalanceLeft()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BalanceLeft&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BalanceRight()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BalanceRight&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Band()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Band&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Bandwidth()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Bandwidth&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Bass()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Bass&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BassDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BassDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BassUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BassUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Blank()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Blank&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BreezeMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BreezeMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Bright()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Bright&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Brightness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Brightness&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BrightnessDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BrightnessDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BrightnessUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BrightnessUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Buy()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Buy&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BypassAB()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BypassAB&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            BypassInputSelection()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=BypassInputSelection&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            C()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=C&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Camera()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Camera&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CategoryDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CategoryDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CategoryUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CategoryUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Center()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Center&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CenterDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CenterDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CenterMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CenterMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CenterUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CenterUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Channel/Program()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Channel/Program&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Close()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Close&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ClosedCaption()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ClosedCaption&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Cold()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Cold&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Color()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Color&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ColorDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ColorDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ColorUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ColorUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Component1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Component1&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Component2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Component2&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Component3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Component3&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Concert()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Concert&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Confirm()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Confirm&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Contrast()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Contrast&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ContrastDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ContrastDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ContrastUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ContrastUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Counter()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Counter&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            CounterReset()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=CounterReset&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            D()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=D&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Delay()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Delay&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            DelayDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DelayDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            DelayUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DelayUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Delete()
+            Delimiter()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Delimiter&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Digest()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Digest&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Digital()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Digital&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Dim()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Dim&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Direct()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Direct&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disarm()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disarm&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc1&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc2&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc3&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc4()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc4&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc5()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc5&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disc6()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disc6&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Disco()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Disco&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Down()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Down&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Edit()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Edit&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            EffectDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=EffectDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            EffectUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=EffectUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Eject()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Eject&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            End()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=End&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            EQ()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=EQ&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Fader()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Fader&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Fan()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Fan&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FanHigh()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FanHigh&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FanLow()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FanLow&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FanMedium()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FanMedium&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FanSpeed()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FanSpeed&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextBlue()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextBlue&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextGreen()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextGreen&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextPurple()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextPurple&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextRed()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextRed&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextWhite()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextWhite&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FastextYellow()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FastextYellow&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FavoriteChannelDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FavoriteChannelDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FavoriteChannelUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FavoriteChannelUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Finalize()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Finalize&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FineTune()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FineTune&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Flat()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Flat&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FM()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FM&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FocusDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FocusDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            FocusUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=FocusUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Freeze()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Freeze&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Front()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Front&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Game()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Game&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            GoTo()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GoTo&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Group()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Group&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Hall()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Hall&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Heat()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Heat&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Help()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Help&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Home()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Home&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Index()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Index&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            IndexForward()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=IndexForward&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            IndexReverse()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=IndexReverse&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Info()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Info&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Interactive()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Interactive&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            IntroSearchScan()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=IntroSearchScan&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Jazz()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Jazz&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Karaoke()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Karaoke&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Keystone()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Keystone&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            KeystoneDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=KeystoneDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            KeystoneUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=KeystoneUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Language()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Language&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            LastChannel()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=LastChannel&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            LeftClick()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=LeftClick&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Level()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Level&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Light()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Light&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            List()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=List&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Local/Dx()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Local/Dx&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Loudness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Loudness&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Mail()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Mail&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Mark()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Mark&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            MemoryRecall()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MemoryRecall&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Monitor()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Monitor&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Movie()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Movie&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            MultiRoom()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MultiRoom&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Music()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Music&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            MusicScan()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MusicScan&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Natural()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Natural&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Night()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Night&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            NoiseReduction()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=NoiseReduction&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Normalize()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Normalize&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            OneTouchPlayback()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=OneTouchPlayback&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            OneTouchRecord()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=OneTouchRecord&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Open()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Open&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Optical()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Optical&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Options()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Options&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Orchestra()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Orchestra&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PAL/NTSC()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PAL/NTSC&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ParentalLock()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ParentalLock&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PBC()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PBC&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Phono()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Phono&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Photos()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Photos&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PictureMenu()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PictureMenu&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PictureMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PictureMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PictureMute()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PictureMute&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PlayMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PlayMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PlayReverse()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PlayReverse&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PPV()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PPV&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Preset()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Preset&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PresetDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PresetDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PresetUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PresetUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Program()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Program&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ProgressiveScan()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ProgressiveScan&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Prologic()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Prologic&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            PTY()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PTY&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Random()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Random&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RDS()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RDS&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Rear()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Rear&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RearVolumeDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RearVolumeDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RearVolumeUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RearVolumeUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Record()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Record&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RecordMute()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RecordMute&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RecordPause()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RecordPause&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RecordSpeed()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RecordSpeed&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Repeat()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Repeat&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RepeatAB()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RepeatAB&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ReplayZones()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ReplayZones&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Resume()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Resume&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RGB()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RGB&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RightClick()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RightClick&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Rock()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Rock&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RotateLeft()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RotateLeft&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            RotateRight()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RotateRight&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SVideo()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SVideo&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SAT()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SAT&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Scan()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Scan&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Scart()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Scart&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Scene()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Scene&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Scroll()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Scroll&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Services()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Services&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Set()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Set&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SetupMenu()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetupMenu&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Sharp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Sharp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Sharpness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Sharpness&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SharpnessDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SharpnessDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SharpnessUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SharpnessUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SideA/B()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SideA/B&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            6CHInput()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=6CHInput&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Sleep()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Sleep&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SlowForward()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SlowForward&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SlowReverse()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SlowReverse&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SoundMenu()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SoundMenu&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SoundMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SoundMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Speed()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Speed&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SpeedDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SpeedDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SpeedUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SpeedUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Sports()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Sports&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Stadium()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Stadium&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Start()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Start&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            StartIDErase()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StartIDErase&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            StartIDRenumber()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StartIDRenumber&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            StartIDWrite()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StartIDWrite&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Step()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Step&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Stereo/Mono()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Stereo/Mono&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            StillForward()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StillForward&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            StillReverse()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StillReverse&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Subtitle()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Subtitle&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SubwooferDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SubwooferDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SubwooferUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SubwooferUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SuperBass()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SuperBass&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Surround()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Surround&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SurroundMode()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SurroundMode&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Sweep()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Sweep&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            SynchroRecord()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SynchroRecord&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tape1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tape1&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tape12()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tape12&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tape2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tape2&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TemperatureDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TemperatureDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TemperatureUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TemperatureUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TestTone()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TestTone&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Text()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Text&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextExpand()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextExpand&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextHold()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextHold&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextIndex()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextIndex&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextMix()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextMix&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextOff()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextOff&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextReveal()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextReveal&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextSubpage()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextSubpage&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextTimedPage()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextTimedPage&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TextUpdate()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TextUpdate&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Theater()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Theater&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Theme()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Theme&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            3CH()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=3CH&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            3D()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=3D&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TiltDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TiltDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TiltUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TiltUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Time()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Time&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Timer()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Timer&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TimerDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TimerDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TimerUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TimerUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tint()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tint&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TintDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TintDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TintUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TintUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Title()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Title&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Track()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Track&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tracking()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tracking&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TrackingDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TrackingDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TrackingUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TrackingUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Treble()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Treble&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TrebleDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TrebleDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TrebleUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TrebleUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TuneDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TuneDown&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            TuneUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=TuneUp&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Tuner()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Tuner&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Up()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Up&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            VCRPlus()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=VCRPlus&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            View()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=View&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Voice()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Voice&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            Zoom()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Zoom&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ZoomIn()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ZoomIn&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+            ZoomOut()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ZoomOut&id=action&serviceId=urn:micasaverde-com:serviceId:Misc1
+
+
+    urn:micasaverde-com:serviceId:NumericEntry1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            8()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=8&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            5()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=5&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            4()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=4&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            9()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=9&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=1&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            10()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=10&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            100()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=100&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            10_100()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=10_100&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            7()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=7&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            6()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=6&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            3()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=3&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=2&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+            0()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=0&id=action&serviceId=urn:micasaverde-com:serviceId:NumericEntry1
+
+
+    urn:micasaverde-com:serviceId:PIP1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            ChannelDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChannelDown&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            ChannelUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChannelUp&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Freeze()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Freeze&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Input()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Input&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Move()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Move&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Multi()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Multi&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Off()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Off&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            On()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=On&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Size()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Size&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+            Swap()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Swap&id=action&serviceId=urn:micasaverde-com:serviceId:PIP1
+
+
+    urn:micasaverde-com:serviceId:TogglePower1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            OnOff()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=OnOff&id=action&serviceId=urn:micasaverde-com:serviceId:TogglePower1
+
+
+    urn:micasaverde-com:serviceId:Tuning1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            ChannelDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChannelDown&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            ChannelEnter()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChannelEnter&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            ChannelUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ChannelUp&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            Dash()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Dash&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            10()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=10&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            11()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=11&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            12()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=12&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            13()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=13&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            14()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=14&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            15()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=15&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+            16()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=16&id=action&serviceId=urn:micasaverde-com:serviceId:Tuning1
+
+
+    urn:micasaverde-com:serviceId:TV1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            DayDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DayDown&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            DayUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DayUp&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            Favorite()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Favorite&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            Guide()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Guide&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            InstantReplay()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=InstantReplay&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            ReturnToLive()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ReturnToLive&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            SAP()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SAP&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            ThumbsDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ThumbsDown&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+            ThumbsUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ThumbsUp&id=action&serviceId=urn:micasaverde-com:serviceId:TV1
+
+
+    urn:micasaverde-com:serviceId:VideoAdjustment1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Wide()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Wide&id=action&serviceId=urn:micasaverde-com:serviceId:VideoAdjustment1
+
+
+    urn:micasaverde-com:serviceId:Volume1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Down()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Down&id=action&serviceId=urn:micasaverde-com:serviceId:Volume1
+            Mute()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Mute&id=action&serviceId=urn:micasaverde-com:serviceId:Volume1
+            Up()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Up&id=action&serviceId=urn:micasaverde-com:serviceId:Volume1
+
+
+    urn:micasaverde-com:serviceId:WMC1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            Details()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Details&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            DVDAngle()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DVDAngle&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            DVDAudio()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DVDAudio&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            DVDMenu()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DVDMenu&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            DVDSubtitle()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DVDSubtitle&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            eHome()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=eHome&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            MyTV()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MyTV&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            MyVideos()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MyVideos&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            OEM1()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=OEM1&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            OEM2()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=OEM2&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            Pound()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Pound&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            Radio()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Radio&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            RecordedTV()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RecordedTV&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+            Star()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Star&id=action&serviceId=urn:micasaverde-com:serviceId:WMC1
+
+

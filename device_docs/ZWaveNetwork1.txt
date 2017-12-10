@@ -1,0 +1,79 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:ZWaveNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:ZWaveNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            ActiveScenes
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActiveScenes&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            Device
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Device&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            InclusionMode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=InclusionMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            LastError
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastError&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            Multiple
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Multiple&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            NetStatusID
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            NetStatusText
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            Node
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            NodeType
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollDelayDeadTime
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayDeadTime&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollDelayInitial
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollDelayInitial&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollFrequency
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollFrequency&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollMinDelay
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollingEnabled
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            Reload
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Reload&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            ResetMode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ResetMode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            Timeout
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            AddNodes(ControllerShift, InclusionMode, Multiple, NodeType, Reload, Timeout)
+                URL  -  http://<VERA_IP>:3480/request_data?ControllerShift=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&InclusionMode=<NEW_VALUE>&Multiple=<NEW_VALUE>&NodeType=<NEW_VALUE>&Reload=<NEW_VALUE>&Timeout=<NEW_VALUE>&action=AddNodes&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            BackupDongle(Restore)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Restore=<NEW_VALUE>&action=BackupDongle&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            DownloadNetwork()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DownloadNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            HealNetwork(BatteryMinutes, Configure, ManualRoute, Node, StartStage, StopStage, StressCycles)
+                URL  -  http://<VERA_IP>:3480/request_data?BatteryMinutes=<NEW_VALUE>&Configure=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&ManualRoute=<NEW_VALUE>&Node=<NEW_VALUE>&StartStage=<NEW_VALUE>&StopStage=<NEW_VALUE>&StressCycles=<NEW_VALUE>&action=HealNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PollAllNodes()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=PollAllNodes&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            PutByte(StartAddress, StopAddress, Value)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&StartAddress=<NEW_VALUE>&StopAddress=<NEW_VALUE>&Value=<NEW_VALUE>&action=PutByte&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            ReconfigureAllNodes(FailedOnly)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&FailedOnly=<NEW_VALUE>&action=ReconfigureAllNodes&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            RemoveNodes(InclusionMode, Multiple, NodeType, Reload, Timeout)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&InclusionMode=<NEW_VALUE>&Multiple=<NEW_VALUE>&NodeType=<NEW_VALUE>&Reload=<NEW_VALUE>&Timeout=<NEW_VALUE>&action=RemoveNodes&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            ResetNetwork(HomeID, ResetMode, ZeroMemory)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&HomeID=<NEW_VALUE>&ResetMode=<NEW_VALUE>&ZeroMemory=<NEW_VALUE>&action=ResetNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            SendData(Data, Node)
+                URL  -  http://<VERA_IP>:3480/request_data?Data=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Node=<NEW_VALUE>&action=SendData&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            SetPolling(IsTemporary, PollDelayDeadTime, PollDelayInitial, PollFrequency, PollMinDelay, PollingEnabled)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&IsTemporary=<NEW_VALUE>&PollDelayDeadTime=<NEW_VALUE>&PollDelayInitial=<NEW_VALUE>&PollFrequency=<NEW_VALUE>&PollMinDelay=<NEW_VALUE>&PollingEnabled=<NEW_VALUE>&action=SetPolling&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            SimulateIncomingData(Data)
+                URL  -  http://<VERA_IP>:3480/request_data?Data=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&action=SimulateIncomingData&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            UpdateNeighbors(Device)
+                URL  -  http://<VERA_IP>:3480/request_data?Device=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&action=UpdateNeighbors&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+            UpdateNetwork()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=UpdateNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:ZWaveNetwork1
+
+

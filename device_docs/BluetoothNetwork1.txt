@@ -1,0 +1,25 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:BluetoothNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:BluetoothNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Address
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Address&id=variableset&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            Add(Address)
+                URL  -  http://<VERA_IP>:3480/request_data?Address=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&action=Add&id=action&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+            Scan(Duration)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Duration=<NEW_VALUE>&action=Scan&id=action&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+            ScanResults()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ScanResults&id=action&serviceId=urn:micasaverde-com:serviceId:BluetoothNetwork1
+
+

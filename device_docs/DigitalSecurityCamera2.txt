@@ -1,0 +1,205 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-upnp-org:device:DigitalSecurityCamera:2
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            AutomaticWhiteBalance
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AutomaticWhiteBalance&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            AvailableRotations
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AvailableRotations&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            Brightness
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Brightness&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            ColorSaturation
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ColorSaturation&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            DefaultRotation
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DefaultRotation&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            FixedWhiteBalance
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FixedWhiteBalance&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+
+        Functions
+        ------------------------------------------------------------------------
+            DecreaseBrightness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DecreaseBrightness&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            DecreaseColorSaturation()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=DecreaseColorSaturation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetAutomaticWhiteBalance()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetAutomaticWhiteBalance&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetAvailableRotations()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetAvailableRotations&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetBrightness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetBrightness&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetColorSaturation()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetColorSaturation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetDefaultRotation()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultRotation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            GetFixedWhiteBalance()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetFixedWhiteBalance&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            IncreaseBrightness()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=IncreaseBrightness&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            IncreaseColorSaturation()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=IncreaseColorSaturation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            SetAutomaticWhiteBalance(NewAutomaticWhiteBalance)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewAutomaticWhiteBalance=<NEW_VALUE>&action=SetAutomaticWhiteBalance&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            SetBrightness(NewBrightness)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewBrightness=<NEW_VALUE>&action=SetBrightness&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            SetColorSaturation(NewColorSaturation)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewColorSaturation=<NEW_VALUE>&action=SetColorSaturation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            SetDefaultRotation(NewRotation)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewRotation=<NEW_VALUE>&action=SetDefaultRotation&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+            SetFixedWhiteBalance(NewFixedWhiteBalance)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewFixedWhiteBalance=<NEW_VALUE>&action=SetFixedWhiteBalance&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraSettings1
+
+
+    urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            AvailableCompressionLevels
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AvailableCompressionLevels&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            AvailableEncodings
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AvailableEncodings&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            AvailableResolutions
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AvailableResolutions&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            DefaultCompressionLevel
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DefaultCompressionLevel&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            DefaultEncoding
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DefaultEncoding&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            DefaultResolution
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DefaultResolution&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            ImagePresentationURL
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ImagePresentationURL&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            ImageURL
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ImageURL&id=variableset&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+
+        Functions
+        ------------------------------------------------------------------------
+            GetAvailableCompressionLevels()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetAvailableCompressionLevels&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetAvailableEncodings()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetAvailableEncodings&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetAvailableResolutions()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetAvailableResolutions&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetDefaultCompressionLevel()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultCompressionLevel&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetDefaultEncoding()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultEncoding&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetDefaultImagePresentationURL()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultImagePresentationURL&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetDefaultImageURL()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultImageURL&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetDefaultResolution()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDefaultResolution&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetImagePresentationURL(ReqCompression, ReqEncoding, ReqResolution)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ReqCompression=<NEW_VALUE>&ReqEncoding=<NEW_VALUE>&ReqResolution=<NEW_VALUE>&action=GetImagePresentationURL&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            GetImageURL(ReqCompression, ReqEncoding, ReqResolution)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ReqCompression=<NEW_VALUE>&ReqEncoding=<NEW_VALUE>&ReqResolution=<NEW_VALUE>&action=GetImageURL&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            SetDefaultCompressionLevel(ReqCompressionLevel)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ReqCompressionLevel=<NEW_VALUE>&action=SetDefaultCompressionLevel&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            SetDefaultEncoding(ReqEncoding)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ReqEncoding=<NEW_VALUE>&action=SetDefaultEncoding&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+            SetDefaultResolution(ReqResolution)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ReqResolution=<NEW_VALUE>&action=SetDefaultResolution&id=action&serviceId=urn:upnp-org:serviceId:DigitalSecurityCameraStillImage1
+
+
+    urn:micasaverde-com:serviceId:PanTiltZoom1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            GoToPreset(presetNumber)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GoToPreset&id=action&presetNumber=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            HorizontalPatrol()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=HorizontalPatrol&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            MoveDown()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MoveDown&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            MoveLeft()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MoveLeft&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            MoveRight()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MoveRight&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            MoveUp()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=MoveUp&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            SetPreset(presetNumber)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetPreset&id=action&presetNumber=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            StopPatrol()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StopPatrol&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            VerticalPatrol()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=VerticalPatrol&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            ZoomIn()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ZoomIn&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+            ZoomOut()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ZoomOut&id=action&serviceId=urn:micasaverde-com:serviceId:PanTiltZoom1
+
+
+    urn:micasaverde-com:serviceId:Camera1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            AutoArchivePreserveDays
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AutoArchivePreserveDays&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            AutoArchiveSeconds
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AutoArchiveSeconds&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            DirectStreamingURL
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DirectStreamingURL&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            LightOptions
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LightOptions&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            LoopRequest
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LoopRequest&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            RelatedLights
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RelatedLights&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            RelatedSensors
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RelatedSensors&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            RtspURL
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RtspURL&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            SensorArchiveSeconds
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=SensorArchiveSeconds&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            URL
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=URL&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            UseCMS
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UseCMS&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+            VideoURLs
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=VideoURLs&id=variableset&serviceId=urn:micasaverde-com:serviceId:Camera1
+
+        Functions
+        ------------------------------------------------------------------------
+            ArchiveVideo(Duration, Format)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Duration=<NEW_VALUE>&Format=<NEW_VALUE>&action=ArchiveVideo&id=action&serviceId=urn:micasaverde-com:serviceId:Camera1
+            GeneratePassword()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GeneratePassword&id=action&serviceId=urn:micasaverde-com:serviceId:Camera1
+            GetWifiNetworks()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetWifiNetworks&id=action&serviceId=urn:micasaverde-com:serviceId:Camera1
+            Reboot()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Reboot&id=action&serviceId=urn:micasaverde-com:serviceId:Camera1
+            SetPassword(password, username)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetPassword&id=action&password=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:Camera1&username=<NEW_VALUE>
+            SetWifiNetwork(enable, passkey, security, ssid)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetWifiNetwork&enable=<NEW_VALUE>&id=action&passkey=<NEW_VALUE>&security=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:Camera1&ssid=<NEW_VALUE>
+
+
+    urn:micasaverde-com:serviceId:CameraMotionDetection1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Columns
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Columns&id=variableset&serviceId=urn:micasaverde-com:serviceId:CameraMotionDetection1
+            ImageHeight
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ImageHeight&id=variableset&serviceId=urn:micasaverde-com:serviceId:CameraMotionDetection1
+            ImageWidth
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ImageWidth&id=variableset&serviceId=urn:micasaverde-com:serviceId:CameraMotionDetection1
+            Rows
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Rows&id=variableset&serviceId=urn:micasaverde-com:serviceId:CameraMotionDetection1
+
+        Functions
+        ------------------------------------------------------------------------
+            SetPriorities(priorities)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetPriorities&id=action&priorities=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:CameraMotionDetection1
+
+

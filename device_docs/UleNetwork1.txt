@@ -1,0 +1,33 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:UleNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:UleNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Address
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Address&id=variableset&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            DeleteDevice(DeviceId)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceId=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&action=DeleteDevice&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            GetAllAttributes(DeviceId, Interface, UnitId)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceId=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Interface=<NEW_VALUE>&UnitId=<NEW_VALUE>&action=GetAllAttributes&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            GetAttribute(Attribute, DeviceId, Interface, UnitId)
+                URL  -  http://<VERA_IP>:3480/request_data?Attribute=<NEW_VALUE>&DeviceId=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Interface=<NEW_VALUE>&UnitId=<NEW_VALUE>&action=GetAttribute&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            GetDeviceInfo(DeviceId)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceId=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&action=GetDeviceInfo&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            GetDevices()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetDevices&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            OpenRegistration(Duration, Mode)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Duration=<NEW_VALUE>&Mode=<NEW_VALUE>&action=OpenRegistration&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+            SetAttribute(Attribute, DeviceId, Interface, UnitId, Value)
+                URL  -  http://<VERA_IP>:3480/request_data?Attribute=<NEW_VALUE>&DeviceId=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Interface=<NEW_VALUE>&UnitId=<NEW_VALUE>&Value=<NEW_VALUE>&action=SetAttribute&id=action&serviceId=urn:micasaverde-com:serviceId:UleNetwork1
+
+

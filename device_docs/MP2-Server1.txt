@@ -1,0 +1,8 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-team-mediaportal-com:device:MP2-Server:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+

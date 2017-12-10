@@ -1,0 +1,60 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-upnp-org:device:RulesEngine:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:upnp-org:serviceId:RulesEngine1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            A_ARG_TYPE_Acknowledgement
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Acknowledgement&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            A_ARG_TYPE_Arming
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Arming&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            A_ARG_TYPE_FileName
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_FileName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            A_ARG_TYPE_RuleId
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleId&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            A_ARG_TYPE_RuleIdx
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleIdx&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            A_ARG_TYPE_RuleName
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            RulesEnginePanel
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RulesEnginePanel&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+
+        Functions
+        ------------------------------------------------------------------------
+            LoadRules(fileName, ruleIdx)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=LoadRules&fileName=<NEW_VALUE>&id=action&ruleIdx=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            RemoveRule(fileName, ruleId, ruleIdx)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RemoveRule&fileName=<NEW_VALUE>&id=action&ruleId=<NEW_VALUE>&ruleIdx=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            SetRuleAcknowledgement(acknowledgement, ruleId)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&acknowledgement=<NEW_VALUE>&action=SetRuleAcknowledgement&id=action&ruleId=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:RulesEngine1
+            SetRuleArming(arming, ruleId)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetRuleArming&arming=<NEW_VALUE>&id=action&ruleId=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:RulesEngine1
+
+
+    urn:upnp-org:serviceId:SwitchPower1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            Target
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+        Functions
+        ------------------------------------------------------------------------
+            GetStatus()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetStatus&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            GetTarget()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetTarget&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            SetTarget(newTargetValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetTarget&id=action&newTargetValue=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+

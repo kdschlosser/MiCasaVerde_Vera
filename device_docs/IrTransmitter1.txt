@@ -1,0 +1,23 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:IrTransmitter:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:IrTransmitter1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            ProntoCode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProntoCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+
+        Functions
+        ------------------------------------------------------------------------
+            SendProntoCode(ProntoCode)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&ProntoCode=<NEW_VALUE>&action=SendProntoCode&id=action&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+
+

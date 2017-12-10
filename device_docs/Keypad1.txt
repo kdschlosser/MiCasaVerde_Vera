@@ -1,0 +1,111 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:Keypad:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:DoorLock1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            PinCodes
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PinCodes&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            Target
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            dateTime
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=dateTime&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_CodeChanged
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_CodeChanged&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_LockButton
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_LockButton&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_LockChanged
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_LockChanged&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_LockFailure
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_LockFailure&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_LowBattery
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_LowBattery&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_PinFailed
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_PinFailed&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_PinProgramFail
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_PinProgramFail&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_PinProgramSuccess
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_PinProgramSuccess&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_PinRemoveSuccess
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_PinRemoveSuccess&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_UnauthUser
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_UnauthUser&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_UserCode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_UserCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            sl_VeryLowBattery
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_VeryLowBattery&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            ui1
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ui1&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            ui4
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ui4&id=variableset&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+
+        Functions
+        ------------------------------------------------------------------------
+            ClearPin(UserCode)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&UserCode=<NEW_VALUE>&action=ClearPin&id=action&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            ClearPinValidity(UserCode, slotID)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&UserCode=<NEW_VALUE>&action=ClearPinValidity&id=action&serviceId=urn:micasaverde-com:serviceId:DoorLock1&slotID=<NEW_VALUE>
+            RenamePin(UserCode, UserCodeName)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&UserCode=<NEW_VALUE>&UserCodeName=<NEW_VALUE>&action=RenamePin&id=action&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            SetPin(UserCodeName, json, newPin)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&UserCodeName=<NEW_VALUE>&action=SetPin&id=action&json=<NEW_VALUE>&newPin=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            SetPinValidityDate(Replace, StartDate, StopDate, UserCode)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Replace=<NEW_VALUE>&StartDate=<NEW_VALUE>&StopDate=<NEW_VALUE>&UserCode=<NEW_VALUE>&action=SetPinValidityDate&id=action&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            SetPinValidityWeekly(DayOfWeek, Replace, StartHour, StartMinute, StopHour, StopMinute, UserCode)
+                URL  -  http://<VERA_IP>:3480/request_data?DayOfWeek=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Replace=<NEW_VALUE>&StartHour=<NEW_VALUE>&StartMinute=<NEW_VALUE>&StopHour=<NEW_VALUE>&StopMinute=<NEW_VALUE>&UserCode=<NEW_VALUE>&action=SetPinValidityWeekly&id=action&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+            SetTarget(newTargetValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetTarget&id=action&newTargetValue=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:DoorLock1
+
+
+    urn:micasaverde-com:serviceId:HaDevice1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            BatteryLevel
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=BatteryLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            CommFailure
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CommFailure&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Commands
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Commands&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Configured
+            ID
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ID&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            PollMinDelay
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            PollingEnabled
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_Alarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Alarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_BatteryAlarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_BatteryAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_Hail
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Hail&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            sl_TamperAlarm
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_TamperAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+
+        Functions
+        ------------------------------------------------------------------------
+            AllowPairing(Seconds)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Seconds=<NEW_VALUE>&action=AllowPairing&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Poll()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Poll&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Reconfigure()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Reconfigure&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            Remove()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=Remove&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            SetPollFrequency(PollMinDelay, PollingEnabled)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&PollMinDelay=<NEW_VALUE>&PollingEnabled=<NEW_VALUE>&action=SetPollFrequency&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            StressTest()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=StressTest&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+            ToggleState()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ToggleState&id=action&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+
+

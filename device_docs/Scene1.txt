@@ -1,0 +1,19 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:Scene:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:Scene1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+
+        Functions
+        ------------------------------------------------------------------------
+            RunScene()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=RunScene&id=action&serviceId=urn:micasaverde-com:serviceId:Scene1
+
+

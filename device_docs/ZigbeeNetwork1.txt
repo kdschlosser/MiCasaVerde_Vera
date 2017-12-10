@@ -1,0 +1,39 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:ZigbeeNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:ZigbeeNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Cluster
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Cluster&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            Command
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Command&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            Duration
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Duration&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            FrameControl
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FrameControl&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            ManufacturerCode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ManufacturerCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            NetStatusText
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            Node
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            PanID
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PanID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            FormNetwork(Channel, PanID)
+                URL  -  http://<VERA_IP>:3480/request_data?Channel=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&PanID=<NEW_VALUE>&action=FormNetwork&id=action&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            OpenJoin(Duration)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Duration=<NEW_VALUE>&action=OpenJoin&id=action&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+            SendData(Cluster, Command, Data, FrameControl, ManufacturerCode, Node)
+                URL  -  http://<VERA_IP>:3480/request_data?Cluster=<NEW_VALUE>&Command=<NEW_VALUE>&Data=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&FrameControl=<NEW_VALUE>&ManufacturerCode=<NEW_VALUE>&Node=<NEW_VALUE>&action=SendData&id=action&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+
+

@@ -1,0 +1,74 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:SamsungAppliances:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:SamsungAppliances1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            AlarmCode
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AlarmCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            CurrentSetpoint
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentSetpoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            CurrentTemperature
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentTemperature&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            ModeStatus
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            ModeTarget
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeTarget&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            OperationStatus
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=OperationStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            RapidFreezing
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFreezing&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            RapidFridge
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFridge&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            TargetSetPoint
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=TargetSetPoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            WindLevel
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+
+        Functions
+        ------------------------------------------------------------------------
+            GetCurrentTemperature()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetCurrentTemperature&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            GetModeStatus()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetModeStatus&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            GetModeTarget()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetModeTarget&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetCurrentSetpoint(NewCurrentSetpoint)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewCurrentSetpoint=<NEW_VALUE>&action=SetCurrentSetpoint&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetModeTarget(NewModeTarget)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewModeTarget=<NEW_VALUE>&action=SetModeTarget&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetOperationTarget(NewOperationTarget)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewOperationTarget=<NEW_VALUE>&action=SetOperationTarget&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetRapidFreezing(NewRapidFreezingValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewRapidFreezingValue=<NEW_VALUE>&action=SetRapidFreezing&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetRapidFridge(NewRapidFridgeValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewRapidFridgeValue=<NEW_VALUE>&action=SetRapidFridge&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+            SetWindTarget(NewWindTarget)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NewWindTarget=<NEW_VALUE>&action=SetWindTarget&id=action&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+
+
+    urn:upnp-org:serviceId:SwitchPower1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            Target
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+        Functions
+        ------------------------------------------------------------------------
+            GetStatus()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetStatus&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            GetTarget()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetTarget&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            SetTarget(newTargetValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetTarget&id=action&newTargetValue=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+

@@ -1,0 +1,27 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:IrDevice:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:IrDevice1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Codeset
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codeset&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+            Codesets
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codesets&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+            Remote
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Remote&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+            Scene
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Scene&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+
+        Functions
+        ------------------------------------------------------------------------
+            SendCode(Button, Codeset, Repeat)
+                URL  -  http://<VERA_IP>:3480/request_data?Button=<NEW_VALUE>&Codeset=<NEW_VALUE>&DeviceNum=<DEVICE_ID>&Repeat=<NEW_VALUE>&action=SendCode&id=action&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+
+

@@ -1,0 +1,27 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:LPRFNetwork:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:LPRFNetwork1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            NodeId
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeId&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+            NodeType
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NodeType&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+            Timeout
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Timeout&id=variableset&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+
+        Functions
+        ------------------------------------------------------------------------
+            AddNodes(NodeId, NodeType, Timeout)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&NodeId=<NEW_VALUE>&NodeType=<NEW_VALUE>&Timeout=<NEW_VALUE>&action=AddNodes&id=action&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+            ResetReceiver()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=ResetReceiver&id=action&serviceId=urn:micasaverde-com:serviceId:LPRFNetwork1
+
+

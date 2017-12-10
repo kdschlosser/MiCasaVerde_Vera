@@ -1,0 +1,73 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-micasaverde-com:device:HomeAutomationGateway:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:micasaverde-com:serviceId:HomeAutomationGateway1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            ActiveScenes
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActiveScenes&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DataFormat
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DataFormat&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DataVersion
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DataVersion&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DataVersionStatus
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DataVersionStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DataVersionUserData
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DataVersionUserData&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DeviceNum
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DeviceNum&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            Reload
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Reload&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            UDN
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UDN&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            UserData
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UserData&id=variableset&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+
+        Functions
+        ------------------------------------------------------------------------
+            CreateDevice(Description, DeviceNumParent, IpAddress, MacAddress, RoomNum, StateVariables, UpnpDevFilename, UpnpImplFilename, deviceType, internalID)
+                URL  -  http://<VERA_IP>:3480/request_data?Description=<NEW_VALUE>&DeviceNumParent=<NEW_VALUE>&IpAddress=<NEW_VALUE>&MacAddress=<NEW_VALUE>&RoomNum=<NEW_VALUE>&StateVariables=<NEW_VALUE>&UpnpDevFilename=<NEW_VALUE>&UpnpImplFilename=<NEW_VALUE>&action=CreateDevice&deviceType=<NEW_VALUE>&id=action&internalID=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            CreatePlugin(PluginNum, StateVariables)
+                URL  -  http://<VERA_IP>:3480/request_data?PluginNum=<NEW_VALUE>&StateVariables=<NEW_VALUE>&action=CreatePlugin&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            CreatePluginDevice(PluginNum, StateVariables)
+                URL  -  http://<VERA_IP>:3480/request_data?PluginNum=<NEW_VALUE>&StateVariables=<NEW_VALUE>&action=CreatePluginDevice&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DeleteDevice(DeviceNum, UDN)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<NEW_VALUE>&UDN=<NEW_VALUE>&action=DeleteDevice&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            DeletePlugin(PluginNum)
+                URL  -  http://<VERA_IP>:3480/request_data?PluginNum=<NEW_VALUE>&action=DeletePlugin&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            GetActions(DeviceNum, UDN)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<NEW_VALUE>&UDN=<NEW_VALUE>&action=GetActions&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            GetStatus(DeviceNum, UDN)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<NEW_VALUE>&UDN=<NEW_VALUE>&action=GetStatus&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            GetUserData(DataVersion)
+                URL  -  http://<VERA_IP>:3480/request_data?DataVersion=<NEW_VALUE>&action=GetUserData&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            GetVariable(DeviceNum, Service, Variable)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<NEW_VALUE>&Service=<NEW_VALUE>&Variable=<NEW_VALUE>&action=GetVariable&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            ImportUpnpDevice(RoomNum, UDN)
+                URL  -  http://<VERA_IP>:3480/request_data?RoomNum=<NEW_VALUE>&UDN=<NEW_VALUE>&action=ImportUpnpDevice&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            LogIpRequest(IpAddress, MacAddress)
+                URL  -  http://<VERA_IP>:3480/request_data?IpAddress=<NEW_VALUE>&MacAddress=<NEW_VALUE>&action=LogIpRequest&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            ModifyUserData(Reload, inUserData)
+                URL  -  http://<VERA_IP>:3480/request_data?Reload=<NEW_VALUE>&action=ModifyUserData&id=action&inUserData=<NEW_VALUE>&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            ProcessChildDevices(DeviceList, DeviceNumParent)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceList=<NEW_VALUE>&DeviceNumParent=<NEW_VALUE>&action=ProcessChildDevices&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            Reload()
+                URL  -  http://<VERA_IP>:3480/request_data?action=Reload&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            RunLua(Code, DeviceNum)
+                URL  -  http://<VERA_IP>:3480/request_data?Code=<NEW_VALUE>&DeviceNum=<NEW_VALUE>&action=RunLua&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            RunScene(SceneNum)
+                URL  -  http://<VERA_IP>:3480/request_data?SceneNum=<NEW_VALUE>&action=RunScene&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            SceneOff(SceneNum)
+                URL  -  http://<VERA_IP>:3480/request_data?SceneNum=<NEW_VALUE>&action=SceneOff&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            SetHouseMode(Mode)
+                URL  -  http://<VERA_IP>:3480/request_data?Mode=<NEW_VALUE>&action=SetHouseMode&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+            SetVariable(DeviceNum, Service, Value, Variable)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<NEW_VALUE>&Service=<NEW_VALUE>&Value=<NEW_VALUE>&Variable=<NEW_VALUE>&action=SetVariable&id=action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1
+
+

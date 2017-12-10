@@ -1,0 +1,27 @@
+*****Items wrapped in <> are fields that have to have data entered by the user.*****
+
+urn:schemas-rts-services-com:device:DayTime:1
+================================================================================
+
+Services
+--------------------------------------------------------------------------------
+
+    urn:upnp-org:serviceId:SwitchPower1
+    ============================================================================
+        Variables
+        ------------------------------------------------------------------------
+            Status
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            Target
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+        Functions
+        ------------------------------------------------------------------------
+            GetStatus()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetStatus&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            GetTarget()
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=GetTarget&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1
+            SetTarget(newTargetValue)
+                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&action=SetTarget&id=action&newTargetValue=<NEW_VALUE>&serviceId=urn:upnp-org:serviceId:SwitchPower1
+
+
