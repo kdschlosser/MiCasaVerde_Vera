@@ -134,7 +134,8 @@ class Scene(Scene1):
         triggers_operator='',
         triggers=[],
         timers=[],
-        groups=[]
+        groups=[],
+        **kwargs
     ):
         if not name:
             name = 'NO NAME ASSIGNED'
