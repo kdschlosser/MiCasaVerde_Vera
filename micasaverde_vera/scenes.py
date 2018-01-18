@@ -1069,7 +1069,7 @@ class Argument(object):
 
     def __init__(self, parent, value, name=None, id=None):
         self.parent = parent
-        if isinstance(self.parent, Action):
+        if isinstance(self.parent.parent, Action):
             if not name:
                 name = 'NO NAME ASSIGNED'
             self.name = name
@@ -1082,7 +1082,7 @@ class Argument(object):
         Notify(self, self.build_event() + '.created')
 
     def build_event(self):
-        if isinstance(self.parent, Action):
+        if isinstance(self.parent.parent, Action):
             event = self.name
         else:
             event = self.id
