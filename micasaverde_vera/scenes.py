@@ -688,6 +688,8 @@ class Trigger(object):
         last_run=0,
         last_eval=0
     ):
+        if not name:
+            name = 'NO NAME ASSIGNED'
         self.parent = parent
         self.scene = scene
         self._name = name
