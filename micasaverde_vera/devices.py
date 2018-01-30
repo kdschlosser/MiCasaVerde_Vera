@@ -101,9 +101,9 @@ class Devices(object):
                 return device
 
         if isinstance(item, int):
-            raise IndexError
+            raise IndexError('{0} not found'.format(item))
 
-        raise KeyError
+        raise KeyError('{0} not found'.format(item))
 
     def update_node(self, node, full=False):
         if node is not None:
