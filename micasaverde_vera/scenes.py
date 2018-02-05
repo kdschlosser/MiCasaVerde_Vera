@@ -18,6 +18,7 @@
 
 
 import base64
+import threading
 
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.core.devices.scene_1 import Scene1
@@ -30,6 +31,7 @@ from vera_exception import VeraNotImplementedError
 class Scenes(SceneController1):
 
     def __init__(self, ha_gateway, node):
+        self.__lock = threading.RLock()
         self.category_num = 14
         self.subcategory_num = 0
         self._scenes = []
@@ -45,48 +47,57 @@ class Scenes(SceneController1):
         )
 
     def __iter__(self):
-        for scene in self._scenes:
-            yield scene
+        with self.__lock:
+            for scene in self._scenes:
+                yield scene
 
     def get_devices(self):
-        return self.ha_gateway.devices
+        with self.__lock:
+            return self.ha_gateway.devices
 
     def get_device(self, device):
-        return self.ha_gateway.devices[device]
+        with self.__lock:
+            return self.ha_gateway.devices[device]
 
     def get_room(self, room):
-        return self.ha_gateway.rooms[room]
+        with self.__lock:
+            return self.ha_gateway.rooms[room]
 
     def get_user(self, user):
-        return self.parent.users[user]
+        with self.__lock:
+            return self.parent.users[user]
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            return self._get_variable(item)[0]
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                return self._get_variable(item)[0]
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-        for scene in self._scenes:
-            name = getattr(scene, 'name', None)
-            if name is not None and name.replace(' ', '_').lower() == item:
-                return scene
-            if item in (scene.name, scene.id):
-                return scene
+            for scene in self._scenes:
+                name = getattr(scene, 'name', None)
+                if name is not None and name.replace(' ', '_').lower() == item:
+                    return scene
+                if item in (scene.name, scene.id):
+                    return scene
 
-        if isinstance(item, int):
-            raise IndexError
-        raise KeyError
+            if isinstance(item, int):
+                raise IndexError
+            raise KeyError
 
     def update_node(self, node, full=False):
-        if node is not None:
+        with self.__lock:
+            if node is None:
+                return
             if isinstance(node, list):
                 scenes = []
                 for scene in node:
@@ -137,6 +148,7 @@ class Scene(Scene1):
         groups=[],
         **kwargs
     ):
+        self.__lock = threading.RLock()
         if not name:
             name = 'NO NAME ASSIGNED'
 
@@ -167,183 +179,207 @@ class Scene(Scene1):
 
     @property
     def name(self):
-        return self._name
+        with self.__lock:
+            return self._name
 
     @name.setter
     def name(self, name):
-        self.parent.send(
-            id='scene',
-            action='rename',
-            scene=self.id,
-            name=name,
-            room=self.room.id
-        )
+        with self.__lock:
+            self.parent.send(
+                id='scene',
+                action='rename',
+                scene=self.id,
+                name=name,
+                room=self.room.id
+            )
 
     @property
     def room(self):
-        return self.parent.ha_gateway.rooms[self._room]
+        with self.__lock:
+            return self.parent.ha_gateway.rooms[self._room]
 
     @room.setter
     def room(self, room):
-        from rooms import Room
+        with self.__lock:
+            from rooms import Room
 
-        if not isinstance(room, Room):
-            room = self.parent.ha_gateway.rooms[room]
+            if not isinstance(room, Room):
+                room = self.parent.ha_gateway.rooms[room]
 
-        self._parent.send(
-            id='scene',
-            action='rename',
-            scene=self.id,
-            name=self.name,
-            room=room.id
-        )
+            self._parent.send(
+                id='scene',
+                action='rename',
+                scene=self.id,
+                name=self.name,
+                room=room.id
+            )
 
     @property
     def encoded_lua(self):
-        return self._encoded_lua
+        with self.__lock:
+            return self._encoded_lua
 
     @encoded_lua.setter
     def encoded_lua(self, encoded_lua):
-        if int(encoded_lua) and not int(self._encoded_lua):
-            self._lua = base64.b64encode(self._lua)
+        with self.__lock:
+            if int(encoded_lua) and not int(self._encoded_lua):
+                self._lua = base64.b64encode(self._lua)
 
-        elif not int(encoded_lua) and int(self._encoded_lua):
-            self._lua = base64.b64decode(self._lua)
+            elif not int(encoded_lua) and int(self._encoded_lua):
+                self._lua = base64.b64decode(self._lua)
 
-        self._encoded_lua = encoded_lua
+            self._encoded_lua = encoded_lua
 
     @property
     def lua(self):
-        if int(self._encoded_lua):
-            return base64.b64decode(self._lua)
-        return self._lua
+        with self.__lock:
+            if int(self._encoded_lua):
+                return base64.b64decode(self._lua)
+            return self._lua
 
     @lua.setter
     def lua(self, lua):
-        if int(self._encoded_lua):
-            self._lua = base64.b64encode(lua)
-        else:
-            self._lua = lua
+        with self.__lock:
+            if int(self._encoded_lua):
+                self._lua = base64.b64encode(lua)
+            else:
+                self._lua = lua
 
     @property
     def triggers_operator(self):
-        return self._triggers_operator
+        with self.__lock:
+            return self._triggers_operator
 
     @triggers_operator.setter
     def triggers_operator(self, triggers_operator):
-        self._triggers_operator = triggers_operator
+        with self.__lock:
+            self._triggers_operator = triggers_operator
 
     @property
     def users(self):
-        return self._users
+        with self.__lock:
+            return self._users
 
     @users.setter
     def users(self, users):
-        self._users = users
+        with self.__lock:
+            self._users = users
 
     @property
     def modeStatus(self):
-        return self._modeStatus
+        with self.__lock:
+            return self._modeStatus
 
     @modeStatus.setter
     def modeStatus(self, mode_status):
-        self._modeStatus = mode_status
+        with self.__lock:
+            self._modeStatus = mode_status
 
     @property
     def active_on_any(self):
-        return self._active_on_any
+        with self.__lock:
+            return self._active_on_any
 
     @active_on_any.setter
     def active_on_any(self, active_on_any):
-        self._active_on_any = active_on_any
+        with self.__lock:
+            self._active_on_any = active_on_any
 
     @property
     def notification_only(self):
-        return self._notification_only
+        with self.__lock:
+            return self._notification_only
 
     @notification_only.setter
     def notification_only(self, notification_only):
-        self._notification_only = notification_only
+        with self.__lock:
+            self._notification_only = notification_only
 
     def add_action_group(self, delay=0):
-        self.groups += [Group(self, delay=delay)]
-        return self.groups[-1]
+        with self.__lock:
+            self.groups += [Group(self, delay=delay)]
+            return self.groups[-1]
 
     def stop_scene(self):
-        self.parent.send(
-            id='action',
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            action='SceneOff',
-            SceneNum=self.id
-        )
+        with self.__lock:
+            self.parent.send(
+                id='action',
+                serviceId=(
+                    'urn:micasaverde-com:serviceId:HomeAutomationGateway1'
+                ),
+                action='SceneOff',
+                SceneNum=self.id
+            )
 
     def delete(self):
-        self.parent.send(
-            id='scene',
-            action='delete',
-            scene=self.id
-        )
+        with self.__lock:
+            self.parent.send(
+                id='scene',
+                action='delete',
+                scene=self.id
+            )
 
     # noinspection PyUnboundLocalVariable
     def update_node(self, node, full=False):
+        with self.__lock:
+            _triggers = node.pop('triggers', [])
+            _groups = node.pop('groups', [])
+            _timers = node.pop('timers', [])
 
-        _triggers = node.pop('triggers', [])
-        _groups = node.pop('groups', [])
-        _timers = node.pop('timers', [])
-
-        for key, value in node.items():
-            if key == 'name':
-                old_value = self._name
-            elif key == 'notification_only':
-                old_value = self._notification_only
-            elif key == 'modeStatus':
-                old_value = self._modeStatus
-            elif key == 'users':
-                old_value = self._users
-            elif key == 'room':
-                old_value = self._room
-            elif key == 'triggers_operator':
-                old_value = self._triggers_operator
-            elif key == 'active_on_any':
-                old_value = self._active_on_any
-            elif key == 'lua':
-                old_value = self._lua
-            elif key == 'encoded_lua':
-                old_value = self._encoded_lua
-            else:
-                old_value = getattr(self, key, None)
-
-            if old_value != value:
+            for key, value in node.items():
                 if key == 'name':
-                    self._name = value
+                    old_value = self._name
                 elif key == 'notification_only':
-                    self._notification_only = value
+                    old_value = self._notification_only
                 elif key == 'modeStatus':
-                    self._modeStatus = value
+                    old_value = self._modeStatus
                 elif key == 'users':
-                    self._users = value
+                    old_value = self._users
                 elif key == 'room':
-                    self._room = value
+                    old_value = self._room
                 elif key == 'triggers_operator':
-                    self._triggers_operator = value
+                    old_value = self._triggers_operator
                 elif key == 'active_on_any':
-                    self._active_on_any = value
+                    old_value = self._active_on_any
                 elif key == 'lua':
-                    self._lua = value
+                    old_value = self._lua
                 elif key == 'encoded_lua':
-                    self._encoded_lua = value
+                    old_value = self._encoded_lua
                 else:
-                    setattr(self, key, value)
+                    old_value = getattr(self, key, None)
 
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                if old_value != value:
+                    if key == 'name':
+                        self._name = value
+                    elif key == 'notification_only':
+                        self._notification_only = value
+                    elif key == 'modeStatus':
+                        self._modeStatus = value
+                    elif key == 'users':
+                        self._users = value
+                    elif key == 'room':
+                        self._room = value
+                    elif key == 'triggers_operator':
+                        self._triggers_operator = value
+                    elif key == 'active_on_any':
+                        self._active_on_any = value
+                    elif key == 'lua':
+                        self._lua = value
+                    elif key == 'encoded_lua':
+                        self._encoded_lua = value
+                    else:
+                        setattr(self, key, value)
 
-        self.triggers.update_node(_triggers, full=full)
-        self.groups.update_node(_groups, full=full)
-        self.timers.update_node(_timers, full=full)
+                    Notify(self, self.build_event() + '.{0}.changed'.format(key))
+
+            self.triggers.update_node(_triggers, full=full)
+            self.groups.update_node(_groups, full=full)
+            self.timers.update_node(_timers, full=full)
 
 
 class Actions(object):
     def __init__(self, parent, scene, actions=[]):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.scene = scene
         self.actions = list(
@@ -355,54 +391,60 @@ class Actions(object):
         return self.parent.build_event()
 
     def __iter__(self):
-        return iter(self.actions)
+        with self.__lock:
+            return iter(self.actions)
 
     def new_action(self):
-        self.actions += [Action(self, self.scene)]
-        return self.actions[-1]
+        with self.__lock:
+            self.actions += [Action(self, self.scene)]
+            return self.actions[-1]
 
     def remove(self, action):
-        if action in self.actions:
-            self.actions.remove(action)
+        with self.__lock:
+            if action in self.actions:
+                self.actions.remove(action)
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            return self.actions[int(item)]
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                return self.actions[int(item)]
 
-        for action in self.actions:
-            if item == action.action:
-                return action
+            for action in self.actions:
+                if item == action.action:
+                    return action
 
-        raise KeyError
+            raise KeyError
 
     def update_node(self, node, full):
-        actions = []
+        with self.__lock:
+            actions = []
 
-        while node and self.actions:
-            action = node.pop(0)
-            found_action = self.actions.pop(0)
-            found_action.update_node(action, full)
-            actions += [found_action]
+            while node and self.actions:
+                action = node.pop(0)
+                found_action = self.actions.pop(0)
+                found_action.update_node(action, full)
+                actions += [found_action]
 
-        for action in node:
-            actions += [Action(self, self.scene, **action)]
+            for action in node:
+                actions += [Action(self, self.scene, **action)]
 
-        if full:
-            for action in self.actions:
-                Notify(action, action.build_event() + '.removed')
-            del self.actions[:]
+            if full:
+                for action in self.actions:
+                    Notify(action, action.build_event() + '.removed')
+                del self.actions[:]
 
-        self.actions += actions
+            self.actions += actions
 
 
 class Action(object):
@@ -415,6 +457,7 @@ class Action(object):
         action='',
         arguments=[]
     ):
+        self.__lock = threading.RLock()
         self.scene = scene
         self.parent = parent
         self.device = device
@@ -428,25 +471,29 @@ class Action(object):
 
     @property
     def action(self):
-        if not self._action:
-            return 'NO NAME ASSIGNED'
-        return self._action
+        with self.__lock:
+            if not self._action:
+                return 'NO NAME ASSIGNED'
+            return self._action
 
     def new_argument(self):
-        return self.arguments.new()
+        with self.__lock:
+            return self.arguments.new()
 
     def delete(self):
-        Notify(self, self.build_event() + '.removed')
-        self.parent.remove(self)
+        with self.__lock:
+            Notify(self, self.build_event() + '.removed')
+            self.parent.remove(self)
 
     def update_node(self, node, full):
-        self.arguments.update_node(node.pop('arguments', []), full)
+        with self.__lock:
+            self.arguments.update_node(node.pop('arguments', []), full)
 
-        for key, value in node.items():
-            old_value = getattr(self, key, None)
-            if old_value != value:
-                setattr(self, key, value)
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+            for key, value in node.items():
+                old_value = getattr(self, key, None)
+                if old_value != value:
+                    setattr(self, key, value)
+                    Notify(self, self.build_event() + '.{0}.changed'.format(key))
 
 
 class AvailableDevices(object):
@@ -532,6 +579,7 @@ class AvailableDevice(object):
 
 class Groups(object):
     def __init__(self, scene, groups):
+        self.__lock = threading.RLock()
         self.scene = scene
         self.groups = []
 
@@ -542,42 +590,48 @@ class Groups(object):
         return self.scene.build_event()
 
     def __iter__(self):
-        return iter(self.groups)
+        with self.__lock:
+            return iter(self.groups)
 
     def new_group(self):
-        self.groups += [Group(self, self.scene, len(self.groups) + 1)]
-        return self.groups[-1]
+        with self.__lock:
+            self.groups += [Group(self, self.scene, len(self.groups) + 1)]
+            return self.groups[-1]
 
     def update_node(self, node, full):
-        groups = []
+        with self.__lock:
+            groups = []
 
-        while node and self.groups:
-            group = node.pop(0)
-            found_group = self.groups.pop(0)
-            found_group.update_node(group, full)
-            groups += [found_group]
+            while node and self.groups:
+                group = node.pop(0)
+                found_group = self.groups.pop(0)
+                found_group.update_node(group, full)
+                groups += [found_group]
 
-        for group in node:
-            groups += [Group(self.scene, **group)]
+            for group in node:
+                groups += [Group(self.scene, **group)]
 
-        if full:
-            for group in self.groups:
-                Notify(group, group.build_event() + '.removed')
-            del self.groups[:]
+            if full:
+                for group in self.groups:
+                    Notify(group, group.build_event() + '.removed')
+                del self.groups[:]
 
-        self.groups += groups
+            self.groups += groups
 
     def remove(self, group):
-        if group in self.groups:
-            self.groups.remove(group)
+        with self.__lock:
+            if group in self.groups:
+                self.groups.remove(group)
 
     def __getitem__(self, item):
-        return self.groups[item]
+        with self.__lock:
+            return self.groups[item]
 
 
 class Group(object):
 
     def __init__(self, parent, scene, id, delay=0, actions=[]):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.scene = scene
         self.id = id
@@ -590,29 +644,34 @@ class Group(object):
 
     @property
     def delay(self):
-        return self._delay
+        with self.__lock:
+            return self._delay
 
     @delay.setter
     def delay(self, delay):
-        self._delay = delay
+        with self.__lock:
+            self._delay = delay
 
     def delete(self):
-        Notify(
-            self,
-            self.build_event() + '.removed'
-        )
-        self.scene.groups.remove(self)
+        with self.__lock:
+            Notify(
+                self,
+                self.build_event() + '.removed'
+            )
+            self.scene.groups.remove(self)
 
     def update_node(self, node, full):
-        if self._delay != node['delay']:
-            self._delay = node['delay']
-            Notify(self, self.build_event() + '.delay.changed')
-        self.actions.update_node(node['actions'], full)
+        with self.__lock:
+            if self._delay != node['delay']:
+                self._delay = node['delay']
+                Notify(self, self.build_event() + '.delay.changed')
+            self.actions.update_node(node['actions'], full)
 
 
 class Triggers(object):
 
     def __init__(self, scene, triggers):
+        self.__lock = threading.RLock()
         self.scene = scene
         self.triggers = list(
             Trigger(self, scene, **trigger) for trigger in triggers
@@ -622,55 +681,61 @@ class Triggers(object):
         return self.scene.build_event()
 
     def __iter__(self):
-        return iter(self.triggers)
+        with self.__lock:
+            return iter(self.triggers)
 
     def new_trigger(self):
-        self.triggers += [Trigger(self, self.scene, '')]
-        return self.triggers[-1]
+        with self.__lock:
+            self.triggers += [Trigger(self, self.scene, '')]
+            return self.triggers[-1]
 
     def remove(self, trigger):
-        if trigger in self.triggers:
-            self.triggers.remove(trigger)
+        with self.__lock:
+            if trigger in self.triggers:
+                self.triggers.remove(trigger)
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            return self.triggers[int(item)]
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                return self.triggers[int(item)]
 
-        for trigger in self.triggers:
-            if item == trigger.name:
-                return trigger
+            for trigger in self.triggers:
+                if item == trigger.name:
+                    return trigger
 
-        raise KeyError
+            raise KeyError
 
     def update_node(self, node, full):
-        triggers = []
+        with self.__lock:
+            triggers = []
 
-        while node and self.triggers:
-            trigger = node.pop(0)
-            found_trigger = self.triggers.pop(0)
+            while node and self.triggers:
+                trigger = node.pop(0)
+                found_trigger = self.triggers.pop(0)
 
-            found_trigger.update_node(trigger, full)
-            triggers += [found_trigger]
+                found_trigger.update_node(trigger, full)
+                triggers += [found_trigger]
 
-        for trigger in node:
-            triggers += [Trigger(self.scene, **trigger)]
+            for trigger in node:
+                triggers += [Trigger(self.scene, **trigger)]
 
-        if full:
-            for trigger in self.triggers:
-                Notify(trigger, trigger.build_event() + '.removed')
-            del self.triggers[:]
+            if full:
+                for trigger in self.triggers:
+                    Notify(trigger, trigger.build_event() + '.removed')
+                del self.triggers[:]
 
-        self.triggers += triggers
+            self.triggers += triggers
 
 
 class Trigger(object):
@@ -688,8 +753,11 @@ class Trigger(object):
         last_run=0,
         last_eval=0
     ):
+        self.__lock = threading.RLock()
+
         if not name:
             name = 'NO NAME ASSIGNED'
+
         self.parent = parent
         self.scene = scene
         self._name = name
@@ -708,177 +776,202 @@ class Trigger(object):
 
     @property
     def name(self):
-        if not self._name:
-            return 'NO NAME ASSIGNED'
+        with self.__lock:
+            if not self._name:
+                return 'NO NAME ASSIGNED'
 
-        return self._name
+            return self._name
 
     @name.setter
     def name(self, name):
-        self._name = name
+        with self.__lock:
+            self._name = name
 
     @property
     def device(self):
-        return self.scene.parent.get_device(self._device)
+        with self.__lock:
+            return self.scene.parent.get_device(self._device)
 
     @device.setter
     def device(self, device):
-        device = self.scene.parent.get_device(device)
-        if device is not None:
-            self._device = device.id
+        with self.__lock:
+            device = self.scene.parent.get_device(device)
+            if device is not None:
+                self._device = device.id
 
     @property
     def template(self):
-        return self._template
+        with self.__lock:
+            return self._template
 
     @template.setter
     def template(self, template):
-        self._template = template
+        with self.__lock:
+            self._template = template
 
     @property
     def enabled(self):
-        return self._enabled
+        with self.__lock:
+            return self._enabled
 
     @enabled.setter
     def enabled(self, enabled):
-        self._enabled = enabled
+        with self.__lock:
+            self._enabled = enabled
 
     @property
     def encoded_lua(self):
-        return self._encoded_lua
+        with self.__lock:
+            return self._encoded_lua
 
     @encoded_lua.setter
     def encoded_lua(self, encoded_lua):
-        if int(encoded_lua) and not int(self._encoded_lua):
-            self._lua = base64.b64encode(self._lua)
+        with self.__lock:
+            if int(encoded_lua) and not int(self._encoded_lua):
+                self._lua = base64.b64encode(self._lua)
 
-        elif not int(encoded_lua) and int(self._encoded_lua):
-            self._lua = base64.b64decode(self._lua)
+            elif not int(encoded_lua) and int(self._encoded_lua):
+                self._lua = base64.b64decode(self._lua)
 
-        self._encoded_lua = encoded_lua
+            self._encoded_lua = encoded_lua
 
     @property
     def lua(self):
-        if int(self._encoded_lua):
-            return base64.b64decode(self._lua)
-        return self._lua
+        with self.__lock:
+            if int(self._encoded_lua):
+                return base64.b64decode(self._lua)
+            return self._lua
 
     @lua.setter
     def lua(self, lua):
-        if int(self._encoded_lua):
-            self._lua = base64.b64encode(lua)
-        else:
-            self._lua = lua
+        with self.__lock:
+            if int(self._encoded_lua):
+                self._lua = base64.b64encode(lua)
+            else:
+                self._lua = lua
 
     def new_argument(self):
-        return self.arguments.new()
+        with self.__lock:
+            return self.arguments.new()
 
     def delete(self):
-        Notify(self, self.build_event() + '.removed')
-        self.scene.triggers.remove(self)
+        with self.__lock:
+            Notify(self, self.build_event() + '.removed')
+            self.scene.triggers.remove(self)
 
     def update_node(self, node, full=False):
-        self.arguments.update_node(node.pop('arguments', []), full)
+        with self.__lock:
+            self.arguments.update_node(node.pop('arguments', []), full)
 
-        for key, value in node.items():
-            if key == 'device':
-                old_value = self._device
-            elif key == 'name':
-                old_value = self._name
-            elif key == 'enabled':
-                old_value = self._enabled
-            elif key == 'template':
-                old_value = self._template
-            elif key == 'lua':
-                old_value = self._lua
-            elif key == 'encoded_lua':
-                old_value = self._encoded_lua
-            else:
-                old_value = getattr(self, key, None)
-
-            if old_value != value:
+            for key, value in node.items():
                 if key == 'device':
-                    self._device = value
+                    old_value = self._device
                 elif key == 'name':
-                    self._name = value
+                    old_value = self._name
                 elif key == 'enabled':
-                    self._enabled = value
+                    old_value = self._enabled
                 elif key == 'template':
-                    self._template = value
+                    old_value = self._template
                 elif key == 'lua':
-                    self._lua = value
+                    old_value = self._lua
                 elif key == 'encoded_lua':
-                    self._encoded_lua = value
+                    old_value = self._encoded_lua
                 else:
-                    setattr(self, key, value)
+                    old_value = getattr(self, key, None)
 
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                if old_value != value:
+                    if key == 'device':
+                        self._device = value
+                    elif key == 'name':
+                        self._name = value
+                    elif key == 'enabled':
+                        self._enabled = value
+                    elif key == 'template':
+                        self._template = value
+                    elif key == 'lua':
+                        self._lua = value
+                    elif key == 'encoded_lua':
+                        self._encoded_lua = value
+                    else:
+                        setattr(self, key, value)
+
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
 
 class Timers(object):
 
     def __init__(self, scene, timers):
+        self.__lock = threading.RLock()
         self.scene = scene
         self.timers = list(Timer(self, scene, **timer) for timer in timers)
 
     def new_timer(self, name):
-        self.timers += [Timer(self, self.scene, len(self.timers), name)]
-        return self.timers[-1]
+        with self.__lock:
+            self.timers += [Timer(self, self.scene, len(self.timers), name)]
+            return self.timers[-1]
 
     def build_event(self):
         return self.scene.build_event()
 
     def __iter__(self):
-        return iter(self.timers)
+        with self.__lock:
+            return iter(self.timers)
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
+        with self.__lock:
+            item = str(item)
 
-        if item.isdigit():
-            return self.timers[int(item)]
+            if item.isdigit():
+                return self.timers[int(item)]
 
-        for timer in self.timers:
-            if timer.name == item:
-                return timer
+            for timer in self.timers:
+                if timer.name == item:
+                    return timer
 
-        raise KeyError
+            raise KeyError
 
     def remove(self, timer):
-        if timer in self.timers:
-            self.timers.remove(timer)
+        with self.__lock:
+            if timer in self.timers:
+                self.timers.remove(timer)
 
     def update_node(self, node, full):
-        timers = []
+        with self.__lock:
+            timers = []
 
-        for timer in node:
-            # noinspection PyShadowingBuiltins
-            id = timer['id']
+            for timer in node:
+                # noinspection PyShadowingBuiltins
+                id = timer['id']
 
-            for found_timer in self.timers[:]:
-                if found_timer.id == id:
-                    found_timer.update_node(timer, full)
-                    self.timers.remove(found_timer)
-                    break
-            else:
-                found_timer = Timer(self.scene, **timer)
+                for found_timer in self.timers[:]:
+                    if found_timer.id == id:
+                        found_timer.update_node(timer, full)
+                        self.timers.remove(found_timer)
+                        break
+                else:
+                    found_timer = Timer(self.scene, **timer)
 
-            timers += [found_timer]
+                timers += [found_timer]
 
-        if full:
-            for timer in self.timers:
-                Notify(timer, timer.build_event() + '.removed')
-            del self.timers[:]
+            if full:
+                for timer in self.timers:
+                    Notify(timer, timer.build_event() + '.removed')
+                del self.timers[:]
 
-        self.timers += timers
+            self.timers += timers
 
 
 # noinspection PyShadowingBuiltins
@@ -897,6 +990,7 @@ class Timer(object):
         next_run=0,
         last_run=0
     ):
+        self.__lock = threading.RLock()
 
         if not name:
             name = 'NO NAME ASSIGNED'
@@ -918,79 +1012,94 @@ class Timer(object):
 
     @property
     def name(self):
-        return self._name
+        with self.__lock:
+            return self._name
 
     @name.setter
     def name(self, name):
-        self._name = name
+        with self.__lock:
+            self._name = name
 
     @property
     def type(self):
-        return self._type
+        with self.__lock:
+            return self._type
 
     @type.setter
     def type(self, type):
-        self._type = type
+        with self.__lock:
+            self._type = type
 
     @property
     def enabled(self):
-        return self._enabled
+        with self.__lock:
+            return self._enabled
 
     @enabled.setter
     def enabled(self, enabled):
-        self._enabled = enabled
+        with self.__lock:
+            self._enabled = enabled
 
     @property
     def days_of_week(self):
-        return self._days_of_week
+        with self.__lock:
+            return self._days_of_week
 
     @days_of_week.setter
     def days_of_week(self, days_of_week):
-        self._days_of_week = days_of_week
+        with self.__lock:
+            self._days_of_week = days_of_week
 
     @property
     def time(self):
-        return self._time
+        with self.__lock:
+            return self._time
 
     @time.setter
     def time(self, time):
-        self._time = time
+        with self.__lock:
+            self._time = time
 
     def delete(self):
-        Notify(self, self.build_event() + '.removed')
-        self.scene.timers.remove(self)
+        with self.__lock:
+            Notify(self, self.build_event() + '.removed')
+            self.scene.timers.remove(self)
 
     def update_node(self, node, _):
-
-        for key, value in node.items():
-            if key == 'type':
-                old_value = self._type
-            elif key == 'enabled':
-                old_value = self._enabled
-            elif key == 'days_of_week':
-                old_value = self._days_of_week
-            elif key == 'time':
-                old_value = self._time
-            else:
-                old_value = getattr(self, key, None)
-
-            if old_value != value:
+        with self.__lock:
+            for key, value in node.items():
                 if key == 'type':
-                    self._type = value
+                    old_value = self._type
                 elif key == 'enabled':
-                    self._enabled = value
+                    old_value = self._enabled
                 elif key == 'days_of_week':
-                    self._days_of_week = value
+                    old_value = self._days_of_week
                 elif key == 'time':
-                    self._time = value
+                    old_value = self._time
                 else:
-                    setattr(self, key, value)
+                    old_value = getattr(self, key, None)
 
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                if old_value != value:
+                    if key == 'type':
+                        self._type = value
+                    elif key == 'enabled':
+                        self._enabled = value
+                    elif key == 'days_of_week':
+                        self._days_of_week = value
+                    elif key == 'time':
+                        self._time = value
+                    else:
+                        setattr(self, key, value)
+
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
 
 class Arguments(object):
     def __init__(self, parent, arguments):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.arguments = list(
             Argument(self, **argument) for argument in arguments
@@ -1000,76 +1109,83 @@ class Arguments(object):
         return self.parent.build_event()
 
     def new(self):
-        if isinstance(self.parent, Action):
-            self.arguments += [
-                Argument(self, name='', value=None)
-            ]
-        else:
-            self.arguments += [
-                Argument(self, id=0, value=None)
-            ]
-        return self.arguments[-1]
+        with self.__lock:
+            if isinstance(self.parent, Action):
+                self.arguments += [
+                    Argument(self, name='', value=None)
+                ]
+            else:
+                self.arguments += [
+                    Argument(self, id=0, value=None)
+                ]
+            return self.arguments[-1]
 
     def update_node(self, node, full):
-        arguments = []
-        for argument in node:
-            for found_argument in self.arguments[:]:
-                if isinstance(self.parent, Action):
-                    if found_argument.name == argument['name']:
+        with self.__lock:
+            arguments = []
+            for argument in node:
+                for found_argument in self.arguments[:]:
+                    if isinstance(self.parent, Action):
+                        if found_argument.name == argument['name']:
+                            found_argument.update_node(argument, full)
+                            self.arguments.remove(found_argument)
+                            break
+
+                    elif found_argument.id == argument['id']:
                         found_argument.update_node(argument, full)
                         self.arguments.remove(found_argument)
                         break
+                else:
+                    found_argument = Argument(self, **argument)
+                arguments += [found_argument]
 
-                elif found_argument.id == argument['id']:
-                    found_argument.update_node(argument, full)
-                    self.arguments.remove(found_argument)
-                    break
-            else:
-                found_argument = Argument(self, **argument)
-            arguments += [found_argument]
+            for argument in self.arguments:
+                Notify(argument, argument.build_event() + '.removed')
 
-        for argument in self.arguments:
-            Notify(argument, argument.build_event() + '.removed')
+            del self.arguments[:]
 
-        del self.arguments[:]
-
-        self.arguments += arguments
+            self.arguments += arguments
 
     def __instancecheck__(self, instance):
-        return isinstance(self.parent, instance)
+        with self.__lock:
+            return isinstance(self.parent, instance)
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                for argument in self.arguments:
+                    if argument.id == int(item):
+                        return argument
+                raise IndexError
+
             for argument in self.arguments:
-                if argument.id == int(item):
+                if argument.name == item:
                     return argument
-            raise IndexError
 
-        for argument in self.arguments:
-            if argument.name == item:
-                return argument
-
-        raise KeyError
+            raise KeyError
 
     def remove(self, argument):
-        if argument in self.arguments:
-            self.arguments.remove(argument)
+        with self.__lock:
+            if argument in self.arguments:
+                self.arguments.remove(argument)
 
 
 # noinspection PyShadowingBuiltins, PyUnresolvedReferences
 class Argument(object):
 
     def __init__(self, parent, value, name=None, id=None):
+        self.__lock = threading.RLock()
         self.parent = parent
         if isinstance(self.parent.parent, Action):
             if not name:
@@ -1091,28 +1207,35 @@ class Argument(object):
         return self.parent.build_event() + '.arguments.{0}'.format(event)
 
     def update_node(self, node, _):
-        for key, value in node.items():
-            if key == 'value':
-                old_value = self._value
-            else:
-                old_value = getattr(self, key, None)
+        with self.__lock:
+            for key, value in node.items():
+                if key == 'value':
+                    old_value = self._value
+                else:
+                    old_value = getattr(self, key, None)
 
-            if old_value != value:
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                if old_value != value:
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
-            if key == 'value':
-                self._value = value
-            else:
-                setattr(self, key, value)
+                if key == 'value':
+                    self._value = value
+                else:
+                    setattr(self, key, value)
 
     @property
     def value(self):
-        return self._value
+        with self.__lock:
+            return self._value
 
     @value.setter
     def value(self, value):
-        self._value = value
+        with self.__lock:
+            self._value = value
 
     def delete(self):
-        Notify(self, self.build_event() + '.removed')
-        self.parent.remove(self)
+        with self.__lock:
+            Notify(self, self.build_event() + '.removed')
+            self.parent.remove(self)

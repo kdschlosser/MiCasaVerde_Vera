@@ -11,17 +11,23 @@ Services
         Variables
         ------------------------------------------------------------------------
             DaysOfWeek
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DaysOfWeek&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DaysOfWeek&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=DaysOfWeek&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
             LightsOn
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LightsOn&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LightsOn&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=LightsOn&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
             MaxWatts
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MaxWatts&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MaxWatts&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=MaxWatts&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
             ThermostatOn
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ThermostatOn&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ThermostatOn&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ThermostatOn&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
             Time
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Time&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Time&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Time&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
             Users
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Users&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Users&id=variableset&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Users&id=variableget&serviceId=urn:upnp-org:serviceId:EnergyCalculator1
 
         Functions
         ------------------------------------------------------------------------
@@ -32,31 +38,44 @@ Services
         Variables
         ------------------------------------------------------------------------
             DevicesRegistered
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DevicesRegistered&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DevicesRegistered&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=DevicesRegistered&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             EMDeviceList
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=EMDeviceList&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=EMDeviceList&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=EMDeviceList&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             GatewayRegistered
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=GatewayRegistered&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=GatewayRegistered&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=GatewayRegistered&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             GotKey
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=GotKey&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=GotKey&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=GotKey&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             IPMeters
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=IPMeters&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=IPMeters&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=IPMeters&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             InsideTS
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=InsideTS&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=InsideTS&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=InsideTS&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             MeterPairings
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MeterPairings&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MeterPairings&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=MeterPairings&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             OutsideTS
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=OutsideTS&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=OutsideTS&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=OutsideTS&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             RenewableEM
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RenewableEM&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RenewableEM&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=RenewableEM&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             SimpleDR
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=SimpleDR&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=SimpleDR&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=SimpleDR&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             TSDeviceList
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=TSDeviceList&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=TSDeviceList&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=TSDeviceList&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             UserDataVersion
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UserDataVersion&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UserDataVersion&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=UserDataVersion&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
             WholehouseEM
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WholehouseEM&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WholehouseEM&id=variableset&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WholehouseEM&id=variableget&serviceId=urn:micasaverde-com:serviceId:EEM-Plugin1
 
         Functions
         ------------------------------------------------------------------------

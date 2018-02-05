@@ -11,13 +11,17 @@ Services
         Variables
         ------------------------------------------------------------------------
             Codeset
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codeset&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codeset&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Codeset&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrDevice1
             Codesets
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codesets&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Codesets&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Codesets&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrDevice1
             Remote
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Remote&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Remote&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Remote&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrDevice1
             Scene
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Scene&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Scene&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Scene&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrDevice1
 
         Functions
         ------------------------------------------------------------------------

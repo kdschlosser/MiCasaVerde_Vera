@@ -11,25 +11,35 @@ Services
         Variables
         ------------------------------------------------------------------------
             AlarmCode
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AlarmCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=AlarmCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=AlarmCode&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             CurrentSetpoint
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentSetpoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentSetpoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=CurrentSetpoint&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             CurrentTemperature
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentTemperature&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CurrentTemperature&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=CurrentTemperature&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             ModeStatus
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ModeStatus&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             ModeTarget
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeTarget&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ModeTarget&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ModeTarget&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             OperationStatus
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=OperationStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=OperationStatus&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=OperationStatus&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             RapidFreezing
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFreezing&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFreezing&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=RapidFreezing&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             RapidFridge
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFridge&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RapidFridge&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=RapidFridge&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             TargetSetPoint
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=TargetSetPoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=TargetSetPoint&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=TargetSetPoint&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
             WindLevel
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WindLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WindLevel&id=variableget&serviceId=urn:micasaverde-com:serviceId:SamsungAppliances1
 
         Functions
         ------------------------------------------------------------------------
@@ -58,9 +68,11 @@ Services
         Variables
         ------------------------------------------------------------------------
             Status
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Status&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
             Target
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Target&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
 
         Functions
         ------------------------------------------------------------------------

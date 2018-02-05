@@ -11,15 +11,20 @@ Services
         Variables
         ------------------------------------------------------------------------
             baud
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=baud&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=baud&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=baud&id=variableget&serviceId=urn:micasaverde-org:serviceId:SerialPort1
             databits
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=databits&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=databits&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=databits&id=variableget&serviceId=urn:micasaverde-org:serviceId:SerialPort1
             parity
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=parity&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=parity&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=parity&id=variableget&serviceId=urn:micasaverde-org:serviceId:SerialPort1
             path
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=path&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=path&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=path&id=variableget&serviceId=urn:micasaverde-org:serviceId:SerialPort1
             stopbits
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=stopbits&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=stopbits&id=variableset&serviceId=urn:micasaverde-org:serviceId:SerialPort1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=stopbits&id=variableget&serviceId=urn:micasaverde-org:serviceId:SerialPort1
 
         Functions
         ------------------------------------------------------------------------

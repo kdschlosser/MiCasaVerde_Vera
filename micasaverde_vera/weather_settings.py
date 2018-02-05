@@ -16,12 +16,13 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
+import threading
 from event import Notify
 
 
 class WeatherSettings(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.send = parent.send
 
@@ -39,63 +40,76 @@ class WeatherSettings(object):
 
     @property
     def tempFormat(self):
-        return self._tempFormat
+        with self.__lock:
+            return self._tempFormat
 
     @tempFormat.setter
     def tempFormat(self, temp_format):
-        self._parent.send(
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            Value=temp_format,
-            Variable='tempFormat',
-            id='variableset',
-        )
+        with self.__lock:
+            self._parent.send(
+                serviceId=(
+                    'urn:micasaverde-com:serviceId:HomeAutomationGateway1'
+                ),
+                Value=temp_format,
+                Variable='tempFormat',
+                id='variableset',
+            )
 
     @property
     def weatherCity(self):
-        return self._weatherCity
+        with self.__lock:
+            return self._weatherCity
 
     @weatherCity.setter
     def weatherCity(self, weather_city):
-        self._parent.send(
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            Value=weather_city,
-            Variable='weatherCity',
-            id='variableset',
-        )
+        with self.__lock:
+            self._parent.send(
+                serviceId=(
+                    'urn:micasaverde-com:serviceId:HomeAutomationGateway1'
+                ),
+                Value=weather_city,
+                Variable='weatherCity',
+                id='variableset',
+            )
 
     @property
     def weatherCountry(self):
-        return self._weatherCountry
+        with self.__lock:
+            return self._weatherCountry
 
     @weatherCountry.setter
     def weatherCountry(self, weather_country):
-        self._parent.send(
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            Value=weather_country,
-            Variable='weatherCountry',
-            id='variableset',
-        )
+        with self.__lock:
+            self._parent.send(
+                serviceId=(
+                    'urn:micasaverde-com:serviceId:HomeAutomationGateway1'
+                ),
+                Value=weather_country,
+                Variable='weatherCountry',
+                id='variableset',
+            )
 
     def update_node(self, node, _):
-        if node is not None:
-            for key, value in node.items():
+        with self.__lock:
+            if node is not None:
+                for key, value in node.items():
 
-                if key == 'weatherCountry':
-                    old_value = self._weatherCountry
-                elif key == 'weatherCity':
-                    old_value = self._weatherCity
-                elif key == 'tempFormat':
-                    old_value = self._tempFormat
-                else:
-                    old_value = getattr(self, key, None)
-
-                if old_value != value:
                     if key == 'weatherCountry':
-                        self._weatherCountry = value
+                        old_value = self._weatherCountry
                     elif key == 'weatherCity':
-                        self._weatherCity = value
+                        old_value = self._weatherCity
                     elif key == 'tempFormat':
-                        self._tempFormat = value
+                        old_value = self._tempFormat
                     else:
-                        setattr(self, key, value)
-                    Notify(self, 'weather_setting.{0}.changed'.format(key))
+                        old_value = getattr(self, key, None)
+
+                    if old_value != value:
+                        if key == 'weatherCountry':
+                            self._weatherCountry = value
+                        elif key == 'weatherCity':
+                            self._weatherCity = value
+                        elif key == 'tempFormat':
+                            self._tempFormat = value
+                        else:
+                            setattr(self, key, value)
+                        Notify(self, 'weather_setting.{0}.changed'.format(key))

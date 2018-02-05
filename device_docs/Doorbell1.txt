@@ -11,9 +11,11 @@ Services
         Variables
         ------------------------------------------------------------------------
             LastPress
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastPress&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LastPress&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=LastPress&id=variableget&serviceId=urn:micasaverde-com:serviceId:Doorbell1
             Pressed
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pressed&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pressed&id=variableset&serviceId=urn:micasaverde-com:serviceId:Doorbell1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Pressed&id=variableget&serviceId=urn:micasaverde-com:serviceId:Doorbell1
 
         Functions
         ------------------------------------------------------------------------

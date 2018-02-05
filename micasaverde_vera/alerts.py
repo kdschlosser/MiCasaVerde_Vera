@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+import threading
 from event import Notify
 
 
 class Alerts(object):
 
     def __init__(self, ha_gateway, node):
+        self.__lock = threading.RLock()
         self.ha_gateway = ha_gateway
         self._alerts = []
 
@@ -30,53 +32,61 @@ class Alerts(object):
                 self._alerts += [Alert(self, alert)]
 
     def __iter__(self):
-        alerts = sorted(self._alerts, key=lambda x: x.LocalTimestamp)
-        for alert in alerts:
-            yield alert
+        with self.__lock:
+            alerts = sorted(
+                self._alerts,
+                key=lambda x: x.LocalTimestamp
+            )
+            for alert in alerts:
+                yield alert
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except IndexError:
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-            for alert in self._alerts:
-                if item == alert.LocalTimestamp:
-                    return alert
-            raise IndexError
-        raise KeyError
+                for alert in self._alerts:
+                    if item == alert.LocalTimestamp:
+                        return alert
+                raise IndexError
+            raise KeyError
 
     def update_node(self, node, full=False):
-        if node is not None:
-            alerts = []
-            for alert in node:
-                timestamp = alert['LocalTimestamp']
-                for found_alert in self._alerts[:]:
-                    if found_alert.LocalTimestamp == timestamp:
-                        self._alerts.remove(found_alert)
-                        break
-                else:
-                    found_alert = Alert(self, alert)
+        with self.__lock:
+            if node is not None:
+                alerts = []
+                for alert in node:
+                    timestamp = alert['LocalTimestamp']
+                    for found_alert in self._alerts[:]:
+                        if found_alert.LocalTimestamp == timestamp:
+                            self._alerts.remove(found_alert)
+                            break
+                    else:
+                        found_alert = Alert(self, alert)
 
-                alerts += [found_alert]
+                    alerts += [found_alert]
 
-            if full:
-                del self._alerts[:]
+                if full:
+                    del self._alerts[:]
 
-            self._alerts += alerts[:]
+                self._alerts += alerts[:]
 
 
 class Alert(object):
 
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.PK_Alert = node.pop('PK_Alert', None)
         self.Room = node.pop('Room', None)
@@ -93,8 +103,10 @@ class Alert(object):
 
     @property
     def device(self):
-        return self._parent.ha_gateway.devices[self.PK_Device]
+        with self.__lock:
+            return self._parent.ha_gateway.devices[self.PK_Device]
 
     @property
     def room(self):
-        return self._parent.ha_gateway.rooms[self.Room]
+        with self.__lock:
+            return self._parent.ha_gateway.rooms[self.Room]

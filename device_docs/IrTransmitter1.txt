@@ -11,9 +11,11 @@ Services
         Variables
         ------------------------------------------------------------------------
             ProntoCode
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProntoCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ProntoCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ProntoCode&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
             Status
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Status&id=variableget&serviceId=urn:micasaverde-com:serviceId:IrTransmitter1
 
         Functions
         ------------------------------------------------------------------------

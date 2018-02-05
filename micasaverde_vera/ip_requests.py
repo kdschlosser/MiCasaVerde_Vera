@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
+import threading
 from event import Notify
 
 
 class IPRequests(object):
 
     def __init__(self, ha_gateway, node):
+        self.__lock = threading.RLock()
         self.ha_gateway = ha_gateway
         self._ip_requests = dict()
 
@@ -34,45 +35,51 @@ class IPRequests(object):
                 self._ip_requests[request.ip.replace('.', '-')] += [request]
 
     def __iter__(self):
-        for request in self._ip_requests.values():
-            yield request
+        with self.__lock:
+            for request in self._ip_requests.values():
+                yield request
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item.replace('.', '-')]
-        except KeyError:
-            raise AttributeError
+            try:
+                return self._ip_requests[item.replace('.', '-')]
+            except KeyError:
+                raise AttributeError
 
     def __getitem__(self, item):
-        return self._ip_requests[item]
+        with self.__lock:
+            return self._ip_requests[item]
 
     def update_node(self, node, full=False):
-        if node is not None:
-            requests = dict()
-            for request in node:
-                ip = request['ip'].replace('.', '-')
-                if ip not in requests:
-                    requests[ip] = []
+        with self.__lock:
+            if node is not None:
+                requests = dict()
+                for request in node:
+                    ip = request['ip'].replace('.', '-')
+                    if ip not in requests:
+                        requests[ip] = []
 
-                date = request['date']
+                    date = request['date']
 
-                sub_requests = self._ip_requests.get(ip, [])
-                for found_request in sub_requests:
-                    if found_request.date == date:
-                        sub_requests.remove(found_request)
-                        break
-                else:
-                    found_request = IPRequest(self, request)
+                    sub_requests = self._ip_requests.get(ip, [])
+                    for found_request in sub_requests:
+                        if found_request.date == date:
+                            sub_requests.remove(found_request)
+                            break
+                    else:
+                        found_request = IPRequest(self, request)
 
-                requests[ip] += [found_request]
+                    requests[ip] += [found_request]
 
-            self._ip_requests.clear()
+                self._ip_requests.clear()
 
-            for ip, requests in requests.items():
-                self._ip_requests[ip] = list(request for request in requests)
+                for ip, requests in requests.items():
+                    self._ip_requests[ip] = list(
+                        request for request in requests
+                    )
 
 
 class IPRequest(object):

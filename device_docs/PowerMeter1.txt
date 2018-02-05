@@ -11,27 +11,38 @@ Services
         Variables
         ------------------------------------------------------------------------
             ActualUsage
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActualUsage&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ActualUsage&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ActualUsage&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             DayKWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DayKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=DayKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=DayKWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             KWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=KWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=KWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=KWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             LifeKWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LifeKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=LifeKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=LifeKWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             MonthKWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MonthKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=MonthKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=MonthKWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             Pulse
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pulse&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Pulse&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Pulse&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             UserSuppliedWattage
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UserSuppliedWattage&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=UserSuppliedWattage&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=UserSuppliedWattage&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             Watts
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Watts&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Watts&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Watts&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             WeekKWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WeekKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WeekKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WeekKWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             WholeHouse
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WholeHouse&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=WholeHouse&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=WholeHouse&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
             YearKWH
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=YearKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=YearKWH&id=variableset&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=YearKWH&id=variableget&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1
 
         Functions
         ------------------------------------------------------------------------
@@ -44,26 +55,36 @@ Services
         Variables
         ------------------------------------------------------------------------
             BatteryLevel
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=BatteryLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=BatteryLevel&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=BatteryLevel&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             CommFailure
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CommFailure&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=CommFailure&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=CommFailure&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             Commands
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Commands&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Commands&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Commands&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             Configured
             ID
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ID&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ID&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ID&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             PollMinDelay
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollMinDelay&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollMinDelay&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             PollingEnabled
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PollingEnabled&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PollingEnabled&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             sl_Alarm
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Alarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Alarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=sl_Alarm&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             sl_BatteryAlarm
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_BatteryAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_BatteryAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=sl_BatteryAlarm&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             sl_Hail
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Hail&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_Hail&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=sl_Hail&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
             sl_TamperAlarm
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_TamperAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=sl_TamperAlarm&id=variableset&serviceId=urn:micasaverde-com:serviceId:HaDevice1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=sl_TamperAlarm&id=variableget&serviceId=urn:micasaverde-com:serviceId:HaDevice1
 
         Functions
         ------------------------------------------------------------------------

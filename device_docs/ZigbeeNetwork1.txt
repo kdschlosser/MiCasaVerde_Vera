@@ -11,21 +11,29 @@ Services
         Variables
         ------------------------------------------------------------------------
             Cluster
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Cluster&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Cluster&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Cluster&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             Command
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Command&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Command&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Command&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             Duration
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Duration&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Duration&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Duration&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             FrameControl
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FrameControl&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=FrameControl&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=FrameControl&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             ManufacturerCode
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ManufacturerCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=ManufacturerCode&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=ManufacturerCode&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             NetStatusText
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=NetStatusText&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=NetStatusText&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             Node
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Node&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Node&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
             PanID
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PanID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=PanID&id=variableset&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=PanID&id=variableget&serviceId=urn:micasaverde-com:serviceId:ZigbeeNetwork1
 
         Functions
         ------------------------------------------------------------------------

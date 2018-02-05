@@ -11,21 +11,29 @@ Services
         Variables
         ------------------------------------------------------------------------
             A_ARG_TYPE_Acknowledgement
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Acknowledgement&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Acknowledgement&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_Acknowledgement&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             A_ARG_TYPE_Arming
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Arming&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_Arming&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_Arming&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             A_ARG_TYPE_FileName
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_FileName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_FileName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_FileName&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             A_ARG_TYPE_RuleId
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleId&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleId&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_RuleId&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             A_ARG_TYPE_RuleIdx
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleIdx&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleIdx&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_RuleIdx&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             A_ARG_TYPE_RuleName
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=A_ARG_TYPE_RuleName&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=A_ARG_TYPE_RuleName&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             RulesEnginePanel
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RulesEnginePanel&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=RulesEnginePanel&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=RulesEnginePanel&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
             Status
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:RulesEngine1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Status&id=variableget&serviceId=urn:upnp-org:serviceId:RulesEngine1
 
         Functions
         ------------------------------------------------------------------------
@@ -44,9 +52,11 @@ Services
         Variables
         ------------------------------------------------------------------------
             Status
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Status&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Status&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
             Target
-                URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                SET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Value=<NEW_VALUE>&Variable=Target&id=variableset&serviceId=urn:upnp-org:serviceId:SwitchPower1
+                GET URL  -  http://<VERA_IP>:3480/request_data?DeviceNum=<DEVICE_ID>&Variable=Target&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1
 
         Functions
         ------------------------------------------------------------------------
