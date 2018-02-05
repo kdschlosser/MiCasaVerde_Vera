@@ -106,10 +106,10 @@ class Devices(object):
                 if item in (device.id, device.name):
                     return device
 
-            if isinstance(item, int):
-                raise IndexError
+        if isinstance(item, int):
+            raise IndexError('{0} not found'.format(item))
 
-            raise KeyError
+        raise KeyError('{0} not found'.format(item))
 
     def update_node(self, node, full=False):
         with self.__lock:
