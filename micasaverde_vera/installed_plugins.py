@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+import threading
 from event import Notify
 
 
 class InstalledPlugins(object):
 
     def __init__(self, ha_gateway, node):
+        self.__lock = threading.RLock()
         self._plugins = []
         self.ha_gateway = ha_gateway
         self.send = ha_gateway.send
@@ -30,58 +32,64 @@ class InstalledPlugins(object):
             self._plugins = [InstalledPlugin(self, plugin) for plugin in node]
 
     def update_node(self, node, full=False):
-        if node is not None:
-            plugins = []
-            for plugin in node:
-                # noinspection PyShadowingBuiltins
-                id = plugin['id']
+        with self.__lock:
+            if node is not None:
+                plugins = []
+                for plugin in node:
+                    # noinspection PyShadowingBuiltins
+                    id = plugin['id']
 
-                try:
-                    found_plugin = self[id]
-                    found_plugin.update_node(plugin, full)
-                    self._plugins.remove(found_plugin)
-                except IndexError:
-                    found_plugin = InstalledPlugin(self, plugin)
-                plugins += [found_plugin]
+                    try:
+                        found_plugin = self[id]
+                        found_plugin.update_node(plugin, full)
+                        self._plugins.remove(found_plugin)
+                    except IndexError:
+                        found_plugin = InstalledPlugin(self, plugin)
+                    plugins += [found_plugin]
 
-            if full:
-                for plugin in self._plugins:
-                    Notify(plugin, plugin.build_event() + '.removed')
-                del self._plugins[:]
+                if full:
+                    for plugin in self._plugins:
+                        Notify(plugin, plugin.build_event() + '.removed')
+                    del self._plugins[:]
 
-            self._plugins += plugins[:]
+                    self._plugins += plugins[:]
 
     def __iter__(self):
-        for plugin in self._plugins:
-            yield plugin
+        with self.__lock:
+            for plugin in self._plugins:
+                yield plugin
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-        for plugin in self._plugins:
-            if item in (plugin.Title, plugin.id):
-                return plugin
-        if isinstance(item, int):
-            raise IndexError
-        raise KeyError
+            for plugin in self._plugins:
+                if item in (plugin.Title, plugin.id):
+                    return plugin
+            if isinstance(item, int):
+                raise IndexError
+            raise KeyError
 
     def get_variables(self):
-        return list(plugin.Title for plugin in self._plugins)
+        with self.__lock:
+            return list(plugin.Title for plugin in self._plugins)
 
 
 class File(object):
     def __init__(self, parent, id, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.id = id
 
@@ -94,79 +102,90 @@ class File(object):
         )
 
     def get_variables(self):
-        return list(
-            item for item in self.__dict__.keys()
-            if not callable(item) and not item.startswith('_')
-        )
+        with self.__lock:
+            return list(
+                item for item in self.__dict__.keys()
+                if not callable(item) and not item.startswith('_')
+            )
 
     def build_event(self):
-        return self._parent.build_event() + '.File.{0}'.format(self.id)
+        with self.__lock:
+            return self._parent.build_event() + '.File.{0}'.format(self.id)
 
     def update_node(self, node):
-        for key, value in node.items():
-            old_value = getattr(self, key, None)
-            if old_value != value:
-                setattr(self, key, value)
-                Notify(
-                    self,
-                    self.build_event() + '.{0}.changed'.format(key)
-                )
+        with self.__lock:
+            for key, value in node.items():
+                old_value = getattr(self, key, None)
+                if old_value != value:
+                    setattr(self, key, value)
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
 
 class Files(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.files = node
 
     def __iter__(self):
-        for f in self.files:
-            yield f
+        with self.__lock:
+            for f in self.files:
+                yield f
 
     def update_node(self, node):
-        files = []
-        for f in node:
-            if f in self.files:
-                self.files.remove(f)
-                files += [f]
-            else:
-                files += [f]
+        with self.__lock:
+            files = []
+            for f in node:
+                if f in self.files:
+                    self.files.remove(f)
+                    files += [f]
+                else:
+                    files += [f]
+                    Notify(self, self.parent.build_event() + '.files.changed')
+
+            if self.files:
                 Notify(self, self.parent.build_event() + '.files.changed')
 
-        if self.files:
-            Notify(self, self.parent.build_event() + '.files.changed')
-
-        del self.files[:]
-        self.files += files[:]
+            del self.files[:]
+            self.files += files[:]
 
 
 class Luas(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.luas = node
 
     def __iter__(self):
-        for lua in self.luas:
-            yield lua
+        with self.__lock:
+            for lua in self.luas:
+                yield lua
 
     def update_node(self, node):
-        luas = []
-        for lua in node:
-            if lua in self.luas:
-                self.luas.remove(lua)
-                luas += [lua]
-            else:
-                luas += [lua]
+        with self.__lock:
+            luas = []
+            for lua in node:
+                if lua in self.luas:
+                    self.luas.remove(lua)
+                    luas += [lua]
+                else:
+                    luas += [lua]
+                    Notify(self, self.parent.build_event() + '.lua.changed')
+
+            if self.luas:
                 Notify(self, self.parent.build_event() + '.lua.changed')
 
-        if self.luas:
-            Notify(self, self.parent.build_event() + '.lua.changed')
+            del self.luas[:]
+            self.luas += luas[:]
 
-        del self.luas[:]
-        self.luas += luas[:]
 
 class Devices(object):
 
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.devices = []
 
@@ -177,66 +196,72 @@ class Devices(object):
                     self.devices += [device]
 
     def __iter__(self):
-        for device in self.devices:
-            yield device
+        with self.__lock:
+            for device in self.devices:
+                yield device
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
-
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-        for device in self.devices:
-            name = getattr(device, 'name', None)
+            for device in self.devices:
+                name = getattr(device, 'name', None)
 
-            if item in (name, device.id):
-                return device
-        if isinstance(item, int):
-            raise IndexError
-        raise KeyError
+                if item in (name, device.id):
+                    return device
+            if isinstance(item, int):
+                raise IndexError
+            raise KeyError
 
     def update_node(self, node):
-        devices = []
 
-        for plugin_device in node:
-            plugin_device_type = plugin_device['DeviceType']
+        with self.__lock:
+            devices = []
 
-            for device in self.parent.parent.ha_gateway.devices:
-                if device.device_type == plugin_device_type:
-                    if device in self.devices:
-                        devices += [device]
-                        self.devices.remove(device)
-                    elif device not in devices:
-                        devices += [device]
-                        Notify(
-                            device,
-                            self.parent.build_event() +
-                            '.devices.{0}.created'.format(device.id)
-                        )
+            for plugin_device in node:
+                plugin_device_type = plugin_device['DeviceType']
 
-        for device in self.devices:
-            Notify(
-                device,
-                self.parent.build_event() + '.devices.{0}.removed'.format(
-                    device.id
+                for device in self.parent.parent.ha_gateway.devices:
+                    if device.device_type == plugin_device_type:
+                        if device in self.devices:
+                            devices += [device]
+                            self.devices.remove(device)
+                        elif device not in devices:
+                            devices += [device]
+                            Notify(
+                                device,
+                                self.parent.build_event() +
+                                '.devices.{0}.created'.format(device.id)
+                            )
+
+            for device in self.devices:
+                Notify(
+                    device,
+                    (
+                        self.parent.build_event() +
+                        '.devices.{0}.removed'.format(device.id)
+                    )
                 )
-            )
 
-        del self.devices[:]
-        self.devices += devices[:]
+            del self.devices[:]
+            self.devices = devices[:]
 
 
 class InstalledPlugin(object):
 
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self.parent = parent
         self.id = node.pop('id', None)
         self.files = Files(self, node.pop('Files', []))
@@ -249,36 +274,41 @@ class InstalledPlugin(object):
         Notify(self, self.build_event() + '.created')
 
     def get_variables(self):
-        return list(
-            item for item in self.__dict__.keys()
-            if not callable(item) and not item.startswith('_')
-        )
+        with self.__lock:
+            return list(
+                item for item in self.__dict__.keys()
+                if not callable(item) and not item.startswith('_')
+            )
 
     def build_event(self):
-        return 'installed_plugins.{0}'.format(self.id)
+        with self.__lock:
+            return 'installed_plugins.{0}'.format(self.id)
 
     def delete(self):
-        self.parent.send(
-            id='delete_plugin',
-            Plugin_ID=self.id
-        )
+        with self.__lock:
+            self.parent.send(
+                id='delete_plugin',
+                Plugin_ID=self.id
+            )
 
     def update(self):
-        self.parent.send(
-            id='update_plugin',
-            Plugin_ID=self.id
-        )
+        with self.__lock:
+            self.parent.send(
+                id='update_plugin',
+                Plugin_ID=self.id
+            )
 
     def update_node(self, node, full=False):
-        self.devices.update_node(node.pop('Devices', []))
-        self.lua.update_node(node.pop('Lua', []))
-        self.files.update_node(node.pop('Files', []))
+        with self.__lock:
+            self.devices.update_node(node.pop('Devices', []))
+            self.lua.update_node(node.pop('Lua', []))
+            self.files.update_node(node.pop('Files', []))
 
-        for key, value in node.items():
-            old_value = getattr(self, key, None)
-            if old_value != value:
-                setattr(self, key, value)
-                Notify(
-                    self,
-                    self.build_event() + '{0}.changed'.format(key)
-                )
+            for key, value in node.items():
+                old_value = getattr(self, key, None)
+                if old_value != value:
+                    setattr(self, key, value)
+                    Notify(
+                        self,
+                        self.build_event() + '{0}.changed'.format(key)
+                    )

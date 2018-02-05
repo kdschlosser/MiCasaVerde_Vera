@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
+import threading
 from event import Notify
 
 
@@ -32,6 +32,7 @@ def _check_item_type(item):
 class Rooms(object):
 
     def __init__(self, ha_gateway, node):
+        self.__lock = threading.RLock()
         self.ha_gateway = ha_gateway
         self.send = ha_gateway.send
         self._rooms = [Room(self, {'id': 0, 'name': 'No Room', 'section': 1})]
@@ -48,61 +49,66 @@ class Rooms(object):
         )
 
     def __iter__(self):
-        for room in self._rooms:
-            yield room
+        with self.__lock:
+            for room in self._rooms:
+                yield room
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-        for room in self._rooms:
-            name = getattr(room, 'name', None)
-            if name is not None and name.replace(' ', '_').lower() == item:
-                return room
-            if item in (room.id, room.name):
-                return room
-        if isinstance(item, int):
-            raise IndexError
+            for room in self._rooms:
+                name = getattr(room, 'name', None)
+                if name is not None and name.replace(' ', '_').lower() == item:
+                    return room
+                if item in (room.id, room.name):
+                    return room
+            if isinstance(item, int):
+                raise IndexError
 
-        raise KeyError
+            raise KeyError
 
     def update_node(self, node, full=False):
-        if node is not None:
-            rooms = [self._rooms.pop(0)]
-            for room in node:
-                # noinspection PyShadowingBuiltins
-                id = room['id']
+        with self.__lock:
+            if node is not None:
+                rooms = [self._rooms.pop(0)]
+                for room in node:
+                    # noinspection PyShadowingBuiltins
+                    id = room['id']
 
-                for found_room in self._rooms[:]:
-                    if found_room.id == id:
-                        found_room.update_node(room)
-                        self._rooms.remove(found_room)
-                        break
-                else:
-                    found_room = Room(self, room)
+                    for found_room in self._rooms[:]:
+                        if found_room.id == id:
+                            found_room.update_node(room)
+                            self._rooms.remove(found_room)
+                            break
+                    else:
+                        found_room = Room(self, room)
 
-                rooms += [found_room]
+                    rooms += [found_room]
 
-            if full:
-                for room in self._rooms:
-                    Notify(room, room.build_event() + '.removed')
-                del self._rooms[:]
+                if full:
+                    for room in self._rooms:
+                        Notify(room, room.build_event() + '.removed')
+                    del self._rooms[:]
 
-            self._rooms += rooms
+                    self._rooms += rooms
 
 
 class Room(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
 
         def get(attr):
@@ -118,17 +124,20 @@ class Room(object):
         Notify(self, self.build_event() + '.created')
 
     def build_event(self):
-        return 'rooms.{0}'.format(self.id)
+        with self.__lock:
+            return 'rooms.{0}'.format(self.id)
 
     @property
     def section(self):
-        return self._parent.ha_gateway.sections[self._section]
+        with self.__lock:
+            return self._parent.ha_gateway.sections[self._section]
 
     def remove(self, item):
-        item = _check_item_type(item)
+        with self.__lock:
+            item = _check_item_type(item)
 
-        if item is not None and item.room == self:
-            item.room = 0
+            if item is not None and item.room == self:
+                item.room = 0
 
     def remove_plugin(self, plugin):
         self._plugin_room(plugin, 0)
@@ -149,137 +158,156 @@ class Room(object):
         self._device_room(device, self.id)
 
     def _plugin_room(self, plugin, room):
-        from installed_plugins import InstalledPlugin
-        if not isinstance(plugin, InstalledPlugin):
-            plugin = self._parent.ha_gateway.installed_plugins[plugin]
+        with self.__lock:
+            from installed_plugins import InstalledPlugin
+            if not isinstance(plugin, InstalledPlugin):
+                plugin = self._parent.ha_gateway.installed_plugins[plugin]
 
-        if getattr(plugin, 'room', None) is not None:
-            plugin.room = room
+            if getattr(plugin, 'room', None) is not None:
+                plugin.room = room
 
     def _scene_room(self, scene, room):
-        from scenes import Scene
-        if not isinstance(scene, Scene):
-            scene = self._parent.ha_gateway.scenes[scene]
+        with self.__lock:
+            from scenes import Scene
+            if not isinstance(scene, Scene):
+                scene = self._parent.ha_gateway.scenes[scene]
 
-        if getattr(scene, 'room', None) is not None:
-            scene.room = room
+            if getattr(scene, 'room', None) is not None:
+                scene.room = room
 
     def _device_room(self, device, room):
-        from devices import Device
-        if not isinstance(device, Device):
-            device = self._parent.ha_gateway.devices[device]
+        with self.__lock:
+            from devices import Device
+            if not isinstance(device, Device):
+                device = self._parent.ha_gateway.devices[device]
 
-        if getattr(device, 'room', None) is not None:
-            device.room = room
+            if getattr(device, 'room', None) is not None:
+                device.room = room
 
     def get_variables(self):
-        return list(
-            item for item in self.__dict__.keys()
-            if not callable(item) and not item.startswith('_')
-        )
+        with self.__lock:
+            return list(
+                item for item in self.__dict__.keys()
+                if not callable(item) and not item.startswith('_')
+            )
 
     def __radd__(self, item):
-        item = _check_item_type(item)
+        with self.__lock:
+            item = _check_item_type(item)
 
-        if item is not None:
-            room = getattr(item, 'room', None)
-            if room is not None and room != self:
-                item.room = self
+            if item is not None:
+                room = getattr(item, 'room', None)
+                if room is not None and room != self:
+                    item.room = self
 
     def __rsub__(self, item):
-        item = _check_item_type(item)
+        with self.__lock:
+            item = _check_item_type(item)
 
-        if item is not None:
-            if item in self:
-                item.room = 0
+            if item is not None:
+                if item in self:
+                    item.room = 0
 
     def __contains__(self, item):
-        item = _check_item_type(item)
+        with self.__lock:
+            item = _check_item_type(item)
 
-        if item is not None:
-            room = getattr(item, 'room', None)
-            if room == self:
-                return True
+            if item is not None:
+                room = getattr(item, 'room', None)
+                if room == self:
+                    return True
 
-        return False
+            return False
 
     def __iter__(self):
-        return iter(self.devices + self.plugins + self.scenes)
+        with self.__lock:
+            return iter(self.devices + self.plugins + self.scenes)
 
     def __getattr__(self, item):
-        from micasaverde_vera.installed_plugins import InstalledPlugin
+        with self.__lock:
+            from micasaverde_vera.installed_plugins import InstalledPlugin
 
-        if item in self.__dict__:
-            return self.__dict__[item]
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        for device in self:
-            if isinstance(device, InstalledPlugin):
-                name = getattr(device, 'Title', None)
-            else:
-                name = getattr(device, 'name', None)
+            for device in self.devices + self.plugins + self.scenes:
+                if isinstance(device, InstalledPlugin):
+                    name = getattr(device, 'Title', None)
+                else:
+                    name = getattr(device, 'name', None)
 
-            if name is not None and name.replace(' ', '_').lower() == item:
-                return device
-        raise AttributeError
+                if name is not None and name.replace(' ', '_').lower() == item:
+                    return device
+            raise AttributeError
 
     @property
     def devices(self):
-        return list(
-            device for device in self._parent.ha_gateway.devices
-            if device in self
-        )
+        with self.__lock:
+            return list(
+                device for device in self._parent.ha_gateway.devices
+                if device in self
+            )
 
     @property
     def scenes(self):
-        return list(
-            scene for scene in self._parent.ha_gateway.scenes
-            if scene in self
-        )
+        with self.__lock:
+            return list(
+                scene for scene in self._parent.ha_gateway.scenes
+                if scene in self
+            )
 
     @property
     def plugins(self):
-        return list(
-            plugin for plugin in self._parent.ha_gateway.installed_plugins
-            if plugin in self
-        )
+        with self.__lock:
+            return list(
+                plugin for plugin in self._parent.ha_gateway.installed_plugins
+                if plugin in self
+            )
 
     @property
     def name(self):
-        return self._name
+        with self.__lock:
+            return self._name
 
     @name.setter
     def name(self, name):
-        if self.id:
-            self._parent.send(
-                id='room',
-                action='rename',
-                room=self.id,
-                name=name
-            )
+        with self.__lock:
+            if self.id:
+                self._parent.send(
+                    id='room',
+                    action='rename',
+                    room=self.id,
+                    name=name
+                )
 
     def delete(self):
-        if self.id:
-            self._parent.send(
-                id='room',
-                action='delete',
-                room=self.id
-            )
+        with self.__lock:
+            if self.id:
+                self._parent.send(
+                    id='room',
+                    action='delete',
+                    room=self.id
+                )
 
     def update_node(self, node):
-        for key, value in node.items():
-            if key == 'name':
-                old_value = self._name
-            elif key == 'section':
-                old_value = self._section
-            else:
-                old_value = getattr(self, key, None)
-
-            if old_value != value:
+        with self.__lock:
+            for key, value in node.items():
                 if key == 'name':
-                    self._name = value
+                    old_value = self._name
                 elif key == 'section':
-                    self._section = value
+                    old_value = self._section
                 else:
-                    setattr(self, key, value)
+                    old_value = getattr(self, key, None)
 
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                if old_value != value:
+                    if key == 'name':
+                        self._name = value
+                    elif key == 'section':
+                        self._section = value
+                    else:
+                        setattr(self, key, value)
+
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )

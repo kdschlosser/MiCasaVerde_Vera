@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 
-from fnmatch import fnmatch
+from fnmatch import fnmatchcase
 
 
 class _NotificationHandler(object):
@@ -44,15 +44,11 @@ class _NotificationHandler(object):
 
     def notify(self, event_object, event):
         for event_name, event_handlers in self._callbacks.items():
-            if '*' in event_name or '?' in event_name:
-                if fnmatch(event, event_name):
-                    for event_handler in event_handlers:
-                        event_handler.event = event
-                        event_handler.event_object = event_object
-            elif event_name == event:
+            if fnmatchcase(event.lower(), event_name):
                 for event_handler in event_handlers:
                     event_handler.event = event
                     event_handler.event_object = event_object
+
 
 NotificationHandler = _NotificationHandler()
 Notify = NotificationHandler.notify

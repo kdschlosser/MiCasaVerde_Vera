@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
+import threading
 from event import Notify
 
 
 class UserSettings(object):
+
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.send = parent.send
         self._settings = []
@@ -32,72 +34,78 @@ class UserSettings(object):
                 self._settings += [UserSetting(self, setting)]
 
     def __iter__(self):
-        for setting in self._settings:
-            yield setting
+        with self.__lock:
+            for setting in self._settings:
+                yield setting
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except(KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
-            for setting in self._settings:
-                if setting.id == item:
-                    return setting
-            raise IndexError
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
+                for setting in self._settings:
+                    if setting.id == item:
+                        return setting
+                raise IndexError
 
-        raise KeyError
+            raise KeyError
 
     def ishome(self, number):
-        number = str(number)
+        with self.__lock:
+            number = str(number)
 
-        if number.isdigit():
-            number = int(number)
+            if number.isdigit():
+                number = int(number)
 
-            for setting in self._settings:
-                if number == setting.id:
-                    return setting.ishome
+                for setting in self._settings:
+                    if number == setting.id:
+                        return setting.ishome
 
     def get_user(self, number):
-        return self._parent.get_user(number)
+        return self._parent.user[number]
 
     def update_node(self, node, full=False):
-        if node is not None:
-            settings = []
+        with self.__lock:
+            if node is not None:
+                settings = []
 
-            for setting in node:
-                # noinspection PyShadowingBuiltins
-                id = setting['id']
-                for found_setting in self._settings[:]:
-                    if found_setting.id == id:
-                        found_setting.update_node(setting, full)
-                        self._settings.remove(found_setting)
-                        break
-                else:
-                    found_setting = UserSetting(self, setting)
+                for setting in node:
+                    # noinspection PyShadowingBuiltins
+                    id = setting['id']
+                    for found_setting in self._settings[:]:
+                        if found_setting.id == id:
+                            found_setting.update_node(setting, full)
+                            self._settings.remove(found_setting)
+                            break
+                    else:
+                        found_setting = UserSetting(self, setting)
 
-                settings += [found_setting]
+                    settings += [found_setting]
 
-            if full:
-                for setting in self._settings:
-                    Notify(
-                        setting,
-                        setting.build_event() + '.removed'
-                    )
-                del self._settings[:]
+                if full:
+                    for setting in self._settings:
+                        Notify(
+                            setting,
+                            setting.build_event() + '.removed'
+                        )
+                    del self._settings[:]
 
-            self._settings += settings
+                self._settings += settings
 
 
 class UserSetting(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
 
         self.id = node.pop('id', None)
@@ -115,8 +123,12 @@ class UserSetting(object):
         return 'user_settings.{0}'.format(self.id)
 
     def update_node(self, node, _):
-        for key, value in node.items():
-            old_value = getattr(self, key, None)
-            if old_value != value:
-                setattr(self, key, value)
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+        with self.__lock:
+            for key, value in node.items():
+                old_value = getattr(self, key, None)
+                if old_value != value:
+                    setattr(self, key, value)
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )

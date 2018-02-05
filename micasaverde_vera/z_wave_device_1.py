@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+import threading
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.vera_exception import VeraNotImplementedError
 
@@ -60,6 +61,7 @@ _argument_mapping = {
 class ZWaveDevice1(object):
 
     def __init__(self, parent):
+        self.__lock = threading.RLock()
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         self.argument_mapping = getattr(self, 'argument_mapping', dict())
