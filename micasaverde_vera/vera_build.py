@@ -31,7 +31,6 @@ from constants import (
     SSDP_ST,
     SSDP_ADDR,
     SSDP_PORT,
-    BUILD_PATH,
     CORE_PATH,
     DEVICES_PATH,
     SERVICES_PATH,
@@ -384,6 +383,9 @@ def create_class_methods(
         if method_name == 'continue':
             method_name = 'Continue'
 
+        if method_name == 'poll':
+            method_name = 'poll_device'
+
         method_name = method_name.replace('/', '')
 
         for number, replacement in NUMBER_MAPPING.items():
@@ -633,9 +635,9 @@ def get_categories(ip_address):
 
         for key in sorted(out_categories.keys(), key=int):
             value = out_categories[key]
-            print(' ' + key + ' ' * (11 - len(key)) + value['0'])
+            print(' ' + str(key) + ' ' * (11 - len(str(key))) + value['0'])
             for k in sorted(value.keys(), key=int)[1:]:
-                print(' ' * 42 + k + ' ' * (14 - len(k)) + value[k])
+                print(' ' * 42 + str(k) + ' ' * (14 - len(str(k))) + value[k])
     return out_categories
 
 
@@ -681,7 +683,11 @@ def get_files(ip_address):
         if __name__ == '__main__':
             print('-Retreiving File', xml_file_name)
 
-        response, xmlns = get_data(VIEW_UPNP_FILE, ip_address, file=xml_file_name)
+        response, xmlns = get_data(
+            VIEW_UPNP_FILE,
+            ip_address,
+            file=xml_file_name
+        )
         if response is None:
             downloaded_files[xml_file_name] = None
         else:
@@ -1011,6 +1017,7 @@ def main(ip_address=''):
         build_files(ip_address)
         print('Building Categories....')
         get_categories(ip_address)
+
 
 if __name__ == "__main__":
     ip = raw_input(

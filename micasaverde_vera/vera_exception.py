@@ -36,6 +36,6 @@ class VeraNotImplementedError(AttributeError, VeraError):
 class VeraImportError(VeraError):
     pass
 
+
 class VeraUnsupportedByDevice(NotImplementedError, VeraError):
     pass
-

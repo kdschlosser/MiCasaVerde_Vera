@@ -46,6 +46,7 @@ class ImportOverride(object):
     def stop(self):
         builtins.__import__ = self._import
 
+    # noinspection PyDefaultArgument, PyShadowingBuiltins
     def __call__(self, name, globals={}, locals={}, fromlist=(), level=-1):
         if 'micasaverde_vera.core' in name:
             if name in sys.modules:
