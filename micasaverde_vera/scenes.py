@@ -25,7 +25,6 @@ from micasaverde_vera.core.devices.scene_1 import Scene1
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.core.devices.scene_controller_1 import SceneController1
 from event import Notify
-from vera_exception import VeraNotImplementedError
 
 
 class Scenes(SceneController1):
@@ -125,9 +124,10 @@ class Scenes(SceneController1):
                 SceneController1.update_node(self, node, full)
 
 
+# noinspection PyPep8Naming
 class Scene(Scene1):
 
-    # noinspection PyShadowingBuiltins,PyPep8Naming
+    # noinspection PyShadowingBuiltins, PyDefaultArgument
     def __init__(
         self,
         parent,
@@ -146,7 +146,7 @@ class Scene(Scene1):
         triggers=[],
         timers=[],
         groups=[],
-        **kwargs
+        onDashboard=False
     ):
         self.__lock = threading.RLock()
         if not name:
@@ -165,6 +165,7 @@ class Scene(Scene1):
         self._notification_only = notification_only
         self._encoded_lua = encoded_lua
         self._lua = lua
+        self._onDashboard = onDashboard
 
         Notify(self, self.build_event() + '.created')
         self.groups = Groups(self, groups)
@@ -295,11 +296,6 @@ class Scene(Scene1):
         with self.__lock:
             self._notification_only = notification_only
 
-    def add_action_group(self, delay=0):
-        with self.__lock:
-            self.groups += [Group(self, delay=delay)]
-            return self.groups[-1]
-
     def stop_scene(self):
         with self.__lock:
             self.parent.send(
@@ -317,6 +313,21 @@ class Scene(Scene1):
                 id='scene',
                 action='delete',
                 scene=self.id
+            )
+
+    @property
+    def onDashboard(self):
+        with self.__lock:
+            return bool(self._onDashboard)
+
+    @onDashboard.setter
+    def onDashboard(self, value=False):
+        with self.__lock:
+            self._parent.send(
+                id='variableset',
+                scene=self.id,
+                Value=int(value),
+                Variable='onDashboard',
             )
 
     # noinspection PyUnboundLocalVariable
@@ -345,6 +356,8 @@ class Scene(Scene1):
                     old_value = self._lua
                 elif key == 'encoded_lua':
                     old_value = self._encoded_lua
+                elif key == 'onDashboard':
+                    old_value = self._onDashboard
                 else:
                     old_value = getattr(self, key, None)
 
@@ -367,10 +380,15 @@ class Scene(Scene1):
                         self._lua = value
                     elif key == 'encoded_lua':
                         self._encoded_lua = value
+                    elif key == 'onDashboard':
+                        self._onDashboard = value
                     else:
                         setattr(self, key, value)
 
-                    Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
             self.triggers.update_node(_triggers, full=full)
             self.groups.update_node(_groups, full=full)
@@ -378,6 +396,8 @@ class Scene(Scene1):
 
 
 class Actions(object):
+
+    # noinspection PyDefaultArgument
     def __init__(self, parent, scene, actions=[]):
         self.__lock = threading.RLock()
         self.parent = parent
@@ -448,6 +468,7 @@ class Actions(object):
 
 
 class Action(object):
+    # noinspection PyDefaultArgument
     def __init__(
         self,
         parent,
@@ -493,7 +514,10 @@ class Action(object):
                 old_value = getattr(self, key, None)
                 if old_value != value:
                     setattr(self, key, value)
-                    Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )
 
 
 class AvailableDevices(object):
@@ -630,6 +654,7 @@ class Groups(object):
 
 class Group(object):
 
+    # noinspection PyDefaultArgument, PyShadowingBuiltins
     def __init__(self, parent, scene, id, delay=0, actions=[]):
         self.__lock = threading.RLock()
         self.parent = parent
@@ -739,6 +764,7 @@ class Triggers(object):
 
 
 class Trigger(object):
+    # noinspection PyDefaultArgument
     def __init__(
         self,
         parent,
@@ -751,7 +777,8 @@ class Trigger(object):
         encoded_lua=0,
         arguments=[],
         last_run=0,
-        last_eval=0
+        last_eval=0,
+        users=[]
     ):
         self.__lock = threading.RLock()
 
@@ -766,6 +793,7 @@ class Trigger(object):
         self._enabled = enabled
         self._lua = lua
         self._encoded_lua = encoded_lua
+        self._users = users
         self.last_run = last_run
         self.last_eval = last_eval
         Notify(self, self.build_event() + '.created')
@@ -773,6 +801,16 @@ class Trigger(object):
 
     def build_event(self):
         return self.parent.build_event() + '.triggers.{0}'.format(self.name)
+
+    @property
+    def users(self):
+        with self.__lock:
+            return self._users
+
+    @users.setter
+    def users(self, value):
+        with self.__lock:
+            self._users = value
 
     @property
     def name(self):
@@ -859,6 +897,7 @@ class Trigger(object):
             Notify(self, self.build_event() + '.removed')
             self.scene.triggers.remove(self)
 
+    # noinspection PyUnboundLocalVariable
     def update_node(self, node, full=False):
         with self.__lock:
             self.arguments.update_node(node.pop('arguments', []), full)
@@ -876,6 +915,8 @@ class Trigger(object):
                     old_value = self._lua
                 elif key == 'encoded_lua':
                     old_value = self._encoded_lua
+                elif key == 'users':
+                    old_value = self._users
                 else:
                     old_value = getattr(self, key, None)
 
@@ -892,6 +933,8 @@ class Trigger(object):
                         self._lua = value
                     elif key == 'encoded_lua':
                         self._encoded_lua = value
+                    elif key == 'users':
+                        self._users = value
                     else:
                         setattr(self, key, value)
 
@@ -988,7 +1031,8 @@ class Timer(object):
         days_of_week='',
         time='',
         next_run=0,
-        last_run=0
+        last_run=0,
+        interval=0
     ):
         self.__lock = threading.RLock()
 
@@ -1004,11 +1048,22 @@ class Timer(object):
         self._time = time
         self.next_run = next_run
         self.last_run = last_run
+        self._interval = interval
 
         Notify(self, self.build_event() + '.created')
 
     def build_event(self):
         return self.parent.build_event() + '.timers.{0}'.format(self.id)
+
+    @property
+    def interval(self):
+        with self.__lock:
+            return self._interval
+
+    @interval.setter
+    def interval(self, value=0):
+        with self.__lock:
+            self._interval = value
 
     @property
     def name(self):
@@ -1065,11 +1120,16 @@ class Timer(object):
             Notify(self, self.build_event() + '.removed')
             self.scene.timers.remove(self)
 
+    # noinspection PyUnboundLocalVariable
     def update_node(self, node, _):
         with self.__lock:
             for key, value in node.items():
                 if key == 'type':
                     old_value = self._type
+                elif key == 'name':
+                    old_value = self._name
+                elif key == 'interval':
+                    old_value = self._interval
                 elif key == 'enabled':
                     old_value = self._enabled
                 elif key == 'days_of_week':
@@ -1082,6 +1142,10 @@ class Timer(object):
                 if old_value != value:
                     if key == 'type':
                         self._type = value
+                    elif key == 'name':
+                        self._name = value
+                    elif key == 'interval':
+                        self._interval = value
                     elif key == 'enabled':
                         self._enabled = value
                     elif key == 'days_of_week':

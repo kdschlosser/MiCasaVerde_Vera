@@ -31,8 +31,8 @@ class IPRequests(object):
             for request in node:
                 request = IPRequest(self, request)
                 if request.ip not in self._ip_requests:
-                    self._ip_requests[request.ip.replace('.', '-')] = []
-                self._ip_requests[request.ip.replace('.', '-')] += [request]
+                    self._ip_requests[request.ip] = []
+                self._ip_requests[request.ip] += [request]
 
     def __iter__(self):
         with self.__lock:
@@ -45,24 +45,23 @@ class IPRequests(object):
                 return self.__dict__[item]
 
             try:
-                return self._ip_requests[item.replace('.', '-')]
+                return self._ip_requests[item.replace('-', '.')]
             except KeyError:
                 raise AttributeError
 
     def __getitem__(self, item):
         with self.__lock:
-            return self._ip_requests[item]
+            return self._ip_requests[item.replace('-', '.')]
 
-    def update_node(self, node, full=False):
+    def update_node(self, node, _=False):
         with self.__lock:
             if node is not None:
                 requests = dict()
                 for request in node:
-                    ip = request['ip'].replace('.', '-')
+                    ip = request['ip']
+                    date = request['date']
                     if ip not in requests:
                         requests[ip] = []
-
-                    date = request['date']
 
                     sub_requests = self._ip_requests.get(ip, [])
                     for found_request in sub_requests:
@@ -71,7 +70,6 @@ class IPRequests(object):
                             break
                     else:
                         found_request = IPRequest(self, request)
-
                     requests[ip] += [found_request]
 
                 self._ip_requests.clear()

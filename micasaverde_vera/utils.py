@@ -19,7 +19,6 @@
 from __future__ import print_function
 import imp
 import os
-import sys
 import binascii
 import importlib
 from constants import CORE_PATH
@@ -102,6 +101,7 @@ def print_dict(d, indent=''):
             print(indent + key + ':', value)
 
 
+# noinspection PyPep8Naming
 def CRC32_from_file(file_path):
     with open(file_path, 'rb') as f:
         crc = (binascii.crc32(f.read()) & 0xFFFFFFFF)

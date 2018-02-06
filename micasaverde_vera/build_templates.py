@@ -68,6 +68,7 @@ from micasaverde_vera.vera_exception import VeraNotImplementedError
 
 {imports}
 
+# noinspection PyPep8Naming
 class {class_name}(Device, {subclasses}):
 
     def __init__(self, parent, node):
@@ -385,20 +386,21 @@ class {class_name}(Device, {subclasses}):
         with self.__lock:
             import inspect
             res = []
-
+            
+            for service_id in self.service_ids:
+                for keys, value in self._variables[service_id].items():
+                    if value is not None:
+                        res += [keys[0]]
+                        
             for cls in self.__class__.__mro__[:-1]:
                 for attribute in inspect.classify_class_attrs(cls):
                     if attribute.kind in ('property', 'data'):
-                        res += [attribute.name]
-
+                        try:
+                            if getattr(self, attribute.name) is not None:
+                                res += [attribute.name]
+                        except VeraNotImplementedError:
+                            continue
             res = set(res)
-
-            for service_id in self.service_ids:
-                for keys, value in self._variables[service_id].items():
-                    if value is None and keys[0] in res:
-                        res.remove(keys[0])
-                    if value is not None:
-                        res.add(keys[0])
 
             return sorted(
                 list(item for item in res if not item.startswith('_'))
@@ -537,6 +539,7 @@ _argument_mapping = {{
 }}
 
 
+# noinspection PyPep8Naming
 class {class_name}(object):
     """
     Properties:
@@ -609,13 +612,13 @@ SERVICE_SEND_TEMPLATE = '''
 '''
 
 SERVICE_SEND_ARGUMENT_TEMPLATE = '''
-                    {keyword}={value},'''
+                        {keyword}={value},'''
 
 SEND_TEMPLATE = '''            {use_return}self._parent.send({send_arguments}
         )'''
 
 SEND_ARGUMENT_TEMPLATE = '''
-                {keyword}={value},'''
+                    {keyword}={value},'''
 
 PROPERTY_TEMPLATE = '''
     @property

@@ -20,6 +20,7 @@ import threading
 from event import Notify
 
 
+# noinspection PyPep8Naming
 class WeatherSettings(object):
     def __init__(self, parent, node):
         self.__lock = threading.RLock()

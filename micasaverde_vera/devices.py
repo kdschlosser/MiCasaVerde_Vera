@@ -18,10 +18,8 @@
 
 from __future__ import print_function
 import threading
-import importlib
 from event import Notify
-from utils import create_service_name, parse_string
-from vera_exception import VeraImportError
+from vera_exception import VeraNotImplementedError
 
 
 class Devices(object):
@@ -46,7 +44,7 @@ class Devices(object):
             for device in self._devices:
                 try:
                     res += [device.name]
-                except:
+                except (VeraNotImplementedError, AttributeError):
                     res += [str(device.id)]
             return res
 
@@ -107,9 +105,9 @@ class Devices(object):
                     return device
 
             if isinstance(item, int):
-                raise IndexError
+                raise IndexError('{0} not found'.format(item))
 
-            raise KeyError
+            raise KeyError('{0} not found'.format(item))
 
     def update_node(self, node, full=False):
         with self.__lock:

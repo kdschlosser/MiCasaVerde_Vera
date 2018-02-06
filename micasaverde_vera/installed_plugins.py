@@ -69,6 +69,7 @@ class InstalledPlugins(object):
             except (KeyError, IndexError):
                 raise AttributeError
 
+    # noinspection PyUnresolvedReferences
     def __getitem__(self, item):
         with self.__lock:
             item = str(item)
@@ -82,12 +83,15 @@ class InstalledPlugins(object):
                 raise IndexError
             raise KeyError
 
+    # noinspection PyUnresolvedReferences
     def get_variables(self):
         with self.__lock:
             return list(plugin.Title for plugin in self._plugins)
 
 
 class File(object):
+
+    # noinspection PyShadowingBuiltins
     def __init__(self, parent, id, node):
         self.__lock = threading.RLock()
         self._parent = parent
@@ -298,7 +302,7 @@ class InstalledPlugin(object):
                 Plugin_ID=self.id
             )
 
-    def update_node(self, node, full=False):
+    def update_node(self, node, _=False):
         with self.__lock:
             self.devices.update_node(node.pop('Devices', []))
             self.lua.update_node(node.pop('Lua', []))

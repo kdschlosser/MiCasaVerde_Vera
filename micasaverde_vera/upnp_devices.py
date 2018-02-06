@@ -61,7 +61,7 @@ class UPNPDevices(object):
 
             raise KeyError
 
-    def update_node(self, node, full=False):
+    def update_node(self, node, _=False):
         with self.__lock:
             if node is not None:
                 devices = []
@@ -105,4 +105,3 @@ class UPNPDevice(object):
 
     def build_event(self):
         return 'upnp_devices.{0}'.format(self.udn)
-

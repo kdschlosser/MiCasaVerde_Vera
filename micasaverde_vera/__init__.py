@@ -66,13 +66,13 @@ before you construct the instance):
 
 to refresh the generated code files:
     micasaverde_vera.build_files('192.168.0.0')
-    
+
 and if you wanted to complete delete the old files and generate new ones
     micasaverde_vera.rebuild_files('192.168.0.0')
-    
+
 and to update the existing files in the event there are new ones.
     micasaverde_vera.update_files('192.168.0.0')
- 
+
 The file system is designed in a way that if newer version of this library are
 installed it will automatically remove all of the old files and build new ones.
 It is also designed to check for file corruption/tampering. so if the files
@@ -80,12 +80,12 @@ are not originals it will rebuild them.
 
 You do not have to build the files directly. When you call connect the
 files are automatically built if the files do not exist. Or updated if needed.
-If you install say a new plugin and additional information has been added to 
-the Vera. The system will automatically build the files that are needed for 
+If you install say a new plugin and additional information has been added to
+the Vera. The system will automatically build the files that are needed for
 this new plugin.
-The files will only be built once (as long as they still exist) so the first 
-time of running this library it will take a while to first load. On a clean 
-Vera with no devices or plugins. around 15 seconds. This all depends on your 
+The files will only be built once (as long as they still exist) so the first
+time of running this library it will take a while to first load. On a clean
+Vera with no devices or plugins. around 15 seconds. This all depends on your
 computer speed as well.
 
 The whole system is designed to give you access to everything you can do
@@ -106,12 +106,12 @@ to get a device you can use one of the following:
     device = vera.devices['10']
     device = vera.devices['Some Device Name']
 
-you are also able to directly request a device by it's name as if it is an 
-attribute. No special characters can be in the name and any spaces have to be 
+you are also able to directly request a device by it's name as if it is an
+attribute. No special characters can be in the name and any spaces have to be
 replaced with an _ and the name has to be all lowercase. This is not the name
 of the device on the Vera only the name when keyed in to access it.
     device = vera.devices.outside_light
-    
+
 the above holds true for these containers
 
 vera.scenes
@@ -121,16 +121,16 @@ vera.rooms
 vera.sections
 vera.users
 
-    
+
 I have also added a nifty feature that will allow you to access a device by its
 room. this can only be done at the vera instance level with the room name.
 
 same deal as above for keying in the room name
     device = vera.outside.patio_light
-    
-if you are developing using this library you are able to use getattr and will 
+
+if you are developing using this library you are able to use getattr and will
 not have to modify the name.
-  
+
 if you want to list off all of the device names and device numbers that
 are attached to the Vera:
     for device in vera.devices:
@@ -164,18 +164,17 @@ This is where the id and name of the controller are stored
 
 I have created 2 methods for discovering what a vera object can do.
 
-    get_functions() - this is able to be globally used on any vera continer 
-    object. It will list all of the functions that are available for that 
+    get_functions() - this is able to be globally used on any vera continer
+    object. It will list all of the functions that are available for that
     object.
-    
-    get_variables() - Globally available. Lists off all of the available 
+
+    get_variables() - Globally available. Lists off all of the available
     variables for that object.
 """
 
 from __future__ import print_function
 import sys
 import threading
-import os
 from copy import deepcopy
 
 if 'micasaverde_vera' not in sys.modules:
@@ -203,6 +202,7 @@ __version__ = _VERSION
 build_files = vera_build.build_files
 discover = vera_build.discover
 
+
 def rebuild_files(ip_address='', log=False):
     if not ip_address:
         ip_address = vera_build.discover()
@@ -211,6 +211,7 @@ def rebuild_files(ip_address='', log=False):
         import shutil
         shutil.rmtree(_BUILD_PATH, ignore_errors=True)
         vera_build.build_files(ip_address, log=log)
+
 
 def update_files(ip_address, log=False):
     """
@@ -227,14 +228,13 @@ def update_files(ip_address, log=False):
     """
     vera_build.build_files(ip_address, log, True)
 
-build_files = vera_build.build_files
 
 def connect(ip_address=''):
 
     """
     MiCasaVerde Vera control entry point.
-    
-    :param ip_address (str): optional 
+
+    :param ip_address: optional
     :return: micasaverde_vera.Vera
     """
 
@@ -262,7 +262,7 @@ def connect(ip_address=''):
         ):
             print('MiCasaVerde Vera: Generated files version mismatch.')
             print('                  Rebuilding files please wait....')
-            _rebuild_files(ip_address)
+            rebuild_files(ip_address)
             print('MiCasaVerde Vera: Build complete.')
 
         # noinspection PyUnresolvedReferences
@@ -275,10 +275,9 @@ def connect(ip_address=''):
         try:
             start_vera()
             # noinspection PyUnresolvedReferences
-            from micasaverde_vera.core.devices.home_automation_gateway_1 import (
-                HomeAutomationGateway1,
-            )
-        except:
+            from micasaverde_vera.core.devices.home_automation_gateway_1 \
+                import HomeAutomationGateway1
+        except Exception:
             import traceback
 
             raise VeraImportError(
@@ -288,9 +287,9 @@ def connect(ip_address=''):
 
     class __Vera(_VeraBase, HomeAutomationGateway1):
 
-        def __init__(self, ip_address):
+        def __init__(self, ip):
             self.__name__ = 'Vera'
-            _VeraBase.__init__(self, ip_address)
+            _VeraBase.__init__(self, ip)
             HomeAutomationGateway1.__init__(
                 self,
                 self,
@@ -316,6 +315,7 @@ def connect(ip_address=''):
                         attr = cls.__dict__[item]
 
                         if isinstance(attr, property):
+                            # noinspection PyArgumentList
                             return attr.fget(self)
 
                         return attr
@@ -335,9 +335,9 @@ def connect(ip_address=''):
 class _VeraBase:
     """
     This is one of the 2 base classes that make up the main Vera object.
-    
-    The second class is dynamically created hence the reason why the 
-    voodoo magic code. I had to be crafty to be able to subclass a class that 
+
+    The second class is dynamically created hence the reason why the
+    voodoo magic code. I had to be crafty to be able to subclass a class that
     technically speaking doesn't exist.
     """
 
@@ -350,6 +350,9 @@ class _VeraBase:
 
     _import_override = None
     id = 0
+
+    _DataVersion = 0
+    _LuaUPnPAlive = 0
 
     # noinspection PyUnresolvedReferences
     def __init__(self, ip_address):
@@ -423,15 +426,24 @@ class _VeraBase:
 
         self.bind = NotificationHandler.bind
         self.unbind = NotificationHandler.unbind
+        self.__event_handler = NotificationHandler
         self.init_data = data
+
+    @property
+    def event_callback_threads(self):
+        return self.__event_handler.event_callback_threads
+
+    @event_callback_threads.setter
+    def event_callback_threads(self, flag=True):
+        self.__event_handler.event_callback_threads = flag
 
     def update_files(self, log=False):
         """
         Updates the vera gen files.
-        
-        This is used internally but can also be used by the user. It builds 
+
+        This is used internally but can also be used by the user. It builds
         any missing files.
-        
+
         :param log: Output build status to sys.stdout
         :type log: bool
         :return: None
@@ -448,7 +460,7 @@ class _VeraBase:
     def rebuild_files(self, log=False):
         """
         Rebuilds the gen files.
-        
+
         :param log: Output build status to sys.stdout
         :type log: bool
         :return: None
@@ -467,10 +479,10 @@ class _VeraBase:
     def send(self, **kwargs):
         """
         Sends a command or query to the Vera.
-        
+
         This method will send a data_request to the Vera. you simply have to
         pass the parameters that you want to send.
-        
+
         example to set the dimming level of a light:
             vera.send(
                 serviceId='urn:upnp-org:serviceId:Dimming1',
@@ -479,8 +491,8 @@ class _VeraBase:
                 DeviceNum=10,
                 newLoadlevelTarget=25
             )
-        
-        :param **kwargs: parameters to be sent
+
+        :param kwargs: parameters to be sent
         :return: response from the Vera
         :rtype: str, json
         """
@@ -490,9 +502,9 @@ class _VeraBase:
     def queue_data(self, data):
         """
         Internal use.
-        
-        :param data: 
-        :return: 
+
+        :param data:
+        :return:
         """
         self._lock.acquire()
         self._queue += [data]
@@ -502,8 +514,8 @@ class _VeraBase:
     def stop_polling(self):
         """
         Stops polling the vera for updates.
-        
-        :return: 
+
+        :return:
         """
         if self._data_thread is not None:
             self._data_event.set()
@@ -516,7 +528,7 @@ class _VeraBase:
     def start_polling(self, interval=0.1):
         """
         Starts polling the vera for updates.
-        
+
         :param interval: time between polling cycles in seconds.
         :type interval: float
         :return: None
@@ -542,18 +554,19 @@ class _VeraBase:
     def build_event(self):
         """
         Builds the event string
-        
+
         Internal use.
-        
-        :return: 
+
+        :return:
         """
         return 'vera'
 
+    # noinspection PyUnresolvedReferences
     def _data_handler(self):
         """
         Internal use.
-        
-        :return: 
+
+        :return:
         """
         last_data = dict()
         while not self._data_event.isSet():
@@ -562,14 +575,20 @@ class _VeraBase:
             while self._queue:
                 data = self._queue.pop(0)
 
+                for item in _UNWANTED_ITEMS:
+                    if item in data:
+                        del data[item]
+
+                data_version = data.pop('DataVersion', self.DataVersion)
+                lua_upnp_alive = data.pop('LuaUPnPAlive', self.LuaUPnPAlive)
+
                 if data == last_data:
                     continue
 
                 last_data = deepcopy(data)
 
-                for item in _UNWANTED_ITEMS:
-                    if item in data:
-                        del data[item]
+                data['DataVersion'] = data_version
+                data['LuaUPnPAlive'] = lua_upnp_alive
 
                 self.__update(self.sections, 'sections', data)
                 self.__update(self.users, 'users', data)
@@ -589,7 +608,6 @@ class _VeraBase:
                 if self.scenes is not None:
                     self.__update(self.scenes, 'scenes', data)
 
-                # noinspection PyUnresolvedReferences
                 self.update_node(data, full=True)
 
             self._lock.release()
