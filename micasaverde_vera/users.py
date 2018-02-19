@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+import threading
 from event import Notify
 
 
 class Users(object):
 
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.send = parent.send
         self._users = []
@@ -31,63 +33,67 @@ class Users(object):
                 self._users += [User(self, user)]
 
     def __iter__(self):
-        for user in self._users:
-            yield user
+        with self.__lock:
+            for user in self._users:
+                yield user
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except(KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            item = int(item)
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                item = int(item)
 
-        for user in self._users:
-            name = getattr(user, 'name', None)
-            if name is not None and name.replace(' ', '_').lower() == item:
-                return user
-            if item in (user.id, user.name):
-                return user
+            for user in self._users:
+                name = getattr(user, 'name', None)
+                if name is not None and name.replace(' ', '_').lower() == item:
+                    return user
+                if item in (user.id, user.name):
+                    return user
 
-        if isinstance(item, int):
-            raise IndexError
+            if isinstance(item, int):
+                raise IndexError
 
-        raise KeyError
+            raise KeyError
 
     def update_node(self, node, full=False):
+        with self.__lock:
+            if node is not None:
+                users = []
+                for user in node:
+                    # noinspection PyShadowingBuiltins
+                    id = user['id']
+                    for found_user in self._users:
+                        if found_user.id == id:
+                            found_user.update_node(user)
+                            self._users.remove(found_user)
+                            break
 
-        if node is not None:
-            users = []
-            for user in node:
-                # noinspection PyShadowingBuiltins
-                id = user['id']
-                for found_user in self._users:
-                    if found_user.id == id:
-                        found_user.update_node(user)
-                        self._users.remove(found_user)
-                        break
+                    else:
+                        found_user = User(self, user)
 
-                else:
-                    found_user = User(self, user)
+                    users += [found_user]
 
-                users += [found_user]
+                if full:
+                    for user in self._users:
+                        Notify(user, user.build_event() + '.removed')
+                    del self._users[:]
 
-            if full:
-                for user in self._users:
-                    Notify(user, user.build_event() + '.removed')
-                del self._users[:]
-
-            self._users += users
+                self._users += users
 
 
 class User(object):
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
 
         def get(attr):
@@ -106,36 +112,43 @@ class User(object):
 
     @property
     def name(self):
-        return self._name
+        with self.__lock:
+            return self._name
 
     @name.setter
     def name(self, name):
-        self._parent.send(
-            id='user',
-            action='rename',
-            user=self.id,
-            name=name
-        )
+        with self.__lock:
+            self._parent.send(
+                id='user',
+                action='rename',
+                user=self.id,
+                name=name
+            )
 
     @property
     def ishome(self):
-        return self._parent.user_settings[self.id].ishome
+        with self.__lock:
+            return self._parent.user_settings[self.id].ishome
 
     @property
     def geofences(self):
-        return self._parent.user_geofences[self.id]
+        with self.__lock:
+            return self._parent.user_geofences[self.id]
 
     def update_node(self, node):
-
-        for key, value in node.items():
-            if key in ('Name', 'name'):
-                old_value = self._name
-            else:
-                old_value = getattr(self, key, None)
-
-            if old_value != value:
+        with self.__lock:
+            for key, value in node.items():
                 if key in ('Name', 'name'):
-                    self._name = value
+                    old_value = self._name
                 else:
-                    setattr(self, key, value)
-                Notify(self, self.build_event() + '.{0}.changed'.format(key))
+                    old_value = getattr(self, key, None)
+
+                if old_value != value:
+                    if key in ('Name', 'name'):
+                        self._name = value
+                    else:
+                        setattr(self, key, value)
+                    Notify(
+                        self,
+                        self.build_event() + '.{0}.changed'.format(key)
+                    )

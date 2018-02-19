@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
+import threading
 from event import Notify
 
 ATTRIBUTES = ('udn', 'name', 'url', 'ip', 'device_type', 'discovery_date')
@@ -25,6 +25,7 @@ ATTRIBUTES = ('udn', 'name', 'url', 'ip', 'device_type', 'discovery_date')
 class UPNPDevices(object):
 
     def __init__(self, parent, node):
+        self.__lock = threading.RLock()
         self._parent = parent
         self.send = parent.send
         self._devices = []
@@ -34,50 +35,54 @@ class UPNPDevices(object):
                 self._devices += [UPNPDevice(self, device)]
 
     def __iter__(self):
-        for device in self._devices:
-            yield device
+        with self.__lock:
+            for device in self._devices:
+                yield device
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        try:
-            return self[item]
-        except (KeyError, IndexError):
-            raise AttributeError
+            try:
+                return self[item]
+            except (KeyError, IndexError):
+                raise AttributeError
 
     def __getitem__(self, item):
-        item = str(item)
-        if item.isdigit():
-            return self._dveices[int(item)]
+        with self.__lock:
+            item = str(item)
+            if item.isdigit():
+                return self._devices[int(item)]
 
-        for device in self._devices:
-            if item == device.udn:
-                return device
+            for device in self._devices:
+                if item == device.udn:
+                    return device
 
-        raise KeyError
+            raise KeyError
 
-    def update_node(self, node, full=False):
-        if node is not None:
-            devices = []
+    def update_node(self, node, _=False):
+        with self.__lock:
+            if node is not None:
+                devices = []
 
-            for device in node:
-                for found_device in self._devices[:]:
-                    for attr in ATTRIBUTES:
-                        found_value = getattr(found_device, attr, None)
-                        device_value = device.get(attr, None)
-                        if found_value != device_value:
+                for device in node:
+                    for found_device in self._devices[:]:
+                        for attr in ATTRIBUTES:
+                            found_value = getattr(found_device, attr, None)
+                            device_value = device.get(attr, None)
+                            if found_value != device_value:
+                                break
+                        else:
+                            self._devices.remove(found_device)
                             break
                     else:
-                        self._devices.remove(found_device)
-                        break
-                else:
-                    found_device = UPNPDevice(self, device)
+                        found_device = UPNPDevice(self, device)
 
-                devices += [found_device]
+                    devices += [found_device]
 
-            del self._devices[:]
-            self._devices += devices
+                del self._devices[:]
+                self._devices += devices
 
 
 class UPNPDevice(object):
@@ -100,4 +105,3 @@ class UPNPDevice(object):
 
     def build_event(self):
         return 'upnp_devices.{0}'.format(self.udn)
-

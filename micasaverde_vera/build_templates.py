@@ -59,7 +59,6 @@ DEVICE_SUBCLASS_INIT_TEMPLATE = (
 
 
 DEVICE_CLASS_TEMPLATE = '''
-from __future__ import print_function
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.event import Notify
 # noinspection PyUnresolvedReferences
@@ -69,10 +68,12 @@ from micasaverde_vera.vera_exception import VeraNotImplementedError
 
 {imports}
 
+# noinspection PyPep8Naming
 class {class_name}(Device, {subclasses}):
 
     def __init__(self, parent, node):
         self._parent = parent
+        self.__lock = threading.RLock()
         
         self.service_ids = [
             '{device_id}'
@@ -100,284 +101,310 @@ class {class_name}(Device, {subclasses}):
         Notify(self, self.build_event() + '.created')
         
     def build_event(self):
-        return 'devices.{{0}}'.format(self.id)
+        with self.__lock:
+            return 'devices.{{0}}'.format(self.id)
 
     def create_variable(self, variable, value):
         """
         Creates a New Variable
         """
+        
+        with self.__lock:
+            orig_variable = variable
+            variable = variable.replace('.', '').replace(' ', '')
 
-        orig_variable = variable
-        variable = variable.replace('.', '').replace(' ', '')
+            if (
+                variable,
+                orig_variable
+            ) in self._variables[self.service_ids[0]]:
+                return None
+                
+            else:
+                self._variables[
+                    self.service_ids[0]
+                ][(variable, orig_variable)] = value
 
-        if (variable, orig_variable) in self._variables[self.service_ids[0]]:
-            return None
-        else:
-            self._variables[self.service_ids[0]][(variable, orig_variable)] = (
-                value
-            )
+            def var_getter():
+                return self._get_variable(orig_variable)[0]
 
-        def var_getter():
-            return self._get_variable(orig_variable)[0]
+            def var_setter(val):
+                self._get_variable(orig_variable)
 
-        def var_setter(val):
-            self._get_variable(orig_variable)
+                self._parent.send(
+                    DeviceNum=self.id,
+                    Value=val,
+                    Variable=orig_variable,
+                    id='variableset',
+                    serviceId='{device_id}'
+                )
 
-            self._parent.send(
+            prop = property(fget=var_getter, fset=var_setter)
+
+            setattr(self, variable, prop)
+
+            return self._parent.send(
                 DeviceNum=self.id,
-                Value=val,
+                Value=value,
                 Variable=orig_variable,
                 id='variableset',
                 serviceId='{device_id}'
             )
 
-        prop = property(fget=var_getter, fset=var_setter)
-
-        setattr(self, variable, prop)
-
-        return self._parent.send(
-            DeviceNum=self.id,
-            Value=value,
-            Variable=orig_variable,
-            id='variableset',
-            serviceId='{device_id}'
-        )
-
     def set_name(self, new_name):
-        try:
-            self._get_variable('name')
-        except VeraNotImplementedError:
+        with self.__lock:    
             try:
-                self._get_variable('Name')
+                self._get_variable('name')
             except VeraNotImplementedError:
-                raise VeraNotImplementedError(
-                    'Function set_name is not supported.'
-                )
+                try:
+                    self._get_variable('Name')
+                except VeraNotImplementedError:
+                    raise VeraNotImplementedError(
+                        'Function set_name is not supported.'
+                    )
 
-        return self._parent.send(
-            id='action',
-            serviceId='{device_id}',
-            action='SetName',
-            DeviceNum=self.id,
-            NewName=new_name
-        )
+            return self._parent.send(
+                id='action',
+                serviceId='{device_id}',
+                action='SetName',
+                DeviceNum=self.id,
+                NewName=new_name
+            )
 
     def get_name(self):
-        try:
-            self._get_variable('name')
-        except VeraNotImplementedError:
+        with self.__lock:
             try:
-                self._get_variable('Name')
+                self._get_variable('name')
             except VeraNotImplementedError:
-                raise VeraNotImplementedError(
-                    'Function get_name is not supported.'
-                )
+                try:
+                    self._get_variable('Name')
+                except VeraNotImplementedError:
+                    raise VeraNotImplementedError(
+                        'Function get_name is not supported.'
+                    )
 
-        return self._parent.send(
-            id='action',
-            serviceId='{device_id}',
-            action='GetName',
-            DeviceNum=self.id
-        )
+            return self._parent.send(
+                id='action',
+                serviceId='{device_id}',
+                action='GetName',
+                DeviceNum=self.id
+            )
         
     @property
     def category(self):
-        try:
-            category = getattr(self, 'category_num')
-        except VeraNotImplementedError as err:
+        with self.__lock:
             try:
-                return getattr(self, 'plugin').Title
-            except VeraNotImplementedError:
-                raise err
+                category = getattr(self, 'category_num')
+            except VeraNotImplementedError as err:
+                try:
+                    return getattr(self, 'plugin').Title
+                except VeraNotImplementedError:
+                    raise err
                 
-        return self._parent.ha_gateway.categories[category]
+            return self._parent.ha_gateway.categories[category]
         
     @property
     def sub_category(self):
-        try:
-            sub_category = getattr(self, 'subcategory_num')
-        except VeraNotImplementedError as err:
+        with self.__lock:
             try:
-                return getattr(self, 'plugin').Title
-            except VeraNotImplementedError:
-                raise err
-        else:
-            category = getattr(self, 'category_num')
+                sub_category = getattr(self, 'subcategory_num')
+            except VeraNotImplementedError as err:
+                try:
+                    return getattr(self, 'plugin').Title
+                except VeraNotImplementedError:
+                    raise err
+            else:
+                category = getattr(self, 'category_num')
             
-        subcategory = '{{0}}.{{1}}'.format(category, sub_category)
-        return self._parent.ha_gateway.categories[subcategory]
+            subcategory = '{{0}}.{{1}}'.format(category, sub_category)
+            return self._parent.ha_gateway.categories[subcategory]
         
     @property
     def plugin(self):
-        plugin = self._get_variable('plugin')[0]
-        return self._parent.ha_gateway.installed_plugins[plugin]
+        with self.__lock:
+            plugin = self._get_variable('plugin')[0]
+            return self._parent.ha_gateway.installed_plugins[plugin]
 
     @property
     def name(self):
-        try:
-            return self._get_variable('Name')[0]
-        except VeraNotImplementedError:
-            return self._get_variable('name')[0]
+        with self.__lock:
+            try:
+                return self._get_variable('Name')[0]
+            except VeraNotImplementedError:
+                return self._get_variable('name')[0]
 
     @name.setter
     def name(self, value):
-        try:
-            self._get_variable('Name')
-        except VeraNotImplementedError:
-            self._get_variable('name')
+        with self.__lock:
+            try:
+                self._get_variable('Name')
+            except VeraNotImplementedError:
+                self._get_variable('name')
 
-        self._parent.send(
-            id='device',
-            action='rename',
-            name=value,
-            device=self.id
-        )
+            self._parent.send(
+                id='device',
+                action='rename',
+                name=value,
+                device=self.id
+            )
 
     @property
     def room(self):
-        try:
-            value, service, keys = self._get_variable('Room')
-        except VeraNotImplementedError:
-            value, service, keys = self._get_variable('room')
+        with self.__lock:
+            try:
+                value, service, keys = self._get_variable('Room')
+            except VeraNotImplementedError:
+                value, service, keys = self._get_variable('room')
 
-        return self._parent.ha_gateway.rooms[value]
+            return self._parent.ha_gateway.rooms[value]
 
     @room.setter
     def room(self, room):
-        
-        try:
-            self._get_variable('Room')
-        except VeraNotImplementedError:
-            self._get_variable('room')
+        with self.__lock:
+            try:
+                self._get_variable('Room')
+            except VeraNotImplementedError:
+                self._get_variable('room')
             
-        # noinspection PyUnresolvedReferences
-        from micasaverde_vera.rooms import Room 
+            # noinspection PyUnresolvedReferences
+            from micasaverde_vera.rooms import Room 
 
-        if isinstance(room, Room):
-            room = room.id
+            if isinstance(room, Room):
+                room = room.id
         
-        room = int(str(room))
-
-        self._parent.send(
-            id='device',
-            action='rename',
-            device=self.id,
-            name=self.name,
-            room=room
-        )
+            room = int(str(room))
+    
+            self._parent.send(
+                id='device',
+                action='rename',
+                device=self.id,
+                name=self.name,
+                room=room
+            )
 
     def delete(self):
-        self._parent.send(
-            serviceId='urn:micasaverde-com:serviceId:HomeAutomationGateway1',
-            id='action',
-            action='DeleteDevice',
-            DeviceNum=self.id,
-        )
+        with self.__lock:
+            self._parent.send(
+                serviceId=(
+                    'urn:micasaverde-com:serviceId:HomeAutomationGateway1'
+                ),
+                id='action',
+                action='DeleteDevice',
+                DeviceNum=self.id,
+            )
 
     @property
     def Jobs(self):
-        return self._jobs
+        with self.__lock:
+            return self._jobs
 
     @property
     def PendingJobs(self):
-        return self._pending_jobs
+        with self.__lock:
+            return self._pending_jobs
 
     @property
     def Configured(self):
-        return self._configured
+        with self.__lock:
+            return self._configured
 
     def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
+        with self.__lock:
+            if item in self.__dict__:
+                return self.__dict__[item]
 
-        if item in self._variables:
-            return self._variables[item]
+            if item in self._variables:
+                return self._variables[item]
 
-        try:
-            value, service, keys = self._get_variable(item)
-        except VeraNotImplementedError:
-            value = None
+            try:
+                value, service, keys = self._get_variable(item)
+            except VeraNotImplementedError:
+                value = None
             
-        if value is None:
-            for cls in self.__class__.__mro__[:-1]:
-                if item in cls.__dict__:
-                    attr = cls.__dict__[item]
+            if value is None:
+                for cls in self.__class__.__mro__[:-1]:
+                    if item in cls.__dict__:
+                        attr = cls.__dict__[item]
                     
-                    if isinstance(attr, property):
-                        return attr.fget(self)
+                        if isinstance(attr, property):
+                            return attr.fget(self)
                         
-                    return attr
-            raise VeraNotImplementedError(
-                'Attribute {{0}} is not supported.'.format(item)
-            )
-        return value
+                        return attr
+                raise VeraNotImplementedError(
+                    'Attribute {{0}} is not supported.'.format(item)
+                )
+            return value
 
     def _get_services(self, command):
-        services = []
-        for service_id in self.service_ids[1:]:
-            for value in self.argument_mapping[service_id].values():
-                if value['orig_name'] == command:
-                    services += [service_id]
-                    break
+        with self.__lock:
+            services = []
+            for service_id in self.service_ids[1:]:
+                for value in self.argument_mapping[service_id].values():
+                    if value['orig_name'] == command:
+                        services += [service_id]
+                        break
 
-            for keys in self._variables[service_id].keys():
-                if command in keys:
-                    if service_id not in services:
-                        services += [service_id]    
-                    break
+                for keys in self._variables[service_id].keys():
+                    if command in keys:
+                        if service_id not in services:
+                            services += [service_id]    
+                        break
 
-        return services
+            return services
 
     def _get_variable(self, variable, service=None):
-        if service is not None:
-            if service in self._variables:
-                for keys, value in self._variables[service].items():
-                    if variable in keys and value is not None:
-                        return value, service, keys
-        else:
-            for service, variables in self._variables.items():
-                for keys, value in variables.items():
-                    if variable in keys and value is not None:
-                        return value, service, keys
+        with self.__lock:
+            if service is not None:
+                if service in self._variables:
+                    for keys, value in self._variables[service].items():
+                        if variable in keys and value is not None:
+                            return value, service, keys
+            else:
+                for service, variables in self._variables.items():
+                    for keys, value in variables.items():
+                        if variable in keys and value is not None:
+                            return value, service, keys
 
-        raise VeraNotImplementedError(
-            'Attribute {{0}} is not supported.'.format(variable)
-        )
+            raise VeraNotImplementedError(
+                'Attribute {{0}} is not supported.'.format(variable)
+            )
         
     def get_functions(self):
-        import inspect
-        res = []
+        with self.__lock:
+            import inspect
+            res = []
 
-        for cls in self.__class__.__mro__[:-1]:
-            for attribute in inspect.classify_class_attrs(cls):
-                if attribute.kind == 'method':
-                    res += [attribute.name]
+            for cls in self.__class__.__mro__[:-1]:
+                for attribute in inspect.classify_class_attrs(cls):
+                    if attribute.kind == 'method':
+                        res += [attribute.name]
 
-        return sorted(
-            list(item for item in set(res) if not item.startswith('_'))
-        )
+            return sorted(
+                list(item for item in set(res) if not item.startswith('_'))
+            )
 
     def get_variables(self):
-        import inspect
-        res = []
+        with self.__lock:
+            import inspect
+            res = []
+            
+            for service_id in self.service_ids:
+                for keys, value in self._variables[service_id].items():
+                    if value is not None:
+                        res += [keys[0]]
+                        
+            for cls in self.__class__.__mro__[:-1]:
+                for attribute in inspect.classify_class_attrs(cls):
+                    if attribute.kind in ('property', 'data'):
+                        try:
+                            if getattr(self, attribute.name) is not None:
+                                res += [attribute.name]
+                        except VeraNotImplementedError:
+                            continue
+            res = set(res)
 
-        for cls in self.__class__.__mro__[:-1]:
-            for attribute in inspect.classify_class_attrs(cls):
-                if attribute.kind in ('property', 'data'):
-                    res += [attribute.name]
-
-        res = set(res)
-
-        for service_id in self.service_ids:
-            for keys, value in self._variables[service_id].items():
-                if value is None and keys[0] in res:
-                    res.remove(keys[0])
-                if value is not None:
-                    res.add(keys[0])
-
-        return sorted(
-            list(item for item in res if not item.startswith('_'))
-        )
+            return sorted(
+                list(item for item in res if not item.startswith('_'))
+            )
 
     def __dir__(self):
         """
@@ -387,8 +414,8 @@ class {class_name}(Device, {subclasses}):
         device. The purpose for this is not all devices will use every 
         component of this class.
         """
-
-        return self.get_functions() + self.get_variables()
+        with self.__lock:
+            return self.get_functions() + self.get_variables()
         
     def update_node(self, node, full=False):
         """
@@ -396,99 +423,104 @@ class {class_name}(Device, {subclasses}):
 
         This is internally used.
         """
-
-        def check_value(variable, value, service_id=None):
-            if service_id is not None:
-                if service_id not in self._variables:
-                    if service_id.endswith('ZWaveDevice1'):
-                        # noinspection PyUnresolvedReferences
-                        from micasaverde_vera.utils import copy_dict
-                        # noinspection PyUnresolvedReferences
-                        from micasaverde_vera.z_wave_device_1 import (
-                            ZWaveDevice1 as service
-                        )
-                    
-                    else:
-                        # noinspection PyUnresolvedReferences
-                        from micasaverde_vera.utils import (
-                            import_service,
-                            copy_dict
-                        )
+        
+        with self.__lock:
+            def check_value(variable, value, service_id=None):
+                if service_id is not None:
+                    if service_id not in self._variables:
+                        if service_id.endswith('ZWaveDevice1'):
+                            # noinspection PyUnresolvedReferences
+                            from micasaverde_vera.utils import copy_dict
+                            # noinspection PyUnresolvedReferences
+                            from micasaverde_vera.z_wave_device_1 import (
+                                ZWaveDevice1 as service
+                            )
+                        
+                        else:
+                            # noinspection PyUnresolvedReferences
+                            from micasaverde_vera.utils import (
+                                import_service,
+                                copy_dict
+                            )
                 
-                        service = import_service(state['service'])
+                            service = import_service(state['service'])
                         
-                    if service is None:
-                        return
+                        if service is None:
+                            return
                         
-                    if service is False:
-                        print(
-                            'MiCasaVerde Vera: Unknown service {{0}}'.format(
-                                service_id
+                        if service is False:
+                            print(
+                                'MiCasaVerde Vera: '
+                                'Unknown service {{0}}'.format(service_id)
+                            )
+                            self._variables[service_id] = dict()
+                        else:                
+                            service_instance = service(self._parent)
+                    
+                            copy_dict(
+                                service_instance._variables,
+                                self._variables
+                            )
+                            copy_dict(
+                                service_instance.argument_mapping,
+                                self.argument_mapping
+                            )
+                    
+                            self.service_ids += [
+                                service_instance.service_ids[-1]
+                            ]
+                            self.service_types += [
+                                service_instance.service_types[-1]
+                            ]
+                        
+                            if not isinstance(self, service):
+                                self.__class__.__bases__ += (service,)
+                        
+                    try:
+                        old_value, service_id, keys = self._get_variable(
+                            variable,
+                            service_id
+                        )
+                    except VeraNotImplementedError:
+                        old_value = None
+                        keys = (variable, variable)
+                else:
+                    try:
+                        (
+                            old_value,
+                            service_id,
+                            keys
+                        ) = self._get_variable(variable)
+                        
+                    except VeraNotImplementedError:
+                        old_value = None
+                        keys = (variable, variable)
+                        service_id = self.service_ids[0]
+
+                if old_value != value:
+                    self._variables[service_id][keys] = value
+                    if full:
+                        Notify(
+                            self,
+                            self.build_event() + '.{{0}}.{{1}}.changed'.format(
+                                service_id.split(':')[-1],
+                                variable.replace('.', '')
                             )
                         )
-                        self._variables[service_id] = dict()
-                    else:                
-                        service_instance = service(self._parent)
-                    
-                        copy_dict(
-                            service_instance._variables,
-                            self._variables
-                        )
-                        copy_dict(
-                            service_instance.argument_mapping,
-                            self.argument_mapping
-                        )
-                    
-                        self.service_ids += [
-                            service_instance.service_ids[-1]
-                        ]
-                        self.service_types += [
-                            service_instance.service_types[-1]
-                        ]
-                        
-                        if not isinstance(self, service):
-                            self.__class__.__bases__ += (service,)
-                        
-                try:
-                    old_value, service_id, keys = self._get_variable(
-                        variable,
-                        service_id
+
+            if node is not None:
+                if 'tooltip' in node:
+                    del node['tooltip']
+
+                for state in node.pop('states', []):
+                    check_value(
+                        state['variable'],
+                        state['value'],
+                        state['service']
                     )
-                except VeraNotImplementedError:
-                    old_value = None
-                    keys = (variable, variable)
-            else:
-                try:
-                    old_value, service_id, keys = self._get_variable(variable)
-                except VeraNotImplementedError:
-                    old_value = None
-                    keys = (variable, variable)
-                    service_id = self.service_ids[0]
-
-            if old_value != value:
-                self._variables[service_id][keys] = value
-                if full:
-                    Notify(
-                        self,
-                        self.build_event() + '.{{0}}.{{1}}.changed'.format(
-                            service_id.split(':')[-1],
-                            variable.replace('.', '')
-                        )
-                    )
-
-        if node is not None:
-            if 'tooltip' in node:
-                del node['tooltip']
-
-            for state in node.pop('states', []):
-                check_value(
-                    state['variable'],
-                    state['value'],
-                    state['service']
-                )
-
-            for node_key, node_value in node.items():
-                check_value(node_key, node_value)
+    
+                for node_key, node_value in node.items():
+                    check_value(node_key, node_value)
 '''
 
 CLASS_TEMPLATE = '''
@@ -507,6 +539,7 @@ _argument_mapping = {{
 }}
 
 
+# noinspection PyPep8Naming
 class {class_name}(object):
     """
     Properties:
@@ -514,6 +547,7 @@ class {class_name}(object):
     """
 
     def __init__(self, parent):
+        self.__lock = threading.RLock()
         self._parent = parent
         self._variables = getattr(self, '_variables', dict())
         self.argument_mapping = getattr(self, 'argument_mapping', dict())
@@ -564,44 +598,47 @@ METHOD_ARGUMENT_TEMPLATE = '''
         }},'''
 
 SERVICE_SEND_TEMPLATE = '''
-        services = self._get_services('{second_name}')
-        if services:
-            for service_id in services:
-                {{use_return}}self._parent.send(
-                    serviceId=service_id,{{send_arguments}}
-                )
+            services = self._get_services('{second_name}')
+            if services:
+                for service_id in services:
+                    {{use_return}}self._parent.send(
+                        serviceId=service_id,{{send_arguments}}
+                    )
 
-        else:
-            raise VeraNotImplementedError(
-                'Attribute {second_name} is not supported.'
-            )
+            else:
+                raise VeraNotImplementedError(
+                    'Attribute {second_name} is not supported.'
+                )
 '''
 
 SERVICE_SEND_ARGUMENT_TEMPLATE = '''
-                    {keyword}={value},'''
+                        {keyword}={value},'''
 
-SEND_TEMPLATE = '''        {use_return}self._parent.send({send_arguments}
+SEND_TEMPLATE = '''            {use_return}self._parent.send({send_arguments}
         )'''
 
 SEND_ARGUMENT_TEMPLATE = '''
-            {keyword}={value},'''
+                    {keyword}={value},'''
 
 PROPERTY_TEMPLATE = '''
     @property
     def {method}(self):
-        return self._get_variable('{second_name}')[0]
+        with self.__lock:
+            return self._get_variable('{second_name}')[0]
 
     @{method}.setter
-    def {method}(self, value):'''
+    def {method}(self, value):
+        with self.__lock:'''
 
 METHOD_TEMPLATE = '''
     def {method}(self, {keywords}):
+        with self.__lock:
 '''
 
 HEADER_TEMPLATE = """# -*- coding: utf-8 -*-
 #
 # This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# Copyright © 2005-2018 EventGhost Project <http://www.eventghost.net/>
 #
 # EventGhost is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -620,4 +657,6 @@ HEADER_TEMPLATE = """# -*- coding: utf-8 -*-
 # ******************* THIS FILE IS AUTOMATICALLY GENERATED *******************
 # ******************************* DO NOT MODIFY ******************************
 
-"""
+
+from __future__ import print_function
+import threading"""

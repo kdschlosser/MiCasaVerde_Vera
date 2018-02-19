@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU General Public License along
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-
-from fnmatch import fnmatch
+from fnmatch import fnmatchcase
+import threading
 
 
 class _NotificationHandler(object):
 
     def __init__(self):
         self._callbacks = {}
+        self.event_callback_threads = True
 
     def bind(self, event, callback):
         event = event.lower()
@@ -44,15 +45,11 @@ class _NotificationHandler(object):
 
     def notify(self, event_object, event):
         for event_name, event_handlers in self._callbacks.items():
-            if '*' in event_name or '?' in event_name:
-                if fnmatch(event, event_name):
-                    for event_handler in event_handlers:
-                        event_handler.event = event
-                        event_handler.event_object = event_object
-            elif event_name == event:
+            if fnmatchcase(event.lower(), event_name):
                 for event_handler in event_handlers:
                     event_handler.event = event
                     event_handler.event_object = event_object
+
 
 NotificationHandler = _NotificationHandler()
 Notify = NotificationHandler.notify
@@ -60,11 +57,15 @@ Notify = NotificationHandler.notify
 
 class EventHandler(object):
 
-    def __init__(self, event_name, callback):
+    def __init__(self, event_name, callback, event_handler=None):
         self.__event = None
         self.event_name = event_name
         self.__callback = callback
         self.__event_object = None
+
+        if event_handler is None:
+            event_handler = self
+        self.__event_handler = event_handler
 
     @property
     def event(self):
@@ -74,9 +75,20 @@ class EventHandler(object):
     def event(self, event):
         self.__event = event
 
-    def event_object(self, event_object):
+    def _run_in_thread(self, event_object):
         self.__event_object = event_object
-        self.__callback(self)
+        t = threading.Thread(target=self.__callback, args=(self,))
+        t.daemon = True
+        t.start()
+
+    def event_object(self, event_object):
+        if NotificationHandler.event_callback_threads:
+            event = self.copy()
+            event.event = self.__event
+            event._run_in_thread(event_object)
+        else:
+            self.__event_object = event_object
+            self.__callback(self)
 
     event_object = property(fset=event_object)
 
@@ -87,4 +99,11 @@ class EventHandler(object):
         return getattr(self.__event_object, item)
 
     def unbind(self):
-        NotificationHandler.unbind(self)
+        NotificationHandler.unbind(self.__event_handler)
+
+    def copy(self):
+        return EventHandler(
+            self.event_name,
+            self.__callback,
+            self.__event_handler
+        )
