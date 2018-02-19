@@ -22,6 +22,7 @@ import requests
 import json
 import random
 import time
+from event import Notify
 from vera_exception import VeraNotImplementedError, VeraUnsupportedByDevice
 from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
 
@@ -29,11 +30,11 @@ from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
 class VeraConnect(object):
     """
     Connection handler
-    
+
     I have a connection handler to the Vera so that way it manages the flow of
-    information to and from the Vera as not to overload it. I am still 
-    tinkering with how many connections the Vera can handle at one time. 
-    I think I am going to have to make it so that it dynamically changes the 
+    information to and from the Vera as not to overload it. I am still
+    tinkering with how many connections the Vera can handle at one time.
+    I think I am going to have to make it so that it dynamically changes the
     number based on response time. This is because the load on the Vera is not
     going to be the same on a per user basis.
     """
@@ -45,6 +46,7 @@ class VeraConnect(object):
         self._thread = None
         self._data_version = 0
         self._load_time = 0
+        self._connected = True
         self.URL = 'http://{0}:3480/data_request'.format(ip_address)
 
     def start_poll(self, interval):
@@ -68,24 +70,25 @@ class VeraConnect(object):
         while not self._event.isSet():
             self._event.wait(interval)
             self._lock.acquire()
-
-            def connect():
-                if self._event.isSet():
-                    return '{}'
-                try:
-                    response = requests.get(
-                        self.URL,
-                        params={'id': 'user_data'},
-                        timeout=1
-                    )
-                    return response.content
-                except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
-                    self._event.wait(random.randrange(1, 5) / 10)
-                    return connect()
-
-            data = json.loads(connect())
-            self._parent.queue_data(data)
-            self._lock.release()
+            try:
+                response = requests.get(
+                    self.URL,
+                    params={'id': 'user_data'},
+                    timeout=1
+                )
+                if not self._connected:
+                    self._connected = True
+                    Notify('vera.connected', self)
+            except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
+                if self._connected:
+                    self._connected = False
+                    Notify('vera.disconnected', self)
+                self._event.wait(random.randrange(1, 5) / 10)
+            else:
+                data = json.loads(response.content)
+                self._parent.queue_data(data)
+            finally:
+                self._lock.release()
 
     @property
     def is_running(self):
@@ -97,24 +100,27 @@ class VeraConnect(object):
 
         self._lock.acquire()
 
-        def send():
-            try:
-                return requests.get(self.URL, params=params).content
-            except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
-                time.sleep(random.randrange(1, 5) / 10)
-                return send()
-
-        response = send()
-        self._lock.release()
-
         try:
-            return json.loads(response)
-        except ValueError:
-
-            if 'ERROR' in response:
-                if 'No implementation' in response:
-                    raise VeraNotImplementedError
-                if 'Device does not handle service/action' in response:
-                    raise VeraUnsupportedByDevice
-
-            return response
+            response = requests.get(self.URL, params=params)
+            if not self._connected:
+                self._connected = True
+                Notify('vera.connected', self)
+        except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
+            if self._connected:
+                self._connected = False
+                Notify('vera.disconnected', self)
+            time.sleep(random.randrange(1, 5) / 10)
+        else:
+            try:
+                return json.loads(response.content)
+            except ValueError:
+                if 'ERROR' in response.content:
+                    if 'No implementation' in response.content:
+                        raise VeraNotImplementedError
+                    if (
+                        'Device does not handle service/action' in
+                        response.content
+                    ):
+                        raise VeraUnsupportedByDevice
+        finally:
+            self._lock.release()
