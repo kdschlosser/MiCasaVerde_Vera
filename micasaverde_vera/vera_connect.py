@@ -78,11 +78,11 @@ class VeraConnect(object):
                 )
                 if not self._connected:
                     self._connected = True
-                    Notify('vera.connected', self)
+                    Notify(self, 'vera.connected')
             except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
                 if self._connected:
                     self._connected = False
-                    Notify('vera.disconnected', self)
+                    Notify(self, 'vera.disconnected')
                 self._event.wait(random.randrange(1, 5) / 10)
             else:
                 data = json.loads(response.content)
@@ -104,11 +104,11 @@ class VeraConnect(object):
             response = requests.get(self.URL, params=params)
             if not self._connected:
                 self._connected = True
-                Notify('vera.connected', self)
+                Notify(self, 'vera.connected')
         except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
             if self._connected:
                 self._connected = False
-                Notify('vera.disconnected', self)
+                Notify(self, 'vera.disconnected')
             time.sleep(random.randrange(1, 5) / 10)
         else:
             try:
