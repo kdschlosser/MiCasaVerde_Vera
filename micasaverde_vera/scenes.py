@@ -778,7 +778,8 @@ class Trigger(object):
         arguments=[],
         last_run=0,
         last_eval=0,
-        users=[]
+        users=[],
+        autogen=None
     ):
         self.__lock = threading.RLock()
 
@@ -796,6 +797,7 @@ class Trigger(object):
         self._users = users
         self.last_run = last_run
         self.last_eval = last_eval
+        self.autogen = autogen
         Notify(self, self.build_event() + '.created')
         self.arguments = Arguments(self, arguments)
 
