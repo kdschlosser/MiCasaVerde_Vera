@@ -1,108 +1,93 @@
 MiCasaVerde_Vera
 
 
-Here is the quick and dirty. I will be providing better docs in the near future.
+This is a simple code example with a console to enter python code into. You will need to change the IP_ADDRESS to match the
+IP of your Vera. if you set the IP_ADDRESS variable to "" it will attempt a discovery of the Vera (provided you have upnp turned on). This process does take a bit to complete the Vera is not exactly in the road runner department. 
 
-    from micasaverde_vera import Vera
-
-If you have UPNP enabled on the Vera and want to try auto discovery.
-This takes longer then directly entering the IP address.
-
-    vera = Vera()
-
-If you want to supply the IP address.
-
-    vera = Vera('192.168.1.1')
-
-The initial running of the library takes a while. the length of time all depends on how many
-plugins and devices are installed. This is due to the dynamic nature of this API. It builds all
-methods, properties and attributes from information gotten form the Vera. It allows for setting
-any of the variables in the Vera (provided the Vera allows you to). It also exposes some hidden
-functions/methods.
-
-dir() is your best friend. I have it supply an altered output of information that lists off all
-available methods, properties and attributes that a specific component supports. Reading the
-generated code files can also help some. But not all of the methods, properties and attributes
-may be supported. This is why it is best to use dir()
-
-Devices can be retrieved one of the 3 following ways.
-
-    device = vera.get_device(10)
-    device = vera.get_device('10')
-    device = vera.get_device('Some Device Name')
-
-This same mechanism works for scenes, rooms, plugins and a few others.
-To get scenes you would use.
-
-    vera.get_scene()
-
-for rooms.
-
-    vera.get_room()
-
-and so on and so forth
-
-Say you want to change the name of a room
-
-    room = vera.get_room('Media')
-    room.name = 'Dining Room'
-
-If you want to have real time updates to the information stored in the Vera
-You will have to start the polling loop.
-
-    vera.start_polling(float(seconds))
-
-This will update the information to match what is stored on the Vera.
-The updating process speed is as fast as you set the interval to. You have
-to remember the Vera is not exactly what I would call "fast". So keep that
-in mind when setting a low interval. The lower the number the faster the
-library will ask for the information. and if you have a really burdened Vera
-to start off with this is going to make it really really really slow if
-you have the number set to low.
-
-The biggest purpose for this library/API is to be able to offload some of
-that burden from the Vera and also extend it's ability to control devices
-that it would normally not be able to.
-
-I changed the event system to make it far easier to use. the old way has
-been completely removed.
-
-the following will register for an event. this specific example is if you
-do not know the device number but you know the device name. This will trigger
-an event if the Status variable changes
-
-    def callback(event):
-        print event.name
-
-    device = vera.get_device('My device')
-    registered_event = vera.bind('Device.{0}.Status.Changed'.format(device.id), callback)
-
-if you know the device number
-
-    registered_event = vera.bind('Device.2.Status.Changed', callback)
-
-if you want to register for an event for all devices where a specific variable changes
-in this example it will trigger an event for any dimmer switch that changes value
-
-    registered_event = vera.bind('Device.*.loadLevelStatus.Changed', callback)
-
-if you need to unbind from an event
-
-    registered_event.unbind()
-
-a good way for you to get to learn the events would be
-
-    def callback(event):
-        print event.event
-
-    vera.bind('*', callback)
-
-If you are using events from the Vera to cause other things to take place
-(Scenes Hint Hint) you need to create a never ending loop at the end of your script.
-
+    IP_ADDRESS = '192.168.1.2'
+    DEVICE_NUMBER = None
+    SHOW_ALL_EVENTS = True
+    
+    import micasaverde_vera
+    
+    
+    def test_callback(event):
+        if SHOW_ALL_EVENTS:
+            print event.event
+    
+        split_event = event.event.split('.')
+    
+        def check_event():
+            if split_event[-1] == 'changed':
+                print
+                print '--------------------------------------------'
+                print event.event
+                attr_name = split_event[-2:][0]
+                try:
+                    print event.name
+                except AttributeError:
+                    print 'NO NAME'
+                print attr_name, '=', getattr(event, attr_name)
+                print'--------------------------------------------'
+                print
+    
+        if split_event[0] == 'devices':
+            if split_event[1] == str(DEVICE_NUMBER):
+                check_event()
+    
+        elif split_event[0] == 'rooms':
+            check_event()
+    
+    vera = micasaverde_vera.connect(IP_ADDRESS)
+    event_handler = vera.bind('*', test_callback)
+    vera.start_polling(0.2)
+    
     while True:
-        pass
+        command = [
+            raw_input('key in commands here. the last line must be RUN\n\n')
+        ]
+        while command[-1] != 'RUN' and not command[-1].endswith('RUN'):
+            command += [raw_input('')]
+        command = '\n'.join(command)[:-3]
+    
+        try:
+            exec command
+        except:
+            import traceback
+            traceback.print_exc()
 
+in the console if you want to get a printout of all of the device names for example
+
+    for device in vera.devices:
+        print device.name
+        
+ 
+ or say you want a prinout of what devices are in what rooms.
+ 
+     for room in vera.rooms:
+         print room.name
+         for device in room:
+             print '   ', device.name
+             
+             
+  how about get a list of devices a plugin has installed
+  
+      for plugin in vera.installed_plugins:
+          print plugin.name
+          for device in plugin:
+              print '   ', device.name
+              
+              
+             
+The best way to go about identifying any vera objects is by it's ID, these id's never get reissued and are unique to an object. You are able to access a device/room/plugin by it's id just as you would a list index. It does not matter if the numbers are not in sequence. You are also able to access using the device name like you would a dictionary.
+
+There is a single convience method that allows for attrubite access to a room/device from the vera object. No unicode and the attribute representation of the room and device are all lowercase with any spaces replaces with an underscore. no numbers or special characters.
+
+if i want to access room Living Room and the device Overhead Light
+
+    vera.living_room.overhead_light
+    
+    
 
 
 
