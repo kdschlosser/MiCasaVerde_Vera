@@ -276,6 +276,9 @@ class InstalledPlugin(object):
             self.__dict__[k] = v
 
         Notify(self, self.build_event() + '.created')
+        
+    def __iter__(self):
+        return iter(self.devices)
 
     def get_variables(self):
         with self.__lock:
