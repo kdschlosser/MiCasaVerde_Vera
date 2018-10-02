@@ -558,34 +558,49 @@ def create_class_attributes(
     return ''.join(class_doc_templates)
 
 
+def interface_addresses(family=socket.AF_INET):
+    for fam, a, b, c, sock_addr in socket.getaddrinfo('', None):
+        if family == fam:
+            yield sock_addr[0]
+            
+            
 def discover():
     if __name__ == "__main__":
         print('Discovering Vera....')
+        
 
     ssdp_request = SSDP_REQUEST.format(SSDP_MX, SSDP_ST, SSDP_ADDR, SSDP_PORT)
     dest = socket.gethostbyname(SSDP_ADDR)
-
-    def connect_sock(bind=False):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        if bind:
-            sock.bind((socket.gethostbyname(socket.gethostname()), 0))
-        sock.sendto(ssdp_request, (dest, SSDP_PORT))
-        sock.settimeout(7)
-
+    dvcs = []
+    
+    def do(local_address, evt):
         try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind((local_address, 0))
+            sock.sendto(ssdp_request, (dest, SSDP_PORT))
+            sock.settimeout(7)
             while True:
                 data, address = sock.recvfrom(1024)
                 if 'luaupnp.xml' in data:
-                    return address[0]
+                    dvcs.append(address[0])
         except socket.timeout:
             sock.close()
+            
+        finally:
+            evt.set()
+            
+     for lcl_address in interface_addresses():
+        events += [threading.Event()]
+        t = threading.Thread(target=do, args=(lcl_address, events[-1]))
+        t.daemon = True
+        t.start()
 
-    ip_address = connect_sock()
-    if ip_address is None:
-        ip_address = connect_sock(bind=True)
+    for event in events:
+        event.wait()
 
-    return ip_address
-
+    return dvcs
 
 def get_categories(ip_address):
     response = requests.get(
