@@ -41,7 +41,7 @@ not respond very quickly to a upnp discovery packet. My suggestion is to
 pass the constructor the IP address.
 
 When the code files are built they are stored in the following locations.
-Microsoft Windows: %APPDATA%\Micasaverde_Vera
+Microsoft Windows: %APPDATA%\\Micasaverde_Vera
 Linux:             ~/.MicasaVerde_Vera
 
 In the event you have some kind of an issue. I am going to need a copy of
@@ -175,20 +175,22 @@ I have created 2 methods for discovering what a vera object can do.
 from __future__ import print_function
 import sys
 import threading
+import json
+import requests
 from copy import deepcopy
 
 if 'micasaverde_vera' not in sys.modules:
     sys.modules['micasaverde_vera'] = sys.modules[__name__]
 
-import vera_build # NOQA
-from utils import init_core  # NOQA
-from import_override import ImportOverride # NOQA
-from constants import (
+from . import vera_build # NOQA
+from .utils import init_core  # NOQA
+from .import_override import ImportOverride # NOQA
+from .constants import (
     VERSION as _VERSION,
     UNWANTED_ITEMS as _UNWANTED_ITEMS,
     BUILD_PATH as _BUILD_PATH
 ) # NOQA
-from vera_exception import (
+from .vera_exception import (
     VeraError,
     VeraNotFoundError,
     VeraBuildError,
@@ -203,7 +205,7 @@ build_files = vera_build.build_files
 discover = vera_build.discover
 
 
-def rebuild_files(ip_address='', log=False):
+def rebuild_files(ip_address=None, log=False):
     if not ip_address:
         ip_address = vera_build.discover()
 
@@ -229,7 +231,52 @@ def update_files(ip_address, log=False):
     vera_build.build_files(ip_address, log, True)
 
 
-def connect(ip_address=''):
+def get_units(username=None, password=None):
+
+    from .auth import Auth, Unit
+
+    auth = Auth(username, password)
+
+    url = 'https://{server}/info/session/token'.format(
+        server=auth.server_account
+    )
+    header = dict(
+        MMSAuth=auth.token,
+        MMSAuthSig=auth.sig_token
+    )
+    response = requests.get(
+        url,
+        headers=header
+    )
+
+    session = response.content
+
+    url = (
+        'https://{server}/account/account/account/{pk_account}/devices'.format(
+            server=auth.server_account,
+            pk_account=auth.pk_account
+        )
+    )
+
+    response = requests.get(
+        url,
+        headers=dict(MMSSession=session)
+    )
+
+    remote_data = json.loads(response.content)
+
+    for device in remote_data['Devices']:
+        unit = Unit()
+        unit.set_remote_relay(
+            auth,
+            device['PK_Device'],
+            device['Server_Device'],
+            device['Server_Device_Alt']
+        )
+        yield unit
+
+
+def connect(ip_address=None):
 
     """
     MiCasaVerde Vera control entry point.
@@ -237,9 +284,16 @@ def connect(ip_address=''):
     :param ip_address: optional
     :return: micasaverde_vera.Vera
     """
+    from .auth import Unit
 
-    if not ip_address:
+    if ip_address is None:
         ip_address = vera_build.discover()
+        print(ip_address)
+
+        if ip_address:
+            unit = Unit()
+            unit.set_local_relay(ip_address)
+            ip_address = unit
 
     def start_vera():
         if 'micasaverde_vera.core' in sys.modules:
@@ -254,8 +308,9 @@ def connect(ip_address=''):
         print('MicasaVerde Vera: Build complete.')
 
     try:
+        print('startin vera')
         core = start_vera()
-
+        print('core loaded')
         if (
             not hasattr(core, 'VERSION') or
             core.VERSION != __version__
@@ -362,20 +417,20 @@ class _VeraBase:
 
         # noinspection PyUnresolvedReferences
         from micasaverde_vera.core.devices import home_automation_gateway_1
-        from event import NotificationHandler
-        from sections import Sections
-        from ip_requests import IPRequests
-        from weather_settings import WeatherSettings
-        from devices import Devices
-        from rooms import Rooms
-        from user_settings import UserSettings
-        from user_geofences import UserGeofences
-        from upnp_devices import UPNPDevices
-        from users import Users
-        from categories import Categories
-        from installed_plugins import InstalledPlugins
-        from alerts import Alerts
-        from vera_connect import VeraConnect
+        from .event import NotificationHandler
+        from .sections import Sections
+        from .ip_requests import IPRequests
+        from .weather_settings import WeatherSettings
+        from .devices import Devices
+        from .rooms import Rooms
+        from .user_settings import UserSettings
+        from .user_geofences import UserGeofences
+        from .upnp_devices import UPNPDevices
+        from .users import Users
+        from .categories import Categories
+        from .installed_plugins import InstalledPlugins
+        from .alerts import Alerts
+        from .vera_connect import VeraConnect
 
         self.ip_address = ip_address
         self._data_event = None
@@ -612,3 +667,4 @@ class _VeraBase:
 
             self._lock.release()
             self._data_wait.wait()
+

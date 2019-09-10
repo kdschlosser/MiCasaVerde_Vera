@@ -17,7 +17,7 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import threading
-from event import Notify
+from .event import Notify
 
 
 class UserSettings(object):

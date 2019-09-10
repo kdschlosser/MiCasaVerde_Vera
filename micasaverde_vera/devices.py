@@ -18,8 +18,8 @@
 
 from __future__ import print_function
 import threading
-from event import Notify
-from vera_exception import VeraNotImplementedError
+from .event import Notify
+from .vera_exception import VeraNotImplementedError
 
 
 class Devices(object):
@@ -58,11 +58,11 @@ class Devices(object):
             return None
 
         if 'SceneController:1' in device_type:
-            from scenes import Scenes
+            from .scenes import Scenes
             self.ha_gateway.scenes = Scenes(self.ha_gateway, device)
             return self.ha_gateway.scenes
 
-        from utils import import_device
+        from .utils import import_device
 
         device_cls = import_device(device_type)
 

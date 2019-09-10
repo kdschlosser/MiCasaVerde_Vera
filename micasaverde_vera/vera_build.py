@@ -25,8 +25,8 @@ import threading
 import random
 import xml.etree.cElementTree as ElementTree
 import time
-from utils import parse_string, create_service_name, CRC32_from_file
-from constants import (
+from .utils import parse_string, create_service_name, CRC32_from_file
+from .constants import (
     SSDP_MX,
     SSDP_ST,
     SSDP_ADDR,
@@ -44,7 +44,7 @@ from constants import (
     VERA_INFO,
     VERSION
 )
-from build_templates import (
+from .build_templates import (
     SSDP_REQUEST,
     CONTROLLER_INFO_TEMPLATE,
     DEVICE_SUBCLASS_IMPORT,
@@ -93,15 +93,14 @@ def write_file(file_path, template):
         f.write(template)
 
 
-def get_data(template, ip_address, **params):
-    url = template.format(ip_address=ip_address)
+def get_data(url, ip_address, **params):
+    print(url)
+    print(ip_address)
     try:
-        response = requests.get(url, params=params, timeout=1)
+        response = ip_address.build_relay.send(extra_url=url, **params)
     except (requests.ConnectionError, requests.Timeout):
         time.sleep(random.randrange(1, 3) / 10)
-        return get_data(template, ip_address, **params)
-
-    response = response.content
+        return get_data(url, ip_address, **params)
 
     if 'doesn\'t exist' in response:
         return None, None
@@ -575,6 +574,8 @@ def discover():
         try:
             while True:
                 data, address = sock.recvfrom(1024)
+                data = data.decode('utf-8')
+
                 if 'luaupnp.xml' in data:
                     return address[0]
         except socket.timeout:
@@ -668,6 +669,7 @@ def get_vera_info(ip_address):
 
 
 def get_files(ip_address):
+    print(ip_address.build_relay)
     device_files = {}
     service_files = {}
     downloaded_files = {}
@@ -799,6 +801,7 @@ def get_files(ip_address):
 
 
 def build_files(ip_address, log=False, update=False):
+    print(ip_address)
 
     if log:
         # noinspection PyGlobalUndefined
@@ -1014,12 +1017,19 @@ def main(ip_address=''):
         ip_address = discover()
 
     if ip_address is not None:
+        # noinspection PyTypeChecker
         build_files(ip_address)
         print('Building Categories....')
         get_categories(ip_address)
 
 
 if __name__ == "__main__":
+    try:
+        # noinspection PyUnboundLocalVariable,PyUnresolvedReferences
+        raw_input = raw_input
+    except NameError:
+        raw_input = input
+
     ip = raw_input(
         'input ip address of vera\n'
         'or leave blank for auto discovery\n'

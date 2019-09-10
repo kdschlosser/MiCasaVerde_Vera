@@ -26,9 +26,9 @@ except ImportError:
 import threading
 import sys
 import os
-from vera_exception import VeraImportError
-from utils import CRC32_from_file, init_core
-from constants import CORE_PATH
+from .vera_exception import VeraImportError
+from .utils import CRC32_from_file, init_core
+from .constants import CORE_PATH
 
 
 class ImportOverride(object):

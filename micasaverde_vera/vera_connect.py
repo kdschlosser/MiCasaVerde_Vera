@@ -22,8 +22,8 @@ import requests
 import json
 import random
 import time
-from event import Notify
-from vera_exception import VeraNotImplementedError, VeraUnsupportedByDevice
+from .event import Notify
+from .vera_exception import VeraNotImplementedError, VeraUnsupportedByDevice
 from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
 
 
@@ -38,7 +38,13 @@ class VeraConnect(object):
     number based on response time. This is because the load on the Vera is not
     going to be the same on a per user basis.
     """
-    def __init__(self, parent, ip_address):
+    def __init__(
+        self,
+        parent,
+        ip_address=None,
+        _=None
+    ):
+
         self._parent = parent
         self._event = threading.Event()
         self._event.set()

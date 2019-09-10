@@ -2,6 +2,10 @@
 *.pyc
 
 # PyCharm
-.idea/
+.idea
 
-
+build
+dist
+*.egg
+*.whl
+__pycache__

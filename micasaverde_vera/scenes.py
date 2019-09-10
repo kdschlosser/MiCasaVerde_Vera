@@ -24,7 +24,7 @@ import threading
 from micasaverde_vera.core.devices.scene_1 import Scene1
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.core.devices.scene_controller_1 import SceneController1
-from event import Notify
+from .event import Notify
 
 
 class Scenes(SceneController1):
@@ -202,7 +202,7 @@ class Scene(Scene1):
     @room.setter
     def room(self, room):
         with self.__lock:
-            from rooms import Room
+            from .rooms import Room
 
             if not isinstance(room, Room):
                 room = self.parent.ha_gateway.rooms[room]

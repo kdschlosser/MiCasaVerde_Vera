@@ -17,13 +17,13 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import threading
-from event import Notify
+from .event import Notify
 
 
 def _check_item_type(item):
-    from installed_plugins import InstalledPlugin
-    from scenes import Scene
-    from devices import Device
+    from .installed_plugins import InstalledPlugin
+    from .scenes import Scene
+    from .devices import Device
 
     if isinstance(item, (InstalledPlugin, Scene, Device)):
         return item
@@ -159,7 +159,8 @@ class Room(object):
 
     def _plugin_room(self, plugin, room):
         with self.__lock:
-            from installed_plugins import InstalledPlugin
+            from .installed_plugins import InstalledPlugin
+
             if not isinstance(plugin, InstalledPlugin):
                 plugin = self._parent.ha_gateway.installed_plugins[plugin]
 
@@ -168,7 +169,8 @@ class Room(object):
 
     def _scene_room(self, scene, room):
         with self.__lock:
-            from scenes import Scene
+            from .scenes import Scene
+
             if not isinstance(scene, Scene):
                 scene = self._parent.ha_gateway.scenes[scene]
 
@@ -177,7 +179,8 @@ class Room(object):
 
     def _device_room(self, device, room):
         with self.__lock:
-            from devices import Device
+            from .devices import Device
+
             if not isinstance(device, Device):
                 device = self._parent.ha_gateway.devices[device]
 

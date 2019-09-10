@@ -17,8 +17,10 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 
 VERSION = (0, 5, 9)
+PY3 = sys.version_info[0] > 2
 
 if os.name == 'nt':
     BUILD_PATH = os.path.join(
@@ -74,11 +76,11 @@ UNWANTED_ITEMS = (
     'startup'
 )
 
-URL = 'http://{ip_address}/cgi-bin/cmh/'
+URL = '/cgi-bin/cmh/'
 GET_UPNP_FILES = URL + 'get_upnp_files.sh'
 VIEW_UPNP_FILE = URL + 'view_upnp_file.sh'
 SYS_INFO = URL + 'sysinfo.sh'
-CATEGORIES = 'http://{ip_address}/cmh/js/config/constants.js'
-CATEGORY_LANG = 'http://{ip_address}/cmh/js/config/lang.js'
-VERA_INFO = 'http://{ip_address}/upnp/vera.xml'
+CATEGORIES = '/cmh/js/config/constants.js'
+CATEGORY_LANG = '/cmh/js/config/lang.js'
+VERA_INFO = '/upnp/vera.xml'
 

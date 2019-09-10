@@ -17,12 +17,13 @@
 # with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
+# noinspection PyDeprecation
 import imp
 import os
 import binascii
 import importlib
-from constants import CORE_PATH
-from vera_exception import VeraImportError
+from .constants import CORE_PATH
+from .vera_exception import VeraImportError
 
 
 def parse_string(word):
