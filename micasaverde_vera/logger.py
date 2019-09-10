@@ -24,6 +24,7 @@ project https://github.com/kdschlosser/MiCasaVerde_Vera.
 .. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
 """
 
+import os
 import logging
 from logging import NullHandler
 
@@ -90,3 +91,11 @@ class Logger(object):
 
     def __setattr__(self, key, value):
         setattr(micasaverde_vera_logger, key, value)
+
+    def set_output_file(self, file_path, level, write_mode='w'):
+        handler = logging.FileHandler(file_path, mode=write_mode)
+        handler.setLevel(level)
+        # create a logging format
+        formatter = logging.Formatter(FORMAT)
+        handler.setFormatter(formatter)
+        micasaverde_vera_logger.addHandler(handler)
