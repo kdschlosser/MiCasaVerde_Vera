@@ -162,7 +162,8 @@ class Scene(Scene1):
         triggers=[],
         timers=[],
         groups=[],
-        onDashboard=False
+        onDashboard=False,
+        paused=None
     ):
         self.__lock = threading.RLock()
         if not name:
@@ -182,6 +183,7 @@ class Scene(Scene1):
         self._encoded_lua = encoded_lua
         self._lua = lua
         self._onDashboard = onDashboard
+        self.paused = paused
 
         Notify(self, self.build_event() + '.created')
         self.groups = Groups(self, groups)
