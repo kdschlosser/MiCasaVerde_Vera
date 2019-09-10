@@ -1,20 +1,28 @@
 # -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: authentication
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
 
 import requests
 import json
@@ -22,6 +30,7 @@ import threading
 import base64
 import time
 import random
+import logging
 from hashlib import sha1
 from requests import (
     ConnectionError,
@@ -36,6 +45,9 @@ from .vera_exception import (
 )
 from .constants import PY3
 from . import connect
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 AUTH_SERVER = (
     'https://vera-us-oem-autha11.mios.com/autha/auth/username/{lower_user_id}'
@@ -156,6 +168,7 @@ class MIOSServer(object):
             extra_url=extra_url
         )
 
+    @utils.logit
     def send(self, extra_url=None, **params):
         self._lock.acquire()
 
@@ -212,6 +225,7 @@ class LocalServer(object):
         self._params = {}
         self._connected = None
 
+    @utils.logit
     def send(self, extra_url=None, **params):
         self._lock.acquire()
         if extra_url is None:
@@ -263,6 +277,7 @@ class Unit(object):
         self._relay_server = None
         self.build_relay = None
 
+    @utils.logit
     def set_remote_relay(self, auth, serial, server, alt_server):
         self._auth = auth
         self.serial = serial
@@ -300,13 +315,16 @@ class Unit(object):
             '/relay/relay/relay/device/{0}/port_80'.format(serial)
         )
 
+    @utils.logit
     def set_local_relay(self, ip_address):
         self.internal_ip = ip_address
         self.build_relay = LocalServer(ip_address)
 
+    @utils.logit
     def relay(self, **params):
         return self._relay_server.send(**params)
 
+    @utils.logit
     def connect(self):
         return connect(self)
 

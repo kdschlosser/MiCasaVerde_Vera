@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
 
 """
-MiCasaVerde Vera.
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: main entry point
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+
 
 This is the module you will use to make the connection to your Vera unit.
 I have designed this system to be dynamic. It builds the code necessary to
@@ -172,17 +176,36 @@ I have created 2 methods for discovering what a vera object can do.
     variables for that object.
 """
 
-from __future__ import print_function
-import sys
-import threading
-import json
-import requests
-from copy import deepcopy
+from . import logger
+LOGGING_DATA_PATH = logger.LOGGING_DATA_PATH
+"""
+Displays the data path.
+"""
+LOGGING_DATA_PATH_WITH_RETURN = logger.LOGGING_DATA_PATH_WITH_RETURN
+"""
+Displays the data path with returned values
+"""
+LOGGING_TIME_FUNCTION_CALLS = logger.LOGGING_TIME_FUNCTION_CALLS
+"""
+Displays code execution times.
+"""
+
+logger = logger.Logger()
+"""
+Instance of :py:class:`micasaverde_vera.logger.Logging`
+"""
+
+import sys # NOQA
+import threading # NOQA
+import json # NOQA
+import requests # NOQA
+from copy import deepcopy # NOQA
 
 if 'micasaverde_vera' not in sys.modules:
     sys.modules['micasaverde_vera'] = sys.modules[__name__]
 
 from . import vera_build # NOQA
+from . import utils # NOQA
 from .utils import init_core  # NOQA
 from .import_override import ImportOverride # NOQA
 from .constants import (
@@ -205,6 +228,7 @@ build_files = vera_build.build_files
 discover = vera_build.discover
 
 
+@utils.logit
 def rebuild_files(ip_address=None, log=False):
     if not ip_address:
         ip_address = vera_build.discover()
@@ -215,6 +239,7 @@ def rebuild_files(ip_address=None, log=False):
         vera_build.build_files(ip_address, log=log)
 
 
+@utils.logit
 def update_files(ip_address, log=False):
     """
     Updates the vera gen files.
@@ -231,6 +256,7 @@ def update_files(ip_address, log=False):
     vera_build.build_files(ip_address, log, True)
 
 
+@utils.logit
 def get_units(username=None, password=None):
 
     from .auth import Auth, Unit
@@ -276,6 +302,7 @@ def get_units(username=None, password=None):
         yield unit
 
 
+@utils.logit
 def connect(ip_address=None):
 
     """
@@ -302,23 +329,22 @@ def connect(ip_address=None):
         return init_core()
 
     def build():
-        print('MicasaVerde Vera: Building files please wait....')
+        logger.info('MicasaVerde Vera: Building files please wait....')
         build_files(ip_address, log=False)
-        print()
-        print('MicasaVerde Vera: Build complete.')
+        logger.info('MicasaVerde Vera: Build complete.')
 
     try:
-        print('startin vera')
+        logger.info('startin vera')
         core = start_vera()
-        print('core loaded')
+        logger.info('core loaded')
         if (
             not hasattr(core, 'VERSION') or
             core.VERSION != __version__
         ):
-            print('MiCasaVerde Vera: Generated files version mismatch.')
-            print('                  Rebuilding files please wait....')
+            logger.info('MiCasaVerde Vera: Generated files version mismatch.')
+            logger.info('                  Rebuilding files please wait....')
             rebuild_files(ip_address)
-            print('MiCasaVerde Vera: Build complete.')
+            logger.info('MiCasaVerde Vera: Build complete.')
 
         # noinspection PyUnresolvedReferences
         from micasaverde_vera.core.devices.home_automation_gateway_1 import (

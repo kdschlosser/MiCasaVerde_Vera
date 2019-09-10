@@ -1,23 +1,36 @@
 # -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: rooms
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
 
 import threading
+import logging
 from .event import Notify
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 
 def _check_item_type(item):
@@ -41,6 +54,7 @@ class Rooms(object):
             for room in node:
                 self._rooms += [Room(self, room)]
 
+    @utils.logit
     def new(self, name):
         self._parent.send(
             id='room',
@@ -80,6 +94,7 @@ class Rooms(object):
 
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             if node is not None:
@@ -132,6 +147,7 @@ class Room(object):
         with self.__lock:
             return self._parent.ha_gateway.sections[self._section]
 
+    @utils.logit
     def remove(self, item):
         with self.__lock:
             item = _check_item_type(item)
@@ -157,6 +173,7 @@ class Room(object):
     def add_device(self, device):
         self._device_room(device, self.id)
 
+    @utils.logit
     def _plugin_room(self, plugin, room):
         with self.__lock:
             from .installed_plugins import InstalledPlugin
@@ -167,6 +184,7 @@ class Room(object):
             if getattr(plugin, 'room', None) is not None:
                 plugin.room = room
 
+    @utils.logit
     def _scene_room(self, scene, room):
         with self.__lock:
             from .scenes import Scene
@@ -177,6 +195,7 @@ class Room(object):
             if getattr(scene, 'room', None) is not None:
                 scene.room = room
 
+    @utils.logit
     def _device_room(self, device, room):
         with self.__lock:
             from .devices import Device
@@ -187,6 +206,7 @@ class Room(object):
             if getattr(device, 'room', None) is not None:
                 device.room = room
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             return list(
@@ -194,7 +214,7 @@ class Room(object):
                 if not callable(item) and not item.startswith('_')
             )
 
-    def __radd__(self, item):
+    def __iadd__(self, item):
         with self.__lock:
             item = _check_item_type(item)
 
@@ -203,7 +223,7 @@ class Room(object):
                 if room is not None and room != self:
                     item.room = self
 
-    def __rsub__(self, item):
+    def __isub__(self, item):
         with self.__lock:
             item = _check_item_type(item)
 
@@ -283,6 +303,7 @@ class Room(object):
                     name=name
                 )
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             if self.id:
@@ -292,6 +313,7 @@ class Room(object):
                     room=self.id
                 )
 
+    @utils.logit
     def update_node(self, node):
         with self.__lock:
             for key, value in node.items():

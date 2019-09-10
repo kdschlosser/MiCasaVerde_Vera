@@ -1,22 +1,30 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: code builder
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
+import logging
 import os
 import socket
 import requests
@@ -25,6 +33,7 @@ import threading
 import random
 import xml.etree.cElementTree as ElementTree
 import time
+from . import utils
 from .utils import parse_string, create_service_name, CRC32_from_file
 from .constants import (
     SSDP_MX,
@@ -42,7 +51,8 @@ from .constants import (
     CATEGORIES,
     CATEGORY_LANG,
     VERA_INFO,
-    VERSION
+    VERSION,
+    BUILD_PATH
 )
 from .build_templates import (
     SSDP_REQUEST,
@@ -66,9 +76,14 @@ from .build_templates import (
     HEADER_TEMPLATE
 )
 
+logger = logging.getLogger(__name__)
+
 
 def processing(indent, p_type, name):
-    print('{0}-Processing {1} {2}.....'.format(indent, p_type, name))
+    if __name__ == '__main__':
+        logger.info('{0}-Processing {1} {2}.....'.format(indent, p_type, name))
+    else:
+        logger.debug('{0}-Processing {1} {2}.....'.format(indent, p_type, name))
 
 
 def create_build_folder(path, file_data):
@@ -80,7 +95,9 @@ def create_build_folder(path, file_data):
 
 def write_file(file_path, template):
     if __name__ == "__main__":
-        print('Writing File {0} ....'.format(file_path))
+        logger.info('Writing File {0} ....'.format(file_path))
+    else:
+        logger.debug('Writing File {0} ....'.format(file_path))
 
     if os.path.exists(file_path):
         try:
@@ -88,14 +105,24 @@ def write_file(file_path, template):
         except OSError:
             return
 
+    head, tail = os.path.split(file_path)
+
+    module = [os.path.splitext(tail)[0]]
+
+    while head != BUILD_PATH:
+        head, tail = os.path.split(head)
+        module.insert(0, tail)
+
+    module_name = '.'.join(['micasaverde_vera'] + module)
+
     with open(file_path, 'w') as f:
-        f.write(HEADER_TEMPLATE)
+        f.write(HEADER_TEMPLATE.format(module_name=module_name))
         f.write(template)
 
-
+@utils.logit
 def get_data(url, ip_address, **params):
-    print(url)
-    print(ip_address)
+    logger.debug(url)
+    logger.debug(ip_address)
     try:
         response = ip_address.build_relay.send(extra_url=url, **params)
     except (requests.ConnectionError, requests.Timeout):
@@ -116,6 +143,7 @@ def get_data(url, ip_address, **params):
     return response, xmlns
 
 
+@utils.logit
 def convert_id_to_type(in_id):
     in_id[2] = 'service'
 
@@ -131,6 +159,7 @@ def convert_id_to_type(in_id):
     return ':'.join(in_id[:-1] + [out_id, out_type])
 
 
+@utils.logit
 def convert_type_to_id(in_type):
     in_type = in_type.replace('schemas-', '')
     in_type = in_type.split(':')
@@ -149,6 +178,7 @@ def convert_type_to_id(in_type):
     return ':'.join(in_type[:4])
 
 
+@utils.logit
 def make_class_template(
     class_name,
     methods,
@@ -259,16 +289,18 @@ def make_class_template(
     return template
 
 
+@utils.logit
 def make_templates(devices, services):
     if __name__ == "__main__":
-        print()
-        print()
-        print('Building Templates....')
+        logger.info('Building Templates....')
+    else:
+        logger.debug('Building Templates....')
 
     create_build_folder(
         CORE_PATH,
         'VERSION = {0}\n'.format(VERSION)
     )
+
     create_build_folder(DEVICES_PATH, '')
     create_build_folder(SERVICES_PATH, '')
 
@@ -334,6 +366,7 @@ def make_templates(devices, services):
 
     with open(os.path.join(CORE_PATH, '__init__.py'), 'a') as f:
         f.write('\n\nclass Devices(object):\n')
+
         for module_file in os.listdir(DEVICES_PATH):
             if module_file.endswith('.pyc'):
                 continue
@@ -349,6 +382,7 @@ def make_templates(devices, services):
             )
 
         f.write('\n\nclass Services(object):\n')
+
         for module_file in os.listdir(SERVICES_PATH):
             if module_file.endswith('.pyc'):
                 continue
@@ -364,6 +398,7 @@ def make_templates(devices, services):
             )
 
 
+@utils.logit
 def create_class_methods(
     service_xmlns,
     service_id,
@@ -391,8 +426,7 @@ def create_class_methods(
             if method_name.startswith(number):
                 method_name = replacement + method_name[len(number):]
 
-        if __name__ == '__main__':
-            processing('    ', 'method', method_name)
+        processing('    ', 'method', method_name)
 
         if gateway:
             send_arguments = [
@@ -471,6 +505,7 @@ def create_class_methods(
             )
 
 
+@utils.logit
 def create_class_attributes(
     service_xmlns,
     service_id,
@@ -483,8 +518,7 @@ def create_class_attributes(
     for state_variable in state_variables:
         attr_name = state_variable.find('%sname' % service_xmlns).text
 
-        if __name__ == '__main__':
-            processing('    ', 'attribute', attr_name)
+        processing('    ', 'attribute', attr_name)
 
         data_type = state_variable.find('%sdataType' % service_xmlns).text
 
@@ -559,7 +593,9 @@ def create_class_attributes(
 
 def discover():
     if __name__ == "__main__":
-        print('Discovering Vera....')
+        logger.info('Discovering Vera....')
+    else:
+        logger.debug('Discovering Vera....')
 
     ssdp_request = SSDP_REQUEST.format(SSDP_MX, SSDP_ST, SSDP_ADDR, SSDP_PORT)
     dest = socket.gethostbyname(SSDP_ADDR)
@@ -588,6 +624,7 @@ def discover():
     return ip_address
 
 
+@utils.logit
 def get_categories(ip_address):
     response = requests.get(
         CATEGORIES.format(ip_address=ip_address),
@@ -625,23 +662,38 @@ def get_categories(ip_address):
 
     del category_mapping
     if __name__ == '__main__':
-
-        print(
+        logger.info(
             ' Category |'
             ' Category Name               |'
             ' Subcategory |'
             ' Subcategory Name'
         )
-        print('=' * 88)
+        logger.info('=' * 88)
+    else:
+        logger.debug(
+            ' Category |'
+            ' Category Name               |'
+            ' Subcategory |'
+            ' Subcategory Name'
+        )
+        logger.debug('=' * 88)
 
-        for key in sorted(out_categories.keys(), key=int):
-            value = out_categories[key]
-            print(' ' + str(key) + ' ' * (11 - len(str(key))) + value['0'])
-            for k in sorted(value.keys(), key=int)[1:]:
-                print(' ' * 42 + str(k) + ' ' * (14 - len(str(k))) + value[k])
+    for key in sorted(out_categories.keys(), key=int):
+        value = out_categories[key]
+        if __name__ == '__main__':
+            logger.info(' ' + str(key) + ' ' * (11 - len(str(key))) + value['0'])
+        else:
+            logger.debug(' ' + str(key) + ' ' * (11 - len(str(key))) + value['0'])
+
+        for k in sorted(value.keys(), key=int)[1:]:
+            if __name__ == '__main__':
+                logger.info(' ' * 42 + str(k) + ' ' * (14 - len(str(k))) + value[k])
+            else:
+                logger.debug(' ' * 42 + str(k) + ' ' * (14 - len(str(k))) + value[k])
     return out_categories
 
 
+@utils.logit
 def get_vera_info(ip_address):
     import json
 
@@ -668,8 +720,9 @@ def get_vera_info(ip_address):
     )
 
 
+@utils.logit
 def get_files(ip_address):
-    print(ip_address.build_relay)
+    logger.info(ip_address.build_relay)
     device_files = {}
     service_files = {}
     downloaded_files = {}
@@ -677,13 +730,16 @@ def get_files(ip_address):
     threads = []
     lock = threading.Lock()
 
+    @utils.logit
     def get_thread(xml_file_name):
         if xml_file_name.startswith('I_'):
             threads.remove(threading.currentThread())
             return
 
         if __name__ == '__main__':
-            print('-Retreiving File', xml_file_name)
+            logger.info('-Retreiving File', xml_file_name)
+        else:
+            logger.debug('-Retreiving File', xml_file_name)
 
         response, xmlns = get_data(
             VIEW_UPNP_FILE,
@@ -800,8 +856,9 @@ def get_files(ip_address):
     return device_files, service_files
 
 
+@utils.logit
 def build_files(ip_address, log=False, update=False):
-    print(ip_address)
+    logger.info(ip_address)
 
     if log:
         # noinspection PyGlobalUndefined
@@ -809,8 +866,11 @@ def build_files(ip_address, log=False, update=False):
         __name__ = '__main__'
 
     if __name__ == '__main__':
-        print(CONTROLLER_INFO_TEMPLATE.format(*get_vera_info(ip_address)))
-        print('Building Device and Service Files....')
+        logger.info(CONTROLLER_INFO_TEMPLATE.format(*get_vera_info(ip_address)))
+        logger.info('Building Device and Service Files....')
+    else:
+        logger.debug(CONTROLLER_INFO_TEMPLATE.format(*get_vera_info(ip_address)))
+        logger.debug('Building Device and Service Files....')
 
     device_files, service_files = get_files(ip_address)
 
@@ -835,8 +895,8 @@ def build_files(ip_address, log=False, update=False):
             properties = svc['properties']
 
         else:
-            if __name__ == "__main__":
-                processing('', 'service', service_id)
+            processing('', 'service', service_id)
+
             methods = dict()
             attributes = []
             class_doc = ''
@@ -909,8 +969,11 @@ def build_files(ip_address, log=False, update=False):
                 (update and not os.path.exists(svc_gen_file))
             )
 
-            if not save_service and update and __name__ == "__main__":
-                print('-File Exists', svc_gen_file)
+            if not save_service and update:
+                if __name__ == "__main__":
+                    logger.info('-File Exists', svc_gen_file)
+                else:
+                    logger.debug('-File Exists', svc_gen_file)
 
             if save_service:
                 build_service(
@@ -944,13 +1007,15 @@ def build_files(ip_address, log=False, update=False):
             not update or (update and not os.path.exists(device_gen_file))
         )
 
-        if not save_device and update and __name__ == "__main__":
-            print('-File Exists', device_gen_file)
+        if not save_device and update:
+            if __name__ == "__main__":
+                logger.info('-File Exists', device_gen_file)
+            else:
+                logger.debug('-File Exists', device_gen_file)
 
         if save_device:
             if device_type not in found_devices:
-                if __name__ == '__main__':
-                    processing('', 'device', device_type)
+                processing('', 'device', device_type)
 
                 found_devices[device_type] = dict(
                     subclasses=[],
@@ -988,8 +1053,11 @@ def build_files(ip_address, log=False, update=False):
                     (update and not os.path.exists(svc_gen_file))
                 )
 
-                if not save_service and update and __name__ == "__main__":
-                    print('-File Exists', svc_gen_file)
+                if not save_service and update:
+                    if __name__ == "__main__":
+                        logger.info('-File Exists', svc_gen_file)
+                    else:
+                        logger.debug('-File Exists', svc_gen_file)
 
                 if save_service:
                     build_service(
@@ -1011,7 +1079,7 @@ def build_files(ip_address, log=False, update=False):
 
     make_templates(found_devices, found_services)
 
-
+@utils.logit
 def main(ip_address=''):
     if not ip_address:
         ip_address = discover()
@@ -1019,11 +1087,13 @@ def main(ip_address=''):
     if ip_address is not None:
         # noinspection PyTypeChecker
         build_files(ip_address)
-        print('Building Categories....')
+        logger.info('Building Categories....')
         get_categories(ip_address)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     try:
         # noinspection PyUnboundLocalVariable,PyUnresolvedReferences
         raw_input = raw_input

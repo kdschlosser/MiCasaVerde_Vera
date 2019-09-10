@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: vera connection handler
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
 
 
+import logging
 import threading
 import requests
 import json
@@ -24,7 +33,11 @@ import random
 import time
 from .event import Notify
 from .vera_exception import VeraNotImplementedError, VeraUnsupportedByDevice
+from . import utils
 from requests import ConnectionError, Timeout, ReadTimeout, ConnectTimeout
+
+
+logger = logging.getLogger(__name__)
 
 
 class VeraConnect(object):
@@ -55,6 +68,7 @@ class VeraConnect(object):
         self._connected = None
         self.URL = 'http://{0}:3480/data_request'.format(ip_address)
 
+    @utils.logit
     def start_poll(self, interval):
         while not self._event.isSet():
             pass
@@ -66,10 +80,12 @@ class VeraConnect(object):
         self._thread.daemon = True
         self._thread.start()
 
+    @utils.logit
     def stop_poll(self):
         self._event.set()
         self._thread.join(3.0)
 
+    @utils.logit
     def run_poll(self, interval):
         self._event.clear()
 
@@ -102,6 +118,7 @@ class VeraConnect(object):
     def is_running(self):
         return not self._event.isSet()
 
+    @utils.logit
     def send(self, **params):
         if 'output_format' not in params:
             params['output_format'] = 'json'

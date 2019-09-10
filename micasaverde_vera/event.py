@@ -1,23 +1,36 @@
 # -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: events
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
 
 from fnmatch import fnmatchcase
 import threading
+import logging
+
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 
 class _NotificationHandler(object):
@@ -26,6 +39,7 @@ class _NotificationHandler(object):
         self._callbacks = {}
         self.event_callback_threads = True
 
+    @utils.logit
     def bind(self, event, callback):
         event = event.lower()
         if event not in self._callbacks:
@@ -35,6 +49,7 @@ class _NotificationHandler(object):
         self._callbacks[event] += [event_handler]
         return event_handler
 
+    @utils.logit
     def unbind(self, event_handler):
         event = event_handler.event_name
         if event in self._callbacks:
@@ -43,6 +58,7 @@ class _NotificationHandler(object):
                 if not self._callbacks[event]:
                     del self._callbacks[event]
 
+    @utils.logit
     def notify(self, event_object, event):
         for event_name, event_handlers in self._callbacks.items():
             if fnmatchcase(event.lower(), event_name):
@@ -98,9 +114,11 @@ class EventHandler(object):
 
         return getattr(self.__event_object, item)
 
+    @utils.logit
     def unbind(self):
         NotificationHandler.unbind(self.__event_handler)
 
+    @utils.logit
     def copy(self):
         return EventHandler(
             self.event_name,

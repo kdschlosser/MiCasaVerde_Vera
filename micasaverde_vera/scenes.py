@@ -1,22 +1,30 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
 
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: scenes
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
+import logging
 import base64
 import threading
 
@@ -25,6 +33,9 @@ from micasaverde_vera.core.devices.scene_1 import Scene1
 # noinspection PyUnresolvedReferences
 from micasaverde_vera.core.devices.scene_controller_1 import SceneController1
 from .event import Notify
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 
 class Scenes(SceneController1):
@@ -50,18 +61,22 @@ class Scenes(SceneController1):
             for scene in self._scenes:
                 yield scene
 
+    @utils.logit
     def get_devices(self):
         with self.__lock:
             return self.ha_gateway.devices
 
+    @utils.logit
     def get_device(self, device):
         with self.__lock:
             return self.ha_gateway.devices[device]
 
+    @utils.logit
     def get_room(self, room):
         with self.__lock:
             return self.ha_gateway.rooms[room]
 
+    @utils.logit
     def get_user(self, user):
         with self.__lock:
             return self.parent.users[user]
@@ -93,6 +108,7 @@ class Scenes(SceneController1):
                 raise IndexError
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             if node is None:
@@ -296,6 +312,7 @@ class Scene(Scene1):
         with self.__lock:
             self._notification_only = notification_only
 
+    @utils.logit
     def stop_scene(self):
         with self.__lock:
             self.parent.send(
@@ -307,6 +324,7 @@ class Scene(Scene1):
                 SceneNum=self.id
             )
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             self.parent.send(
@@ -331,6 +349,7 @@ class Scene(Scene1):
             )
 
     # noinspection PyUnboundLocalVariable
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             _triggers = node.pop('triggers', [])
@@ -414,11 +433,13 @@ class Actions(object):
         with self.__lock:
             return iter(self.actions)
 
+    @utils.logit
     def new_action(self):
         with self.__lock:
             self.actions += [Action(self, self.scene)]
             return self.actions[-1]
 
+    @utils.logit
     def remove(self, action):
         with self.__lock:
             if action in self.actions:
@@ -446,6 +467,7 @@ class Actions(object):
 
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             actions = []
@@ -497,15 +519,18 @@ class Action(object):
                 return 'NO NAME ASSIGNED'
             return self._action
 
+    @utils.logit
     def new_argument(self):
         with self.__lock:
             return self.arguments.new()
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             Notify(self, self.build_event() + '.removed')
             self.parent.remove(self)
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             self.arguments.update_node(node.pop('arguments', []), full)
@@ -617,11 +642,13 @@ class Groups(object):
         with self.__lock:
             return iter(self.groups)
 
+    @utils.logit
     def new_group(self):
         with self.__lock:
             self.groups += [Group(self, self.scene, len(self.groups) + 1)]
             return self.groups[-1]
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             groups = []
@@ -642,6 +669,7 @@ class Groups(object):
 
             self.groups += groups
 
+    @utils.logit
     def remove(self, group):
         with self.__lock:
             if group in self.groups:
@@ -677,6 +705,7 @@ class Group(object):
         with self.__lock:
             self._delay = delay
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             Notify(
@@ -685,6 +714,7 @@ class Group(object):
             )
             self.scene.groups.remove(self)
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             if self._delay != node['delay']:
@@ -709,11 +739,13 @@ class Triggers(object):
         with self.__lock:
             return iter(self.triggers)
 
+    @utils.logit
     def new_trigger(self):
         with self.__lock:
             self.triggers += [Trigger(self, self.scene, '')]
             return self.triggers[-1]
 
+    @utils.logit
     def remove(self, trigger):
         with self.__lock:
             if trigger in self.triggers:
@@ -741,6 +773,7 @@ class Triggers(object):
 
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             triggers = []
@@ -890,16 +923,19 @@ class Trigger(object):
             else:
                 self._lua = lua
 
+    @utils.logit
     def new_argument(self):
         with self.__lock:
             return self.arguments.new()
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             Notify(self, self.build_event() + '.removed')
             self.scene.triggers.remove(self)
 
     # noinspection PyUnboundLocalVariable
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             self.arguments.update_node(node.pop('arguments', []), full)
@@ -953,6 +989,7 @@ class Timers(object):
         self.scene = scene
         self.timers = list(Timer(self, scene, **timer) for timer in timers)
 
+    @utils.logit
     def new_timer(self, name):
         with self.__lock:
             self.timers += [Timer(self, self.scene, len(self.timers), name)]
@@ -988,11 +1025,13 @@ class Timers(object):
 
             raise KeyError
 
+    @utils.logit
     def remove(self, timer):
         with self.__lock:
             if timer in self.timers:
                 self.timers.remove(timer)
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             timers = []
@@ -1117,12 +1156,14 @@ class Timer(object):
         with self.__lock:
             self._time = time
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             Notify(self, self.build_event() + '.removed')
             self.scene.timers.remove(self)
 
     # noinspection PyUnboundLocalVariable
+    @utils.logit
     def update_node(self, node, _):
         with self.__lock:
             for key, value in node.items():
@@ -1174,6 +1215,7 @@ class Arguments(object):
     def build_event(self):
         return self.parent.build_event()
 
+    @utils.logit
     def new(self):
         with self.__lock:
             if isinstance(self.parent, Action):
@@ -1186,6 +1228,7 @@ class Arguments(object):
                 ]
             return self.arguments[-1]
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             arguments = []
@@ -1241,6 +1284,7 @@ class Arguments(object):
 
             raise KeyError
 
+    @utils.logit
     def remove(self, argument):
         with self.__lock:
             if argument in self.arguments:
@@ -1272,6 +1316,7 @@ class Argument(object):
             event = self.id
         return self.parent.build_event() + '.arguments.{0}'.format(event)
 
+    @utils.logit
     def update_node(self, node, _):
         with self.__lock:
             for key, value in node.items():
@@ -1301,6 +1346,7 @@ class Argument(object):
         with self.__lock:
             self._value = value
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             Notify(self, self.build_event() + '.removed')

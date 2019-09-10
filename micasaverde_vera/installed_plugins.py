@@ -1,23 +1,36 @@
 # -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: installed plugins
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
 
 import threading
+import logging
 from .event import Notify
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 
 class InstalledPlugins(object):
@@ -31,6 +44,7 @@ class InstalledPlugins(object):
         if node is not None:
             self._plugins = [InstalledPlugin(self, plugin) for plugin in node]
 
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             if node is not None:
@@ -84,6 +98,7 @@ class InstalledPlugins(object):
             raise KeyError
 
     # noinspection PyUnresolvedReferences
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             return list(plugin.Title for plugin in self._plugins)
@@ -105,6 +120,7 @@ class File(object):
             self.build_event() + '.created'
         )
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             return list(
@@ -116,6 +132,7 @@ class File(object):
         with self.__lock:
             return self._parent.build_event() + '.File.{0}'.format(self.id)
 
+    @utils.logit
     def update_node(self, node):
         with self.__lock:
             for key, value in node.items():
@@ -139,6 +156,7 @@ class Files(object):
             for f in self.files:
                 yield f
 
+    @utils.logit
     def update_node(self, node):
         with self.__lock:
             files = []
@@ -168,6 +186,7 @@ class Luas(object):
             for lua in self.luas:
                 yield lua
 
+    @utils.logit
     def update_node(self, node):
         with self.__lock:
             luas = []
@@ -228,6 +247,7 @@ class Devices(object):
                 raise IndexError
             raise KeyError
 
+    @utils.logit
     def update_node(self, node):
 
         with self.__lock:
@@ -276,10 +296,11 @@ class InstalledPlugin(object):
             self.__dict__[k] = v
 
         Notify(self, self.build_event() + '.created')
-        
+
     def __iter__(self):
         return iter(self.devices)
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             return list(
@@ -291,6 +312,7 @@ class InstalledPlugin(object):
         with self.__lock:
             return 'installed_plugins.{0}'.format(self.id)
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             self.parent.send(
@@ -298,6 +320,7 @@ class InstalledPlugin(object):
                 Plugin_ID=self.id
             )
 
+    @utils.logit
     def update(self):
         with self.__lock:
             self.parent.send(
@@ -305,6 +328,7 @@ class InstalledPlugin(object):
                 Plugin_ID=self.id
             )
 
+    @utils.logit
     def update_node(self, node, _=False):
         with self.__lock:
             self.devices.update_node(node.pop('Devices', []))

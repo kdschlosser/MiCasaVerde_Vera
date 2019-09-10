@@ -1,21 +1,28 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: code output templates
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
 
 SSDP_REQUEST = (
     'M-SEARCH * HTTP/1.1\r\n'
@@ -71,6 +78,7 @@ from micasaverde_vera.vera_exception import VeraNotImplementedError
 # noinspection PyPep8Naming
 class {class_name}(Device, {subclasses}):
 
+    @utils.logit
     def __init__(self, parent, node):
         self._parent = parent
         self.__lock = threading.RLock()
@@ -104,6 +112,7 @@ class {class_name}(Device, {subclasses}):
         with self.__lock:
             return 'devices.{{0}}'.format(self.id)
 
+    @utils.logit
     def create_variable(self, variable, value):
         """
         Creates a New Variable
@@ -150,6 +159,7 @@ class {class_name}(Device, {subclasses}):
                 serviceId='{device_id}'
             )
 
+    @utils.logit
     def set_name(self, new_name):
         with self.__lock:    
             try:
@@ -170,6 +180,7 @@ class {class_name}(Device, {subclasses}):
                 NewName=new_name
             )
 
+    @utils.logit
     def get_name(self):
         with self.__lock:
             try:
@@ -281,6 +292,7 @@ class {class_name}(Device, {subclasses}):
                 room=room
             )
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             self._parent.send(
@@ -367,7 +379,8 @@ class {class_name}(Device, {subclasses}):
             raise VeraNotImplementedError(
                 'Attribute {{0}} is not supported.'.format(variable)
             )
-        
+    
+    @utils.logit
     def get_functions(self):
         with self.__lock:
             import inspect
@@ -382,6 +395,7 @@ class {class_name}(Device, {subclasses}):
                 list(item for item in set(res) if not item.startswith('_'))
             )
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             import inspect
@@ -416,7 +430,8 @@ class {class_name}(Device, {subclasses}):
         """
         with self.__lock:
             return self.get_functions() + self.get_variables()
-        
+    
+    @utils.logit
     def update_node(self, node, full=False):
         """
         Updates the device with data retrieved from the Vera
@@ -449,7 +464,7 @@ class {class_name}(Device, {subclasses}):
                             return
                         
                         if service is False:
-                            print(
+                            logger.error(
                                 'MiCasaVerde Vera: '
                                 'Unknown service {{0}}'.format(service_id)
                             )
@@ -546,6 +561,7 @@ class {class_name}(object):
 {class_doc}
     """
 
+    @utils.logit
     def __init__(self, parent):
         self.__lock = threading.RLock()
         self._parent = parent
@@ -631,32 +647,47 @@ PROPERTY_TEMPLATE = '''
         with self.__lock:'''
 
 METHOD_TEMPLATE = '''
+    @utils.logit
     def {method}(self, {keywords}):
         with self.__lock:
 '''
 
-HEADER_TEMPLATE = """# -*- coding: utf-8 -*-
+HEADER_TEMPLATE = '''\
+# -*- coding: utf-8 -*-
+
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This file is part of EventGhost.
-# Copyright © 2005-2018 EventGhost Project <http://www.eventghost.net/>
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 #
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: auto gen code file - {module_name}
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
 #
 #
 # ******************* THIS FILE IS AUTOMATICALLY GENERATED *******************
 # ******************************* DO NOT MODIFY ******************************
 
+__name__ = '{module_name}'
+import logging
+import threading
+from micasaverde_vera import utils
 
-from __future__ import print_function
-import threading"""
+logger = logging.getLogger(__name__)
+'''

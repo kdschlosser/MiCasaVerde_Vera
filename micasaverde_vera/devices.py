@@ -1,25 +1,37 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: devices
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
 import threading
+import logging
 from .event import Notify
 from .vera_exception import VeraNotImplementedError
+from . import utils
+
+
+logger = logging.getLogger(__name__)
 
 
 class Devices(object):
@@ -37,6 +49,7 @@ class Devices(object):
                 if self._devices[-1] is None:
                     self._devices.remove(None)
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             res = []
@@ -48,6 +61,7 @@ class Devices(object):
                     res += [str(device.id)]
             return res
 
+    @utils.logit
     def __get_device_class(self, device):
         device_type = device.get('device_type', '')
 
@@ -71,7 +85,7 @@ class Devices(object):
 
         if device_cls is False:
             self._device_error += [device_type]
-            print('MiCasaVerde_Vera: Unknown device {0}'.format(device_type))
+            logger.error('MiCasaVerde_Vera: Unknown device {0}'.format(device_type))
 
         else:
             return device_cls(self, device)
@@ -109,6 +123,7 @@ class Devices(object):
 
             raise KeyError('{0} not found'.format(item))
 
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             if node is not None:
@@ -186,9 +201,11 @@ class UnknownDevice(Device):
             for key, value in node.items():
                 self.__dict__[key] = value
 
+    @utils.logit
     def update_node(self, node, full=False):
         pass
 
+    @utils.logit
     def delete(self):
         with self.__lock:
             self._parent.send(
@@ -200,6 +217,7 @@ class UnknownDevice(Device):
                 DeviceNum=self.id,
             )
 
+    @utils.logit
     def get_variables(self):
         with self.__lock:
             return list(

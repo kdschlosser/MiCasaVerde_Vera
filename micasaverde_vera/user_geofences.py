@@ -1,23 +1,35 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of EventGhost.
-# Copyright © 2005-2016 EventGhost Project <http://www.eventghost.net/>
-#
-# EventGhost is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 2 of the License, or (at your option)
-# any later version.
-#
-# EventGhost is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with EventGhost. If not, see <http://www.gnu.org/licenses/>.
 
+# **micasaverde_vera** is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# **micasaverde_vera** is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with python-openzwave. If not, see http://www.gnu.org/licenses.
+
+"""
+This file is part of the **micasaverde_vera**
+project https://github.com/kdschlosser/MiCasaVerde_Vera.
+
+:platform: Unix, Windows, OSX
+:license: GPL(v3)
+:synopsis: geofences
+
+.. moduleauthor:: Kevin Schlosser @kdschlosser <kevin.g.schlosser@gmail.com>
+"""
+
+import logging
 import threading
 from .event import Notify
+from . import utils
+
+logger = logging.getLogger(__name__)
 
 
 class UserGeofences(object):
@@ -62,6 +74,7 @@ class UserGeofences(object):
 
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full=False):
         with self.__lock:
             if node is not None:
@@ -102,6 +115,7 @@ class GeoTag(object):
     def user(self):
         return self._parent.user
 
+    @utils.logit
     def update_node(self, node):
         with self.__lock:
             for key, value in node.items():
@@ -158,6 +172,7 @@ class GeoTags(object):
 
             raise KeyError
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             geotags = []
@@ -199,6 +214,7 @@ class UserGeoFence(object):
     def build_event(self):
         return 'user_geofence.{0}'.format(self.iduser)
 
+    @utils.logit
     def update_node(self, node, full):
         with self.__lock:
             self.geotags.update_node(
