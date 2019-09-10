@@ -195,11 +195,11 @@ class MIOSServer(object):
 
             if self._connected in (None, False):
                 self._connected = True
-                Notify(self, 'vera.connected')
+                Notify('vera.connected', self)
         except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
             if self._connected in (True, None):
                 self._connected = False
-                Notify(self, 'vera.disconnected')
+                Notify('vera.disconnected', self)
             time.sleep(random.randrange(1, 5) / 10)
         else:
             try:
@@ -244,11 +244,11 @@ class LocalServer(object):
 
             if self._connected in (None, False):
                 self._connected = True
-                Notify(self, 'vera.connected')
+                Notify('vera.connected', self)
         except (ConnectionError, Timeout, ReadTimeout, ConnectTimeout):
             if self._connected in (True, None):
                 self._connected = False
-                Notify(self, 'vera.disconnected')
+                Notify('vera.disconnected', self)
             time.sleep(random.randrange(1, 5) / 10)
         else:
             try:
