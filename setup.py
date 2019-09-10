@@ -27,7 +27,7 @@ setup(
     zip_safe=False,
     url='https://github.com/kdschlosser/MiCasaVerde_Vera',
     install_requires=['requests'],
-    packages=find_packages('micasaverde_vera'),
+    packages=['micasaverde_vera', 'micasaverde_vera\external_plugins'],
     package_dir=dict(
         micasaverde_vera= 'micasaverde_vera'
     ),
