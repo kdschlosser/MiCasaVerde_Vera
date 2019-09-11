@@ -120,14 +120,15 @@ def write_file(file_path, template):
         f.write(template)
 
 @utils.logit
-def get_data(url, ip_address, **params):
-    logger.debug(url)
-    logger.debug(ip_address)
+def get_data(template, ip_address, **params):
+    url = template.format(ip_address=ip_address)
     try:
-        response = ip_address.build_relay.send(extra_url=url, **params)
+        response = requests.get(url, params=params, timeout=1)
     except (requests.ConnectionError, requests.Timeout):
         time.sleep(random.randrange(1, 3) / 10)
-        return get_data(url, ip_address, **params)
+        return get_data(template, ip_address, **params)
+
+    response = response.content
 
     if 'doesn\'t exist' in response:
         return None, None
@@ -722,7 +723,7 @@ def get_vera_info(ip_address):
 
 @utils.logit
 def get_files(ip_address):
-    logger.info(ip_address.build_relay)
+    logger.info(ip_address)
     device_files = {}
     service_files = {}
     downloaded_files = {}
@@ -1085,7 +1086,6 @@ def main(ip_address=''):
         ip_address = discover()
 
     if ip_address is not None:
-        # noinspection PyTypeChecker
         build_files(ip_address)
         logger.info('Building Categories....')
         get_categories(ip_address)
