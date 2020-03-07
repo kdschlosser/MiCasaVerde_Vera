@@ -1123,7 +1123,7 @@ class Timer(object):
         self._interval = interval
 
         Notify(self, self.build_event() + '.created')
-        
+
         for key, value in kwargs:
             logger.info('Timer argument "{0}" has not been added. Adding it dynamically.'.format(key))
             setattr(self, key, value)
