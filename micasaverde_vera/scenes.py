@@ -163,7 +163,8 @@ class Scene(Scene1):
         timers=[],
         groups=[],
         onDashboard=False,
-        paused=None
+        paused=None,
+        **kwargs
     ):
         self.__lock = threading.RLock()
         if not name:
@@ -191,6 +192,11 @@ class Scene(Scene1):
         self.timers = Timers(self, timers)
         self.category_num = 9999
         self.subcategory_num = 0
+
+        for key, value in kwargs:
+            logger.info('Scene argument "{0}" has not been added. Adding it dynamically.'.format(key))
+            setattr(self, key, value)
+
         Scene1.__init__(self, parent, {})
 
     def build_event(self):
@@ -500,7 +506,8 @@ class Action(object):
         device=None,
         service='',
         action='',
-        arguments=[]
+        arguments=[],
+        **kwargs
     ):
         self.__lock = threading.RLock()
         self.scene = scene
@@ -510,6 +517,10 @@ class Action(object):
         self._action = action
         Notify(self, self.build_event() + '.created')
         self.arguments = Arguments(self, arguments)
+
+        for key, value in kwargs:
+            logger.info('Action argument "{0}" has not been added. Adding it dynamically.'.format(key))
+            setattr(self, key, value)
 
     def build_event(self):
         return self.parent.build_event() + '.actions.{0}'.format(self._action)
@@ -685,7 +696,15 @@ class Groups(object):
 class Group(object):
 
     # noinspection PyDefaultArgument, PyShadowingBuiltins
-    def __init__(self, parent, scene, id, delay=0, actions=[]):
+    def __init__(
+            self,
+            parent,
+            scene,
+            id,
+            delay=0,
+            actions=[],
+            **kwargs
+    ):
         self.__lock = threading.RLock()
         self.parent = parent
         self.scene = scene
@@ -693,6 +712,10 @@ class Group(object):
         self._delay = delay
         Notify(self, self.build_event() + '.created')
         self.actions = Actions(self, scene, actions)
+
+        for key, value in kwargs:
+            logger.info('Group argument "{0}" has not been added. Adding it dynamically.'.format(key))
+            setattr(self, key, value)
 
     def build_event(self):
         return self.parent.build_event() + '.groups.{0}'.format(self.id)
@@ -814,7 +837,8 @@ class Trigger(object):
         last_run=0,
         last_eval=0,
         users=[],
-        autogen=None
+        autogen=None,
+        **kwargs
     ):
         self.__lock = threading.RLock()
 
@@ -835,6 +859,10 @@ class Trigger(object):
         self.autogen = autogen
         Notify(self, self.build_event() + '.created')
         self.arguments = Arguments(self, arguments)
+
+        for key, value in kwargs:
+            logger.info('Trigger argument "{0}" has not been added. Adding it dynamically.'.format(key))
+            setattr(self, key, value)
 
     def build_event(self):
         return self.parent.build_event() + '.triggers.{0}'.format(self.name)
@@ -1075,7 +1103,8 @@ class Timer(object):
         time='',
         next_run=0,
         last_run=0,
-        interval=0
+        interval=0,
+        **kwargs
     ):
         self.__lock = threading.RLock()
 
@@ -1094,6 +1123,10 @@ class Timer(object):
         self._interval = interval
 
         Notify(self, self.build_event() + '.created')
+        
+        for key, value in kwargs:
+            logger.info('Timer argument "{0}" has not been added. Adding it dynamically.'.format(key))
+            setattr(self, key, value)
 
     def build_event(self):
         return self.parent.build_event() + '.timers.{0}'.format(self.id)
